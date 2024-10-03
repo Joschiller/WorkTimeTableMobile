@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2023 Joachim Schiller
+Copyright (c) 2024 Joachim Schiller
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
