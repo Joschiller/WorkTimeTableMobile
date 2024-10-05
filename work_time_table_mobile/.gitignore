@@ -41,3 +41,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Generated Files
+/lib/_generated_prisma_client
+/prisma/db.sqlite
+/prisma/db.sqlite-journal
