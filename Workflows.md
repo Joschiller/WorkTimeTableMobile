@@ -33,6 +33,12 @@
        - Description: Copy from Changelog
        - Files: add .apk and documentation
 
+# Additions to Database
+
+1. Modify [prisma scheme](./finance_logger_mobile/prisma/schema.prisma)
+2. Run `npx prisma migrate dev`
+3. Add newly generated migration to assets in [pubspec.yaml](./finance_logger_mobile/pubspec.yaml)
+
 # Update against template
 
 > Run once: `git remote add template https://github.com/Joschiller/Android_Project_Template`
