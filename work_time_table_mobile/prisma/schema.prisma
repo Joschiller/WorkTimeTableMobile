@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "dart run orm"
+  output     = "../lib/_generated_prisma_client"
+  engineType = "flutter"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db.sqlite"
+}
+
+model User {
+  id   Int @id @default(autoincrement())
+  name String @unique
+
+  defaultWorkTimeStart          Int
+  defaultWorkTimeEnd            Int
+  defaultMandatoryWorkTimeStart Int
+  defaultMandatoryWorkTimeEnd   Int
+  defaultBreakDuration          Int
+
+  targetWorkTimePerWeek Int
+
+  GlobalSetting  GlobalSetting[]
+  WeekDaySetting WeekDaySetting[]
+  EventSetting   EventSetting[]
+  DayValue       DayValue[]
+  WeekValue      WeekValue[]
+}
+
+model GlobalSetting {
+  id     Int @id @default(autoincrement())
+  userId Int
+  key    String
+
+  value  String
+
+  @@unique([userId, key])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// if a day setting exists in the database, the day of week is considered to be a work day (no extra "active" flag needed)
+model WeekDaySetting {
+  id     Int @id @default(autoincrement())
+  userId Int
+  day    String // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+
+  defaultWorkTimeStart   Int?
+  defaultWorkTimeEnd     Int?
+  mandatoryWorkTimeStart Int?
+  mandatoryWorkTimeEnd   Int?
+  defaultBreakDuration   Int?
+
+  timeEquivalent Int
+
+  @@unique([userId, day])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EventSetting {
+  id     Int @id @default(autoincrement())
+  userId Int
+  type   String // Public Holiday, Vacation, Sick Day, Day Off, Business Trip
+  title  String?
+
+  startDate        DateTime
+  endDate          DateTime
+  startIsHalfDay   Boolean // cuts off the first half of a day
+  endIsHalfDay     Boolean // cuts off the second half of a day
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  DayBasedRepetitionRule   DayBasedRepetitionRule[]
+  MonthBasedRepetitionRule MonthBasedRepetitionRule[]
+}
+
+// used for day/week repetitions
+model DayBasedRepetitionRule {
+  id      Int @id @default(autoincrement())
+  eventId Int
+
+  repeatAfterDays Int
+
+  event EventSetting @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+// used for month/year repetitions
+model MonthBasedRepetitionRule {
+  id      Int @id @default(autoincrement())
+  eventId Int
+
+  repeatAfterMonths Int
+
+  dayIndex Int // refers to day within month if weekIndex is null - else refers to the day of week
+  weekIndex Int?
+  countFromEnd Boolean // refers to dayIndex if weekIndex is null - else refers to the weekIndex
+
+  event EventSetting @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model DayValue {
+  id     Int @id @default(autoincrement())
+  userId Int
+  date   DateTime
+
+  mode          String // Non-Work-Day, Work Day, Public Holiday, Vacation, Sick Day, Day Off, Business Trip
+  workTimeStart Int
+  workTimeEnd   Int
+  breakDuration Int
+
+  @@unique([userId, date])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WeekValue {
+  id            Int @id @default(autoincrement())
+  userId        Int
+  weekStartDate DateTime
+
+  targetTime  Int
+
+  @@unique([userId, weekStartDate])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
