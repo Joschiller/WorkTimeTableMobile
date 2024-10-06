@@ -47,7 +47,7 @@ model GlobalSetting {
 model WeekDaySetting {
   id     Int @id @default(autoincrement())
   userId Int
-  day    String // Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+  day    String
 
   defaultWorkTimeStart   Int?
   defaultWorkTimeEnd     Int?
@@ -65,7 +65,7 @@ model WeekDaySetting {
 model EventSetting {
   id     Int @id @default(autoincrement())
   userId Int
-  type   String // Public Holiday, Vacation, Sick Day, Day Off, Business Trip
+  type   String
   title  String?
 
   startDate        DateTime
@@ -108,7 +108,7 @@ model DayValue {
   userId Int
   date   DateTime
 
-  mode          String // Non-Work-Day, Work Day, Public Holiday, Vacation, Sick Day, Day Off, Business Trip
+  mode          String
   workTimeStart Int
   workTimeEnd   Int
   breakDuration Int
