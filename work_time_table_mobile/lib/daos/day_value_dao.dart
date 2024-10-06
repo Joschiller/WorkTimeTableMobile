@@ -45,7 +45,7 @@ class DayValueDao implements StreamableListDao<DayValue> {
     _stream.emitUpdate([DayValue.fromPrismaModel(updated)]);
   }
 
-  Future<void> deleteValueByUserIdAndDate(int userId, DateTime date) async {
+  Future<void> deleteByUserIdAndDate(int userId, DateTime date) async {
     final deleted = await prisma.dayValue.delete(
       where: DayValueWhereUniqueInput(
         userIdDate: DayValueUserIdDateCompoundUniqueInput(
