@@ -10,6 +10,11 @@ final _stream = ListDaoStream<User>([]);
 class UserDao implements StreamableListDao<User> {
   const UserDao();
 
+  Future<void> loadData() async {
+    final users = await prisma.user.findMany();
+    _stream.emitReload(users.map(User.fromPrismaModel).toList());
+  }
+
   Future<void> create(String name) async {
     final created = await prisma.user.create(
         data: PrismaUnion.$1(
