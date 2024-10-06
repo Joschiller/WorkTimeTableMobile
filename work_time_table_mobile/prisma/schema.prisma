@@ -96,8 +96,8 @@ model MonthBasedRepetitionRule {
 
   repeatAfterMonths Int
 
-  dayIndex Int // refers to day within month if weekIndex is null - else refers to the day of week
-  weekIndex Int?
+  dayIndex     Int // refers to day within month if weekIndex is null - else refers to the day of week
+  weekIndex    Int?
   countFromEnd Boolean // refers to dayIndex if weekIndex is null - else refers to the weekIndex
 
   event EventSetting @relation(fields: [eventId], references: [id], onDelete: Cascade)
