@@ -22,7 +22,10 @@ class GlobalSettingDao implements StreamableDao<SettingsMap> {
   }
 
   Future<void> updateByUserIdAndKey(
-      int userId, GlobalSettingKey key, String? value) async {
+    int userId,
+    GlobalSettingKey key,
+    String? value,
+  ) async {
     if (value == null) {
       await prisma.globalSetting.delete(
         where: GlobalSettingWhereUniqueInput(
