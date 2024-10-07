@@ -16,9 +16,11 @@ class ListDaoStream<T extends Identifiable> extends DaoStream<List<T>> {
 
   void _emitChange({List<T>? removedElements, List<T>? addedElements}) =>
       super.emitReload([
-        ...state.where((e) =>
-            removedElements == null ||
-            !removedElements.any((u) => u.identity == e.identity)),
+        ...removedElements == null
+            ? state
+            : state.where(
+                (e) => !removedElements.any((u) => u.identity == e.identity),
+              ),
         ...(addedElements ?? []),
       ]);
 }
