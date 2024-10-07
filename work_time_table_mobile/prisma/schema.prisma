@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "dart run orm"
+  output     = "../lib/_generated_prisma_client"
+  engineType = "flutter"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./db.sqlite"
+}
+
+model User {
+  id   Int @id @default(autoincrement())
+  name String @unique
+
+  defaultWorkTimeStart          Int
+  defaultWorkTimeEnd            Int
+  defaultMandatoryWorkTimeStart Int
+  defaultMandatoryWorkTimeEnd   Int
+  defaultBreakDuration          Int
+
+  targetWorkTimePerWeek Int
+
+  GlobalSetting  GlobalSetting[]
+  WeekDaySetting WeekDaySetting[]
+  EventSetting   EventSetting[]
+  DayValue       DayValue[]
+  WeekValue      WeekValue[]
+}
+
+model GlobalSetting {
+  id     Int @id @default(autoincrement())
+  userId Int
+  key    String
+
+  value  String
+
+  @@unique([userId, key])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WeekDaySetting {
+  id     Int @id @default(autoincrement())
+  userId Int
+  day    String
+
+  defaultWorkTimeStart   Int?
+  defaultWorkTimeEnd     Int?
+  mandatoryWorkTimeStart Int?
+  mandatoryWorkTimeEnd   Int?
+  defaultBreakDuration   Int?
+
+  timeEquivalent Int
+
+  @@unique([userId, day])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EventSetting {
+  id     Int @id @default(autoincrement())
+  userId Int
+  type   String
+  title  String?
+
+  startDate        DateTime
+  endDate          DateTime
+  startIsHalfDay   Boolean
+  endIsHalfDay     Boolean
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  DayBasedRepetitionRule   DayBasedRepetitionRule[]
+  MonthBasedRepetitionRule MonthBasedRepetitionRule[]
+}
+
+model DayBasedRepetitionRule {
+  id      Int @id @default(autoincrement())
+  eventId Int
+
+  repeatAfterDays Int
+
+  event EventSetting @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model MonthBasedRepetitionRule {
+  id      Int @id @default(autoincrement())
+  eventId Int
+
+  repeatAfterMonths Int
+
+  dayIndex     Int
+  weekIndex    Int?
+  countFromEnd Boolean
+
+  event EventSetting @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model DayValue {
+  id     Int @id @default(autoincrement())
+  userId Int
+  date   DateTime
+
+  mode          String
+  workTimeStart Int
+  workTimeEnd   Int
+  breakDuration Int
+
+  @@unique([userId, date])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WeekValue {
+  id            Int @id @default(autoincrement())
+  userId        Int
+  weekStartDate DateTime
+
+  targetTime  Int
+
+  @@unique([userId, weekStartDate])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
