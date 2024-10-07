@@ -9,6 +9,6 @@ class DaoStream<T> {
     stream.listen((newState) => state = newState);
   }
 
-  /// Pushes a new value to the stream.
+  /// Pushes a new state to the stream.
   void emitReload(T data) => _streamController.add(data);
 }
