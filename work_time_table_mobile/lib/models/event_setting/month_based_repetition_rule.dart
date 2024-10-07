@@ -4,8 +4,11 @@ import 'package:work_time_table_mobile/_generated_prisma_client/model.dart'
 class MonthBasedRepetitionRule {
   final int repeatAfterMonths;
 
+  /// Refers to day within the month if `weekIndex` is null - else refers to the day of week.
   final int dayIndex;
   final int? weekIndex;
+
+  /// Refers to `dayIndex` if `weekIndex` is null - else refers to the `weekIndex`.
   final bool countFromEnd;
 
   MonthBasedRepetitionRule({

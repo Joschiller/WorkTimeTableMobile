@@ -43,7 +43,6 @@ model GlobalSetting {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// if a day setting exists in the database, the day of week is considered to be a work day (no extra "active" flag needed)
 model WeekDaySetting {
   id     Int @id @default(autoincrement())
   userId Int
@@ -70,8 +69,8 @@ model EventSetting {
 
   startDate        DateTime
   endDate          DateTime
-  startIsHalfDay   Boolean // cuts off the first half of a day
-  endIsHalfDay     Boolean // cuts off the second half of a day
+  startIsHalfDay   Boolean
+  endIsHalfDay     Boolean
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -79,7 +78,6 @@ model EventSetting {
   MonthBasedRepetitionRule MonthBasedRepetitionRule[]
 }
 
-// used for day/week repetitions
 model DayBasedRepetitionRule {
   id      Int @id @default(autoincrement())
   eventId Int
@@ -89,16 +87,15 @@ model DayBasedRepetitionRule {
   event EventSetting @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
-// used for month/year repetitions
 model MonthBasedRepetitionRule {
   id      Int @id @default(autoincrement())
   eventId Int
 
   repeatAfterMonths Int
 
-  dayIndex     Int // refers to day within month if weekIndex is null - else refers to the day of week
+  dayIndex     Int
   weekIndex    Int?
-  countFromEnd Boolean // refers to dayIndex if weekIndex is null - else refers to the weekIndex
+  countFromEnd Boolean
 
   event EventSetting @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }

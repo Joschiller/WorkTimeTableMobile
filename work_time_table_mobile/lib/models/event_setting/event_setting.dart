@@ -12,10 +12,17 @@ class EventSetting implements Identifiable {
 
   final DateTime startDate;
   final DateTime endDate;
+
+  /// Cuts off the first half of the day.
   final bool startIsHalfDay;
+
+  /// Cuts off the second half of the day.
   final bool endIsHalfDay;
 
+  /// Repetition rules used for daily and weekly repetitions.
   final List<DayBasedRepetitionRule> dayBasedRepetitionRules;
+
+  /// Repetition rules used for monthly and yearly repetitions.
   final List<MonthBasedRepetitionRule> monthBasedRepetitionRules;
 
   EventSetting({
