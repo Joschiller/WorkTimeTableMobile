@@ -56,20 +56,20 @@ class WeekSettingDao implements StreamableDao<WeekSetting?> {
                       day: setting.dayOfWeek.name,
                       defaultWorkTimeStart: setting.defaultWorkTimeStart != null
                           ? PrismaUnion.$1(setting.defaultWorkTimeStart!)
-                          : null,
+                          : const PrismaUnion.$2(PrismaNull()),
                       defaultWorkTimeEnd: setting.defaultWorkTimeEnd != null
                           ? PrismaUnion.$1(setting.defaultWorkTimeEnd!)
-                          : null,
+                          : const PrismaUnion.$2(PrismaNull()),
                       mandatoryWorkTimeStart:
                           setting.mandatoryWorkTimeStart != null
                               ? PrismaUnion.$1(setting.mandatoryWorkTimeStart!)
-                              : null,
+                              : const PrismaUnion.$2(PrismaNull()),
                       mandatoryWorkTimeEnd: setting.mandatoryWorkTimeEnd != null
                           ? PrismaUnion.$1(setting.mandatoryWorkTimeEnd!)
-                          : null,
+                          : const PrismaUnion.$2(PrismaNull()),
                       defaultBreakDuration: setting.defaultBreakDuration != null
                           ? PrismaUnion.$1(setting.defaultBreakDuration!)
-                          : null,
+                          : const PrismaUnion.$2(PrismaNull()),
                       timeEquivalent: setting.timeEquivalent,
                     ))));
       },

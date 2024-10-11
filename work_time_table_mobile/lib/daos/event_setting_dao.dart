@@ -26,7 +26,9 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
     final created = await prisma.eventSetting.create(
       data: PrismaUnion.$1(EventSettingCreateInput(
         type: event.eventType.name,
-        title: event.title != null ? PrismaUnion.$1(event.title!) : null,
+        title: event.title != null
+            ? PrismaUnion.$1(event.title!)
+            : const PrismaUnion.$2(PrismaNull()),
         startDate: event.startDate,
         endDate: event.endDate,
         startIsHalfDay: event.startIsHalfDay,
@@ -49,7 +51,7 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
                                   dayIndex: rule.dayIndex,
                                   weekIndex: rule.weekIndex != null
                                       ? PrismaUnion.$1(rule.weekIndex!)
-                                      : null,
+                                      : const PrismaUnion.$2(PrismaNull()),
                                   countFromEnd: rule.countFromEnd,
                                 ))))),
         user: UserCreateNestedOneWithoutEventSettingInput(
