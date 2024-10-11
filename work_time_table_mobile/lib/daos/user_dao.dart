@@ -1,5 +1,6 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
+import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/user.dart';
@@ -12,7 +13,7 @@ class UserDao implements StreamableListDao<User> {
 
   Future<void> loadData() async {
     final users = await prisma.user.findMany();
-    _stream.emitReload(users.map(User.fromPrismaModel).toList());
+    _stream.emitReload(users.map((u) => u.toAppModel()).toList());
   }
 
   Future<void> create(String name) async {
@@ -28,7 +29,7 @@ class UserDao implements StreamableListDao<User> {
         targetWorkTimePerWeek: 0,
       ),
     ));
-    _stream.emitInsertion([User.fromPrismaModel(created)]);
+    _stream.emitInsertion([created.toAppModel()]);
   }
 
   Future<void> renameById(int id, String newName) async {
@@ -37,7 +38,7 @@ class UserDao implements StreamableListDao<User> {
       where: UserWhereUniqueInput(id: id),
     );
     if (updated != null) {
-      _stream.emitUpdate([User.fromPrismaModel(updated)]);
+      _stream.emitUpdate([updated.toAppModel()]);
     }
   }
 
@@ -46,7 +47,7 @@ class UserDao implements StreamableListDao<User> {
       where: UserWhereUniqueInput(id: id),
     );
     if (deleted != null) {
-      _stream.emitDeletion([User.fromPrismaModel(deleted)]);
+      _stream.emitDeletion([deleted.toAppModel()]);
     }
   }
 

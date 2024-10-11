@@ -1,5 +1,6 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
+import 'package:work_time_table_mobile/daos/mapper/event_setting_mapper.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
@@ -18,7 +19,7 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
         monthBasedRepetitionRule: PrismaUnion.$1(true),
       ),
     );
-    _stream.emitReload(settings.map(EventSetting.fromPrismaModel).toList());
+    _stream.emitReload(settings.map((s) => s.toAppModel()).toList());
   }
 
   Future<void> create(int userId, EventSetting event) async {
@@ -60,7 +61,7 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
         monthBasedRepetitionRule: PrismaUnion.$1(true),
       ),
     );
-    _stream.emitInsertion([EventSetting.fromPrismaModel(created)]);
+    _stream.emitInsertion([created.toAppModel()]);
   }
 
   Future<void> deleteById(int id) async {
@@ -72,7 +73,7 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
       ),
     );
     if (deleted != null) {
-      _stream.emitDeletion([EventSetting.fromPrismaModel(deleted)]);
+      _stream.emitDeletion([deleted.toAppModel()]);
     }
   }
 

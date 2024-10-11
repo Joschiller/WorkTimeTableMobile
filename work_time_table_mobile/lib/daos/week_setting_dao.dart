@@ -1,5 +1,6 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
+import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_dao.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
@@ -11,19 +12,16 @@ class WeekSettingDao implements StreamableDao<WeekSetting?> {
   const WeekSettingDao();
 
   Future<void> loadUserSettings(int userId) async {
-    final defaultSettings = await prisma.user.findUnique(
+    final user = await prisma.user.findUnique(
       where: UserWhereUniqueInput(id: userId),
     );
-    if (defaultSettings == null) {
+    if (user == null) {
       throw 'Unknown User'; // TODO: centralize error handling
     }
     final weekDaySettings = await prisma.weekDaySetting.findMany(
       where: WeekDaySettingWhereInput(userId: PrismaUnion.$2(userId)),
     );
-    _stream.emitReload(WeekSetting.fromPrismaModel(
-      defaultSettings,
-      weekDaySettings,
-    ));
+    _stream.emitReload(user.toWeekSetting(weekDaySettings));
   }
 
   Future<void> updateByUserId(int userId, WeekSetting settings) async {

@@ -1,5 +1,6 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
+import 'package:work_time_table_mobile/daos/mapper/week_value_mapper.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
@@ -14,7 +15,7 @@ class WeekValueDao implements StreamableListDao<WeekValue> {
     final values = await prisma.weekValue.findMany(
       where: WeekValueWhereInput(userId: PrismaUnion.$2(userId)),
     );
-    _stream.emitReload(values.map(WeekValue.fromPrismaModel).toList());
+    _stream.emitReload(values.map((v) => v.toAppModel()).toList());
   }
 
   Future<void> create(int userId, WeekValue value) async {
@@ -26,7 +27,7 @@ class WeekValueDao implements StreamableListDao<WeekValue> {
         connect: UserWhereUniqueInput(id: userId),
       ),
     )));
-    _stream.emitInsertion([WeekValue.fromPrismaModel(inserted)]);
+    _stream.emitInsertion([inserted.toAppModel()]);
   }
 
   @override

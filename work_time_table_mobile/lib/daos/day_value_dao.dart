@@ -1,5 +1,6 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
+import 'package:work_time_table_mobile/daos/mapper/day_value_mapper.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
@@ -14,7 +15,7 @@ class DayValueDao implements StreamableListDao<DayValue> {
     final values = await prisma.dayValue.findMany(
       where: DayValueWhereInput(userId: PrismaUnion.$2(userId)),
     );
-    _stream.emitReload(values.map(DayValue.fromPrismaModel).toList());
+    _stream.emitReload(values.map((v) => v.toAppModel()).toList());
   }
 
   Future<void> upsert(int userId, DayValue value) async {
@@ -42,7 +43,7 @@ class DayValueDao implements StreamableListDao<DayValue> {
         breakDuration: PrismaUnion.$1(value.breakDuration),
       )),
     );
-    _stream.emitUpdate([DayValue.fromPrismaModel(updated)]);
+    _stream.emitUpdate([updated.toAppModel()]);
   }
 
   Future<void> deleteByUserIdAndDate(int userId, DateTime date) async {
@@ -55,7 +56,7 @@ class DayValueDao implements StreamableListDao<DayValue> {
       ),
     );
     if (deleted != null) {
-      _stream.emitDeletion([DayValue.fromPrismaModel(deleted)]);
+      _stream.emitDeletion([deleted.toAppModel()]);
     }
   }
 
