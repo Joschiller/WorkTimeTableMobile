@@ -25,7 +25,11 @@ final _stream = DaoStream<WeekSetting>(initialWeekSettingValue);
 class WeekSettingDao implements StreamableDao<WeekSetting> {
   const WeekSettingDao();
 
-  Future<void> loadUserSettings(int userId) async {
+  Future<void> loadUserSettings(int? userId) async {
+    if (userId == null) {
+      _stream.emitReload(initialWeekSettingValue);
+      return;
+    }
     final user = await prisma.user.findUnique(
       where: UserWhereUniqueInput(id: userId),
     );

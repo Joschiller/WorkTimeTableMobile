@@ -6,12 +6,18 @@ import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 
-final _stream = ListDaoStream<DayValue>([]);
+final initialDayValueValue = <DayValue>[];
+
+final _stream = ListDaoStream<DayValue>(initialDayValueValue);
 
 class DayValueDao implements StreamableListDao<DayValue> {
   const DayValueDao();
 
-  Future<void> loadUserValues(int userId) async {
+  Future<void> loadUserValues(int? userId) async {
+    if (userId == null) {
+      _stream.emitReload(initialDayValueValue);
+      return;
+    }
     final values = await prisma.dayValue.findMany(
       where: DayValueWhereInput(userId: PrismaUnion.$2(userId)),
     );

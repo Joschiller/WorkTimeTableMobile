@@ -6,12 +6,18 @@ import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_dao.dart';
 
-final _stream = DaoStream<SettingsMap>({});
+final initialGlobalSettingValue = SettingsMap();
+
+final _stream = DaoStream<SettingsMap>(initialGlobalSettingValue);
 
 class GlobalSettingDao implements StreamableDao<SettingsMap> {
   const GlobalSettingDao();
 
-  Future<void> loadUserValues(int userId) async {
+  Future<void> loadUserValues(int? userId) async {
+    if (userId == null) {
+      _stream.emitReload(initialGlobalSettingValue);
+      return;
+    }
     final settings = await prisma.globalSetting.findMany(
       where: GlobalSettingWhereInput(userId: PrismaUnion.$2(userId)),
     );

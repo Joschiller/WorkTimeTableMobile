@@ -6,12 +6,18 @@ import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 
-final _stream = ListDaoStream<EventSetting>([]);
+final initialEventSettingValue = <EventSetting>[];
+
+final _stream = ListDaoStream<EventSetting>(initialEventSettingValue);
 
 class EventSettingDao implements StreamableListDao<EventSetting> {
   const EventSettingDao();
 
-  Future<void> loadUserSettings(int userId) async {
+  Future<void> loadUserSettings(int? userId) async {
+    if (userId == null) {
+      _stream.emitReload(initialEventSettingValue);
+      return;
+    }
     final settings = await prisma.eventSetting.findMany(
       where: EventSettingWhereInput(userId: PrismaUnion.$2(userId)),
       include: const EventSettingInclude(
