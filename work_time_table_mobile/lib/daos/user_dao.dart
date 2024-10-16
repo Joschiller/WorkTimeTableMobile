@@ -21,6 +21,7 @@ class UserDao implements StreamableListDao<User> {
         data: PrismaUnion.$1(
       UserCreateInput(
         name: name,
+        currentlySelected: false,
         defaultWorkTimeStart: 0,
         defaultWorkTimeEnd: 0,
         defaultMandatoryWorkTimeStart: 0,

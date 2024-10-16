@@ -16,6 +16,8 @@ model User {
   id   Int @id @default(autoincrement())
   name String @unique
 
+  currentlySelected Boolean
+
   defaultWorkTimeStart          Int
   defaultWorkTimeEnd            Int
   defaultMandatoryWorkTimeStart Int
