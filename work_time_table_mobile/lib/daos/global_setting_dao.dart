@@ -1,6 +1,6 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
-import 'package:work_time_table_mobile/daos/wrapper/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
 import 'package:work_time_table_mobile/models/global_setting_key.dart';
 import 'package:work_time_table_mobile/models/settings_map.dart';
 import 'package:work_time_table_mobile/prisma.dart';
