@@ -1,21 +1,20 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/event_setting_mapper.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_user_dependent_list_dao.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_list_dao_stream.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
 
-final initialEventSettingValue = <EventSetting>[];
+final _stream = UserDependentListDaoStream<EventSetting>();
 
-final _stream = ListDaoStream<EventSetting>(initialEventSettingValue);
-
-class EventSettingDao implements StreamableListDao<EventSetting> {
+class EventSettingDao implements StreamableUserDependentListDao<EventSetting> {
   const EventSettingDao();
 
   Future<void> loadUserSettings(int? userId) async {
     if (userId == null) {
-      _stream.emitReload(initialEventSettingValue);
+      _stream.emitReload(NoUserValue());
       return;
     }
     final settings = await prisma.eventSetting.findMany(
@@ -25,7 +24,7 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
         monthBasedRepetitionRule: PrismaUnion.$1(true),
       ),
     );
-    _stream.emitReload(settings.map((s) => s.toAppModel()).toList());
+    _stream.emitReload(UserValue(settings.map((s) => s.toAppModel()).toList()));
   }
 
   Future<void> create(int userId, EventSetting event) async {
@@ -86,7 +85,7 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
   }
 
   @override
-  List<EventSetting> get data => _stream.state;
+  UserDependentValue<List<EventSetting>> get data => _stream.state;
   @override
-  Stream<List<EventSetting>> get stream => _stream.stream;
+  Stream<UserDependentValue<List<EventSetting>>> get stream => _stream.stream;
 }
