@@ -2,32 +2,20 @@ import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
-import 'package:work_time_table_mobile/models/week_setting/global_week_day_setting.dart';
+import 'package:work_time_table_mobile/daos/wrapper/user_dependent_value.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_dao.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 
-final initialWeekSettingValue = WeekSetting(
-  targetWorkTimePerWeek: 0,
-  globalWeekDaySetting: GlobalWeekDaySetting(
-    defaultWorkTimeStart: 0,
-    defaultWorkTimeEnd: 0,
-    defaultMandatoryWorkTimeStart: 0,
-    defaultMandatoryWorkTimeEnd: 0,
-    defaultBreakDuration: 0,
-  ),
-  weekDaySettings: {},
-);
+final _stream = DaoStream<UserDependentValue<WeekSetting>>(NoUserValue());
 
-final _stream = DaoStream<WeekSetting>(initialWeekSettingValue);
-
-class WeekSettingDao implements StreamableDao<WeekSetting> {
+class WeekSettingDao implements StreamableDao<UserDependentValue<WeekSetting>> {
   const WeekSettingDao();
 
   Future<void> loadUserSettings(int? userId) async {
     if (userId == null) {
-      _stream.emitReload(initialWeekSettingValue);
+      _stream.emitReload(NoUserValue());
       return;
     }
     final user = await prisma.user.findUnique(
@@ -39,7 +27,7 @@ class WeekSettingDao implements StreamableDao<WeekSetting> {
     final weekDaySettings = await prisma.weekDaySetting.findMany(
       where: WeekDaySettingWhereInput(userId: PrismaUnion.$2(userId)),
     );
-    _stream.emitReload(user.toWeekSetting(weekDaySettings));
+    _stream.emitReload(UserValue(user.toWeekSetting(weekDaySettings)));
   }
 
   Future<void> updateByUserId(int userId, WeekSetting settings) async {
@@ -96,7 +84,7 @@ class WeekSettingDao implements StreamableDao<WeekSetting> {
   }
 
   @override
-  WeekSetting get data => _stream.state;
+  UserDependentValue<WeekSetting> get data => _stream.state;
   @override
-  Stream<WeekSetting> get stream => _stream.stream;
+  Stream<UserDependentValue<WeekSetting>> get stream => _stream.stream;
 }
