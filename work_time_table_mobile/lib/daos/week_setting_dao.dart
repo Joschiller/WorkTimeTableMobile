@@ -2,15 +2,15 @@ import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_user_dependent_dao.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_dao_stream.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_dao.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 
-final _stream = DaoStream<UserDependentValue<WeekSetting>>(NoUserValue());
+final _stream = UserDependentDaoStream<WeekSetting>();
 
-class WeekSettingDao implements StreamableDao<UserDependentValue<WeekSetting>> {
+class WeekSettingDao implements StreamableUserDependentDao<WeekSetting> {
   const WeekSettingDao();
 
   Future<void> loadUserSettings(int? userId) async {
