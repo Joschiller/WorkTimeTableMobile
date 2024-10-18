@@ -3,19 +3,21 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_dao.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_user_dependent_dao.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_dao_stream.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
 
-final _stream = DaoStream<User?>(null);
+final _stream = UserDependentDaoStream<User>();
 
-class CurrentUserDao implements StreamableDao<User?> {
+class CurrentUserDao implements StreamableUserDependentDao<User> {
   Future<void> loadData() async {
     final user = await prisma.user.findFirst(
       where: const UserWhereInput(
         currentlySelected: PrismaUnion.$2(true),
       ),
     );
-    _stream.emitReload(user?.toAppModel());
+    _stream.emitReload(
+        user != null ? UserValue(user.toAppModel()) : NoUserValue());
   }
 
   Future<void> setSelectedUser(int id) async {
@@ -36,8 +38,8 @@ class CurrentUserDao implements StreamableDao<User?> {
   }
 
   @override
-  User? get data => _stream.state;
+  UserDependentValue<User> get data => _stream.state;
 
   @override
-  Stream<User?> get stream => _stream.stream;
+  Stream<UserDependentValue<User>> get stream => _stream.stream;
 }
