@@ -12,6 +12,10 @@ enum AppError {
   service_user_unconfirmedDeletion('Deleting the user was not confirmed.'),
 
   service_weekSettings_invalid('The week settings are invalid.'),
+
+  service_eventSettings_invalid('The event settings are invalid.'),
+  service_eventSettings_unconfirmedDeletion(
+      'Deleting the event was not confirmed.'),
   ;
 
   final String displayText;
