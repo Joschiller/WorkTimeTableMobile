@@ -67,7 +67,7 @@ class WeekSettingsService {
                   (day.mandatoryWorkTimeEnd ?? 0))
               ? AppError.service_weekSettings_invalid
               : null,
-          // default time within manatory time
+          // default time respects manatory time
           () => settings.globalWeekDaySetting.defaultWorkTimeStart >
                   settings.globalWeekDaySetting.defaultMandatoryWorkTimeStart
               ? AppError.service_weekSettings_invalid
