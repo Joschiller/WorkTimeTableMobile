@@ -16,6 +16,11 @@ enum AppError {
   service_eventSettings_invalid('The event settings are invalid.'),
   service_eventSettings_unconfirmedDeletion(
       'Deleting the event was not confirmed.'),
+
+  service_timeInput_invalid('The inserted values are invalid.'),
+  service_timeInput_alreadyClosed('The week is already finished.'),
+  service_timeInput_unconfirmedReset('Resetting the week was not confirmed.'),
+  service_timeInput_unconfirmedClose('Finishing the week was not confirmed.'),
   ;
 
   final String displayText;
