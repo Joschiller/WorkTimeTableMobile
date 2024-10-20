@@ -7,8 +7,8 @@ import 'package:work_time_table_mobile/models/event_setting/month_based_repetiti
 import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
-class EventSettingsService {
-  EventSettingsService(this.currentUserDao, this.eventSettingDao) {
+class EventSettingService {
+  EventSettingService(this.currentUserDao, this.eventSettingDao) {
     currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
           selectedUser,
           () => _loadData(null),

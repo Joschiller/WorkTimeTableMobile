@@ -5,8 +5,8 @@ import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
-class WeekSettingsService {
-  WeekSettingsService(this.currentUserDao, this.weekSettingDao) {
+class WeekSettingService {
+  WeekSettingService(this.currentUserDao, this.weekSettingDao) {
     currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
           selectedUser,
           () => _loadData(null),
