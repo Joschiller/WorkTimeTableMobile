@@ -33,7 +33,8 @@ class DayValueDao implements StreamableUserDependentListDao<DayValue> {
       ),
       create: PrismaUnion.$1(DayValueCreateInput(
         date: value.date,
-        mode: value.mode.name,
+        firstHalfMode: value.firstHalfMode.name,
+        secondHalfMode: value.secondHalfMode.name,
         workTimeStart: value.workTimeStart,
         workTimeEnd: value.workTimeEnd,
         breakDuration: value.breakDuration,
@@ -42,7 +43,8 @@ class DayValueDao implements StreamableUserDependentListDao<DayValue> {
         ),
       )),
       update: PrismaUnion.$1(DayValueUpdateInput(
-        mode: PrismaUnion.$1(value.mode.name),
+        firstHalfMode: PrismaUnion.$1(value.firstHalfMode.name),
+        secondHalfMode: PrismaUnion.$1(value.secondHalfMode.name),
         workTimeStart: PrismaUnion.$1(value.workTimeStart),
         workTimeEnd: PrismaUnion.$1(value.workTimeEnd),
         breakDuration: PrismaUnion.$1(value.breakDuration),

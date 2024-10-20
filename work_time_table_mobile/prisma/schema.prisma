@@ -107,10 +107,11 @@ model DayValue {
   userId Int
   date   DateTime
 
-  mode          String
-  workTimeStart Int
-  workTimeEnd   Int
-  breakDuration Int
+  firstHalfMode  String
+  secondHalfMode String
+  workTimeStart  Int
+  workTimeEnd    Int
+  breakDuration  Int
 
   @@unique([userId, date])
 
