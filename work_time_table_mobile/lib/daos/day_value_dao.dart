@@ -5,24 +5,25 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/day_value_mapper.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_user_dependent_list_dao.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_list_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/list/streamable_context_dependent_list_dao.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/list/context_dependent_list_dao_stream.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 
-final _stream = UserDependentListDaoStream<DayValue>();
+final _stream = ContextDependentListDaoStream<DayValue>();
 
-class DayValueDao implements StreamableUserDependentListDao<DayValue> {
+class DayValueDao implements StreamableContextDependentListDao<DayValue> {
   const DayValueDao();
 
   Future<void> loadUserValues(int? userId) async {
     if (userId == null) {
-      _stream.emitReload(NoUserValue());
+      _stream.emitReload(NoContextValue());
       return;
     }
     final values = await prisma.dayValue.findMany(
       where: DayValueWhereInput(userId: PrismaUnion.$2(userId)),
     );
-    _stream.emitReload(UserValue(values.map((v) => v.toAppModel()).toList()));
+    _stream
+        .emitReload(ContextValue(values.map((v) => v.toAppModel()).toList()));
   }
 
   Future<void> upsert(int userId, DayValue value) async {
@@ -78,7 +79,7 @@ class DayValueDao implements StreamableUserDependentListDao<DayValue> {
   }
 
   @override
-  UserDependentValue<List<DayValue>> get data => _stream.state;
+  ContextDependentValue<List<DayValue>> get data => _stream.state;
   @override
-  Stream<UserDependentValue<List<DayValue>>> get stream => _stream.stream;
+  Stream<ContextDependentValue<List<DayValue>>> get stream => _stream.stream;
 }

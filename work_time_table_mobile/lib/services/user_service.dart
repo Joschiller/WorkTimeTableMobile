@@ -1,7 +1,7 @@
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
 class UserService {
@@ -50,7 +50,7 @@ class UserService {
 
   Future<void> deleteUser(int id, bool isConfirmed) => validateAndRun(
         [
-          () => runUserDependentAction(
+          () => runContextDependentAction(
                 currentUserDao.data,
                 () => null,
                 (value) => value.id == id

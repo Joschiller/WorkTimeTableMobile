@@ -1,9 +1,9 @@
 import 'package:work_time_table_mobile/streamed_dao_helpers/identifiable.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_dao_stream.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 
-class UserDependentListDaoStream<T extends Identifiable>
-    extends UserDependentDaoStream<List<T>> {
+class ContextDependentListDaoStream<T extends Identifiable>
+    extends ContextDependentDaoStream<List<T>> {
   /// Pushes a new state extended by the new elements.
   void emitInsertion(List<T> elements) => _emitChange(addedElements: elements);
 
@@ -16,8 +16,8 @@ class UserDependentListDaoStream<T extends Identifiable>
 
   void _emitChange({List<T>? removedElements, List<T>? addedElements}) =>
       super.emitReload(switch (state) {
-        NoUserValue() => UserValue(addedElements ?? []),
-        UserValue(value: var stateValue) => UserValue([
+        NoContextValue() => ContextValue(addedElements ?? []),
+        ContextValue(value: var stateValue) => ContextValue([
             ...removedElements == null
                 ? stateValue
                 : stateValue.where(

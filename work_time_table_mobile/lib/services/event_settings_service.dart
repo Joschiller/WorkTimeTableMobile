@@ -4,12 +4,12 @@ import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
 class EventSettingsService {
   EventSettingsService(this.currentUserDao, this.eventSettingDao) {
-    currentUserDao.stream.listen((selectedUser) => runUserDependentAction(
+    currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
           selectedUser,
           () => _loadData(null),
           (user) => _loadData(user.id),
@@ -24,7 +24,7 @@ class EventSettingsService {
 
   // TODO: "getEventForDaTe" -> checks all events for that day and returns the correct value
 
-  Future<void> addEvent(EventSetting event) => runUserDependentAction(
+  Future<void> addEvent(EventSetting event) => runContextDependentAction(
         currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(

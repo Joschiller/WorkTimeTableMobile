@@ -3,13 +3,13 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_user_dependent_dao.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/streamable_context_dependent_dao.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_dao_stream.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 
-final _stream = UserDependentDaoStream<User>();
+final _stream = ContextDependentDaoStream<User>();
 
-class CurrentUserDao implements StreamableUserDependentDao<User> {
+class CurrentUserDao implements StreamableContextDependentDao<User> {
   Future<void> loadData() async {
     final user = await prisma.user.findFirst(
       where: const UserWhereInput(
@@ -17,7 +17,7 @@ class CurrentUserDao implements StreamableUserDependentDao<User> {
       ),
     );
     _stream.emitReload(
-        user != null ? UserValue(user.toAppModel()) : NoUserValue());
+        user != null ? ContextValue(user.toAppModel()) : NoContextValue());
   }
 
   Future<void> setSelectedUser(int id) async {
@@ -38,8 +38,8 @@ class CurrentUserDao implements StreamableUserDependentDao<User> {
   }
 
   @override
-  UserDependentValue<User> get data => _stream.state;
+  ContextDependentValue<User> get data => _stream.state;
 
   @override
-  Stream<UserDependentValue<User>> get stream => _stream.stream;
+  Stream<ContextDependentValue<User>> get stream => _stream.stream;
 }

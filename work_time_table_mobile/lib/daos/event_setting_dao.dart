@@ -3,18 +3,19 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/event_setting_mapper.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_user_dependent_list_dao.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_list_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/list/streamable_context_dependent_list_dao.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/list/context_dependent_list_dao_stream.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 
-final _stream = UserDependentListDaoStream<EventSetting>();
+final _stream = ContextDependentListDaoStream<EventSetting>();
 
-class EventSettingDao implements StreamableUserDependentListDao<EventSetting> {
+class EventSettingDao
+    implements StreamableContextDependentListDao<EventSetting> {
   const EventSettingDao();
 
   Future<void> loadUserSettings(int? userId) async {
     if (userId == null) {
-      _stream.emitReload(NoUserValue());
+      _stream.emitReload(NoContextValue());
       return;
     }
     final settings = await prisma.eventSetting.findMany(
@@ -24,7 +25,8 @@ class EventSettingDao implements StreamableUserDependentListDao<EventSetting> {
         monthBasedRepetitionRule: PrismaUnion.$1(true),
       ),
     );
-    _stream.emitReload(UserValue(settings.map((s) => s.toAppModel()).toList()));
+    _stream
+        .emitReload(ContextValue(settings.map((s) => s.toAppModel()).toList()));
   }
 
   Future<void> create(int userId, EventSetting event) async {
@@ -85,7 +87,8 @@ class EventSettingDao implements StreamableUserDependentListDao<EventSetting> {
   }
 
   @override
-  UserDependentValue<List<EventSetting>> get data => _stream.state;
+  ContextDependentValue<List<EventSetting>> get data => _stream.state;
   @override
-  Stream<UserDependentValue<List<EventSetting>>> get stream => _stream.stream;
+  Stream<ContextDependentValue<List<EventSetting>>> get stream =>
+      _stream.stream;
 }

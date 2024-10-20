@@ -2,12 +2,12 @@ import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/user_dependent_value.dart';
+import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
 class WeekSettingsService {
   WeekSettingsService(this.currentUserDao, this.weekSettingDao) {
-    currentUserDao.stream.listen((selectedUser) => runUserDependentAction(
+    currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
           selectedUser,
           () => _loadData(null),
           (user) => _loadData(user.id),
@@ -21,7 +21,7 @@ class WeekSettingsService {
       weekSettingDao.loadUserSettings(userId);
 
   Future<void> updateWeekSettings(WeekSetting settings) =>
-      runUserDependentAction(
+      runContextDependentAction(
         currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
