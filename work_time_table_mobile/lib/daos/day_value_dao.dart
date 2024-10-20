@@ -1,4 +1,6 @@
 import 'package:orm/orm.dart';
+import 'package:work_time_table_mobile/_generated_prisma_client/model.dart'
+    as prisma_model;
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/day_value_mapper.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
@@ -53,18 +55,26 @@ class DayValueDao implements StreamableUserDependentListDao<DayValue> {
     _stream.emitUpdate([updated.toAppModel()]);
   }
 
-  Future<void> deleteByUserIdAndDate(int userId, DateTime date) async {
-    final deleted = await prisma.dayValue.delete(
-      where: DayValueWhereUniqueInput(
-        userIdDate: DayValueUserIdDateCompoundUniqueInput(
-          userId: userId,
-          date: date,
-        ),
-      ),
+  Future<void> deleteByUserIdAndDates(int userId, List<DateTime> dates) async {
+    final deleted = <prisma_model.DayValue>[];
+    await prisma.$transaction(
+      (prisma) async {
+        for (final date in dates) {
+          final del = await prisma.dayValue.delete(
+            where: DayValueWhereUniqueInput(
+              userIdDate: DayValueUserIdDateCompoundUniqueInput(
+                userId: userId,
+                date: date,
+              ),
+            ),
+          );
+          if (del != null) {
+            deleted.add(del);
+          }
+        }
+      },
     );
-    if (deleted != null) {
-      _stream.emitDeletion([deleted.toAppModel()]);
-    }
+    _stream.emitDeletion(deleted.map((d) => d.toAppModel()).toList());
   }
 
   @override
