@@ -27,27 +27,30 @@ class EventSettingsService {
   Future<void> addEvent(EventSetting event) => runUserDependentAction(
         currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
-        (user) => validateAndRun([
-          // start <= end
-          () => event.startDate.isAfter(event.endDate)
-              ? AppError.service_eventSettings_invalid
-              : null,
-          // non-empty event
-          () => event.startDate == event.endDate &&
-                  event.startIsHalfDay &&
-                  event.endIsHalfDay
-              ? AppError.service_eventSettings_invalid
-              : null,
-          // repetitions valid
-          () => event.dayBasedRepetitionRules
-                  .any((rule) => !_isDayBasedRepetitionRuleValid(rule))
-              ? AppError.service_eventSettings_invalid
-              : null,
-          () => event.monthBasedRepetitionRules
-                  .any((rule) => !_isMonthBasedRepetitionRuleValid(rule))
-              ? AppError.service_eventSettings_invalid
-              : null,
-        ], () => eventSettingDao.create(user.id, event)),
+        (user) => validateAndRun(
+          [
+            // start <= end
+            () => event.startDate.isAfter(event.endDate)
+                ? AppError.service_eventSettings_invalid
+                : null,
+            // non-empty event
+            () => event.startDate == event.endDate &&
+                    event.startIsHalfDay &&
+                    event.endIsHalfDay
+                ? AppError.service_eventSettings_invalid
+                : null,
+            // repetitions valid
+            () => event.dayBasedRepetitionRules
+                    .any((rule) => !_isDayBasedRepetitionRuleValid(rule))
+                ? AppError.service_eventSettings_invalid
+                : null,
+            () => event.monthBasedRepetitionRules
+                    .any((rule) => !_isMonthBasedRepetitionRuleValid(rule))
+                ? AppError.service_eventSettings_invalid
+                : null,
+          ],
+          () => eventSettingDao.create(user.id, event),
+        ),
       );
 
   Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun([

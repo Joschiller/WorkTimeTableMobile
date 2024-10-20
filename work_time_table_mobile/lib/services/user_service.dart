@@ -18,34 +18,47 @@ class UserService {
     await currentUserDao.loadData();
   }
 
-  Future<void> selectUser(int id) => validateAndRun([
-        () => !userDao.data.any((u) => u.id == id)
-            ? AppError.service_user_unknownUser
-            : null,
-      ], () => currentUserDao.setSelectedUser(id));
+  Future<void> selectUser(int id) => validateAndRun(
+        [
+          () => !userDao.data.any((u) => u.id == id)
+              ? AppError.service_user_unknownUser
+              : null,
+        ],
+        () => currentUserDao.setSelectedUser(id),
+      );
 
-  Future<void> addUser(String name) => validateAndRun([
-        () => name.isBlank ? AppError.service_user_invalidName : null,
-        () => userDao.data.any((user) => user.name == name)
-            ? AppError.service_user_duplicateName
-            : null,
-      ], () => userDao.create(name));
+  Future<void> addUser(String name) => validateAndRun(
+        [
+          () => name.isBlank ? AppError.service_user_invalidName : null,
+          () => userDao.data.any((user) => user.name == name)
+              ? AppError.service_user_duplicateName
+              : null,
+        ],
+        () => userDao.create(name),
+      );
 
-  Future<void> renameUser(int id, String newName) => validateAndRun([
-        () => newName.isBlank ? AppError.service_user_invalidName : null,
-        () => userDao.data.any((user) => user.id != id && user.name == newName)
-            ? AppError.service_user_duplicateName
-            : null,
-      ], () => userDao.renameById(id, newName));
-
-  Future<void> deleteUser(int id, bool isConfirmed) => validateAndRun([
-        () => runUserDependentAction(
-              currentUserDao.data,
-              () => null,
-              (value) => value.id == id
-                  ? AppError.service_user_forbiddenDeletion
+  Future<void> renameUser(int id, String newName) => validateAndRun(
+        [
+          () => newName.isBlank ? AppError.service_user_invalidName : null,
+          () =>
+              userDao.data.any((user) => user.id != id && user.name == newName)
+                  ? AppError.service_user_duplicateName
                   : null,
-            ),
-        () => !isConfirmed ? AppError.service_user_unconfirmedDeletion : null,
-      ], () => userDao.deleteById(id));
+        ],
+        () => userDao.renameById(id, newName),
+      );
+
+  Future<void> deleteUser(int id, bool isConfirmed) => validateAndRun(
+        [
+          () => runUserDependentAction(
+                currentUserDao.data,
+                () => null,
+                (value) => value.id == id
+                    ? AppError.service_user_forbiddenDeletion
+                    : null,
+              ),
+          () => !isConfirmed ? AppError.service_user_unconfirmedDeletion : null,
+        ],
+        () => userDao.deleteById(id),
+      );
 }
