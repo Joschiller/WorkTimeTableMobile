@@ -13,28 +13,28 @@ import 'package:work_time_table_mobile/utils.dart';
 
 class TimeInputService {
   TimeInputService(
-    this.currentUserDao,
-    this.weekSettingDao,
-    this.eventSettingDao,
-    this.dayValueDao,
-    this.weekValueDao,
+    this._currentUserDao,
+    this._weekSettingDao,
+    this._eventSettingDao,
+    this._dayValueDao,
+    this._weekValueDao,
   ) {
-    currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
+    _currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
           selectedUser,
           () => _loadData(null),
           (user) => _loadData(user.id),
         ));
   }
 
-  final CurrentUserDao currentUserDao;
-  final WeekSettingDao weekSettingDao;
-  final EventSettingDao eventSettingDao;
-  final DayValueDao dayValueDao;
-  final WeekValueDao weekValueDao;
+  final CurrentUserDao _currentUserDao;
+  final WeekSettingDao _weekSettingDao;
+  final EventSettingDao _eventSettingDao;
+  final DayValueDao _dayValueDao;
+  final WeekValueDao _weekValueDao;
 
   Future<void> _loadData(int? userId) async {
-    await dayValueDao.loadUserValues(userId);
-    await weekValueDao.loadUserValues(userId);
+    await _dayValueDao.loadUserValues(userId);
+    await _weekValueDao.loadUserValues(userId);
   }
 
   // TODO: "getDefaultValueForDate" -> checks all events for that day and returns the correct value as well as setting the default work times
@@ -47,7 +47,7 @@ class TimeInputService {
 
   Future<void> updateDaysOfWeek(List<DayValue> values) =>
       runContextDependentAction(
-        currentUserDao.data,
+        _currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [
@@ -60,7 +60,7 @@ class TimeInputService {
                 : null,
             // week not already closed
             () => runContextDependentAction(
-                  weekValueDao.data,
+                  _weekValueDao.data,
                   () => null,
                   (weekValues) => isWeekClosed(weekValues, values.first.date)
                       ? AppError.service_timeInput_alreadyClosed
@@ -81,7 +81,7 @@ class TimeInputService {
                 : null,
             // settings dependent validations
             () => runContextDependentAction(
-                  weekSettingDao.data,
+                  _weekSettingDao.data,
                   () => AppError.service_noUserLoaded,
                   (weekSettings) => validateAndRun(
                     [
@@ -122,7 +122,7 @@ class TimeInputService {
           ],
           () async {
             for (final day in values) {
-              await dayValueDao.upsert(user.id, day);
+              await _dayValueDao.upsert(user.id, day);
             }
           },
         ),
@@ -130,7 +130,7 @@ class TimeInputService {
 
   Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
       runContextDependentAction(
-        currentUserDao.data,
+        _currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [
@@ -140,7 +140,7 @@ class TimeInputService {
                 : null,
             // week not already closed
             () => runContextDependentAction(
-                  weekValueDao.data,
+                  _weekValueDao.data,
                   () => null,
                   (weekValues) => isWeekClosed(weekValues, weekStartDate)
                       ? AppError.service_timeInput_alreadyClosed
@@ -151,7 +151,7 @@ class TimeInputService {
                 ? AppError.service_timeInput_unconfirmedReset
                 : null,
           ],
-          () => dayValueDao.deleteByUserIdAndDates(
+          () => _dayValueDao.deleteByUserIdAndDates(
             user.id,
             List.generate(7, (i) => weekStartDate.add(Duration(days: i))),
           ),
@@ -164,7 +164,7 @@ class TimeInputService {
     bool isConfirmed,
   ) =>
       runContextDependentAction(
-        currentUserDao.data,
+        _currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) async {
           // save all days in this week
@@ -179,7 +179,7 @@ class TimeInputService {
                   : null,
               // week not already closed
               () => runContextDependentAction(
-                    weekValueDao.data,
+                    _weekValueDao.data,
                     () => null,
                     (weekValues) =>
                         isWeekClosed(weekValues, value.weekStartDate)
@@ -191,7 +191,7 @@ class TimeInputService {
                   ? AppError.service_timeInput_unconfirmedClose
                   : null,
             ],
-            () => weekValueDao.create(user.id, value),
+            () => _weekValueDao.create(user.id, value),
           );
         },
       );
