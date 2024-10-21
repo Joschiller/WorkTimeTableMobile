@@ -1,7 +1,7 @@
-import 'package:work_time_table_mobile/stream_helpers/dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/cached_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
 
-class ListDaoStream<T extends Identifiable> extends DaoStream<List<T>> {
+class ListDaoStream<T extends Identifiable> extends CachedStream<List<T>> {
   ListDaoStream(super.state);
 
   /// Pushes a new state extended by the new elements.

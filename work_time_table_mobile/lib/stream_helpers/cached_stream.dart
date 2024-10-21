@@ -1,11 +1,11 @@
 import 'dart:async';
 
-class DaoStream<T> {
+class CachedStream<T> {
   final _streamController = StreamController<T>.broadcast();
   T state;
   Stream<T> get stream => _streamController.stream;
 
-  DaoStream(this.state) {
+  CachedStream(this.state) {
     stream.listen((newState) => state = newState);
   }
 
