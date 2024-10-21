@@ -6,4 +6,15 @@ class StreamableService {
     serviceStream.emitReload(dao.data);
     dao.stream.listen(serviceStream.emitReload);
   }
+
+  void prepareComplexListen<T>(
+    List<Streamable> daos,
+    T Function() generateNext,
+    CachedStream<T> serviceStream,
+  ) {
+    serviceStream.emitReload(generateNext());
+    for (var dao in daos) {
+      dao.stream.listen((data) => serviceStream.emitReload(generateNext()));
+    }
+  }
 }
