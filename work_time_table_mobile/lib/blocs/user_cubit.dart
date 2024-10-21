@@ -6,7 +6,7 @@ typedef UserCubitState = List<User>;
 
 class UserCubit extends Cubit<UserCubitState> {
   UserCubit(this.userService) : super([]) {
-    userService.userDao.stream.listen(emit);
+    userService.userStream.listen(emit);
   }
 
   UserService userService;

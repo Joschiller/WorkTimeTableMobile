@@ -1,57 +1,71 @@
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
+import 'package:work_time_table_mobile/models/user.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/list/list_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
-class UserService {
-  UserService(
-    this.userDao,
-    this.currentUserDao,
-  );
+final _userStream = ListStream<User>([]);
+final _currentUserStream = ContextDependentStream<User>();
 
-  final UserDao userDao;
-  final CurrentUserDao currentUserDao;
+class UserService extends StreamableService {
+  UserService(
+    this._userDao,
+    this._currentUserDao,
+  ) {
+    prepareListen(_userDao, _userStream);
+    prepareListen(_currentUserDao, _currentUserStream);
+  }
+
+  final UserDao _userDao;
+  final CurrentUserDao _currentUserDao;
+
+  Stream<List<User>> get userStream => _userStream.stream;
+  Stream<ContextDependentValue<User>> get currentUserStream =>
+      _currentUserStream.stream;
 
   Future<void> loadData() async {
-    await userDao.loadData();
-    await currentUserDao.loadData();
+    await _userDao.loadData();
+    await _currentUserDao.loadData();
   }
 
   Future<void> selectUser(int id) => validateAndRun(
         [
-          () => !userDao.data.any((u) => u.id == id)
+          () => !_userDao.data.any((u) => u.id == id)
               ? AppError.service_user_unknownUser
               : null,
         ],
-        () => currentUserDao.setSelectedUser(id),
+        () => _currentUserDao.setSelectedUser(id),
       );
 
   Future<void> addUser(String name) => validateAndRun(
         [
           () => name.isBlank ? AppError.service_user_invalidName : null,
-          () => userDao.data.any((user) => user.name == name)
+          () => _userDao.data.any((user) => user.name == name)
               ? AppError.service_user_duplicateName
               : null,
         ],
-        () => userDao.create(name),
+        () => _userDao.create(name),
       );
 
   Future<void> renameUser(int id, String newName) => validateAndRun(
         [
           () => newName.isBlank ? AppError.service_user_invalidName : null,
           () =>
-              userDao.data.any((user) => user.id != id && user.name == newName)
+              _userDao.data.any((user) => user.id != id && user.name == newName)
                   ? AppError.service_user_duplicateName
                   : null,
         ],
-        () => userDao.renameById(id, newName),
+        () => _userDao.renameById(id, newName),
       );
 
   Future<void> deleteUser(int id, bool isConfirmed) => validateAndRun(
         [
           () => runContextDependentAction(
-                currentUserDao.data,
+                _currentUserDao.data,
                 () => null,
                 (value) => value.id == id
                     ? AppError.service_user_forbiddenDeletion
@@ -59,6 +73,6 @@ class UserService {
               ),
           () => !isConfirmed ? AppError.service_user_unconfirmedDeletion : null,
         ],
-        () => userDao.deleteById(id),
+        () => _userDao.deleteById(id),
       );
 }
