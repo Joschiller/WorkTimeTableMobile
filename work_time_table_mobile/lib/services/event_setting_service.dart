@@ -5,27 +5,35 @@ import 'package:work_time_table_mobile/models/event_setting/day_based_repetition
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
-class EventSettingService {
-  EventSettingService(this.currentUserDao, this.eventSettingDao) {
-    currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
+final _stream = ContextDependentListStream<EventSetting>();
+
+class EventSettingService extends StreamableService {
+  EventSettingService(this._currentUserDao, this._eventSettingDao) {
+    _currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
           selectedUser,
           () => _loadData(null),
           (user) => _loadData(user.id),
         ));
+    prepareListen(_eventSettingDao, _stream);
   }
 
-  final CurrentUserDao currentUserDao;
-  final EventSettingDao eventSettingDao;
+  final CurrentUserDao _currentUserDao;
+  final EventSettingDao _eventSettingDao;
+
+  Stream<ContextDependentValue<List<EventSetting>>> get weekSettingStream =>
+      _stream.stream;
 
   Future<void> _loadData(int? userId) =>
-      eventSettingDao.loadUserSettings(userId);
+      _eventSettingDao.loadUserSettings(userId);
 
   // TODO: "getEventForDaTe" -> checks all events for that day and returns the correct value
 
   Future<void> addEvent(EventSetting event) => runContextDependentAction(
-        currentUserDao.data,
+        _currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [
@@ -49,7 +57,7 @@ class EventSettingService {
                 ? AppError.service_eventSettings_invalid
                 : null,
           ],
-          () => eventSettingDao.create(user.id, event),
+          () => _eventSettingDao.create(user.id, event),
         ),
       );
 
@@ -57,7 +65,7 @@ class EventSettingService {
         () => !isConfirmed
             ? AppError.service_eventSettings_unconfirmedDeletion
             : null,
-      ], () => eventSettingDao.deleteById(id));
+      ], () => _eventSettingDao.deleteById(id));
 }
 
 bool _isDayBasedRepetitionRuleValid(DayBasedRepetitionRule rule) =>

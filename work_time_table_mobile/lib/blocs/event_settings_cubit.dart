@@ -7,7 +7,7 @@ typedef EventSettingsCubitState = List<EventSetting>;
 class EventSettingsCubit
     extends ContextDependentCubit<EventSettingsCubitState> {
   EventSettingsCubit(this.eventSettingsService) : super() {
-    eventSettingsService.eventSettingDao.stream.listen(emit);
+    eventSettingsService.weekSettingStream.listen(emit);
   }
 
   EventSettingService eventSettingsService;
