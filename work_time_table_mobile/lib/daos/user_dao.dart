@@ -1,8 +1,8 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/list/list_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/list/streamable_list_dao.dart';
+import 'package:work_time_table_mobile/stream_helpers/list/list_dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/list/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 

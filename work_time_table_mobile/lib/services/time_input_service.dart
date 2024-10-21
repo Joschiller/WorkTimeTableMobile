@@ -8,7 +8,7 @@ import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
 class TimeInputService {

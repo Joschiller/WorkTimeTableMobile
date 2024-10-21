@@ -1,6 +1,6 @@
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_cubit.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 
 class CurrentUserCubit extends ContextDependentCubit<User> {
   CurrentUserCubit(this.userService) : super() {

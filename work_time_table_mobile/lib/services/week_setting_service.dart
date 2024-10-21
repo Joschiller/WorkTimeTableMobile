@@ -2,7 +2,7 @@ import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
 class WeekSettingService {

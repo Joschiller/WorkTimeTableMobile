@@ -1,6 +1,6 @@
-import 'package:work_time_table_mobile/streamed_dao_helpers/identifiable.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
 class ContextDependentListDaoStream<T extends Identifiable>
     extends ContextDependentDaoStream<List<T>> {

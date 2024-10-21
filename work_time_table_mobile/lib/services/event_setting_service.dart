@@ -4,7 +4,7 @@ import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
 class EventSettingService {

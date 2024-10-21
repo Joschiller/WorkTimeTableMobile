@@ -1,6 +1,6 @@
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/context/context_dependent_cubit.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 
 typedef EventSettingsCubitState = List<EventSetting>;
 

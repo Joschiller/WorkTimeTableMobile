@@ -1,5 +1,5 @@
-import 'package:work_time_table_mobile/streamed_dao_helpers/dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/identifiable.dart';
+import 'package:work_time_table_mobile/stream_helpers/dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
 
 class ListDaoStream<T extends Identifiable> extends DaoStream<List<T>> {
   ListDaoStream(super.state);
