@@ -5,17 +5,17 @@ import 'package:work_time_table_mobile/services/user_service.dart';
 typedef UserCubitState = List<User>;
 
 class UserCubit extends Cubit<UserCubitState> {
-  UserCubit(this.userService) : super([]) {
-    userService.userStream.listen(emit);
+  UserCubit(this._userService) : super([]) {
+    _userService.userStream.listen(emit);
   }
 
-  UserService userService;
+  final UserService _userService;
 
-  Future<void> addUser(String name) => userService.addUser(name);
+  Future<void> addUser(String name) => _userService.addUser(name);
 
   Future<void> renameUser(int id, String newName) =>
-      userService.renameUser(id, newName);
+      _userService.renameUser(id, newName);
 
   Future<void> deleteUser(int id, bool isConfirmed) =>
-      userService.deleteUser(id, isConfirmed);
+      _userService.deleteUser(id, isConfirmed);
 }

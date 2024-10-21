@@ -6,15 +6,15 @@ typedef EventSettingsCubitState = List<EventSetting>;
 
 class EventSettingsCubit
     extends ContextDependentCubit<EventSettingsCubitState> {
-  EventSettingsCubit(this.eventSettingsService) : super() {
-    eventSettingsService.weekSettingStream.listen(emit);
+  EventSettingsCubit(this._eventSettingsService) : super() {
+    _eventSettingsService.weekSettingStream.listen(emit);
   }
 
-  EventSettingService eventSettingsService;
+  final EventSettingService _eventSettingsService;
 
   Future<void> addEvent(EventSetting event) =>
-      eventSettingsService.addEvent(event);
+      _eventSettingsService.addEvent(event);
 
   Future<void> deleteEvent(int id, bool isConfirmed) =>
-      eventSettingsService.deleteEvent(id, isConfirmed);
+      _eventSettingsService.deleteEvent(id, isConfirmed);
 }

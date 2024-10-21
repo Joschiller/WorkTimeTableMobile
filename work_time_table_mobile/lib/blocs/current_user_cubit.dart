@@ -3,12 +3,12 @@ import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 
 class CurrentUserCubit extends ContextDependentCubit<User> {
-  CurrentUserCubit(this.userService) : super() {
-    userService.currentUserStream.listen(emit);
-    userService.loadData();
+  CurrentUserCubit(this._userService) : super() {
+    _userService.currentUserStream.listen(emit);
+    _userService.loadData();
   }
 
-  UserService userService;
+  final UserService _userService;
 
-  Future<void> selectUser(int id) => userService.selectUser(id);
+  Future<void> selectUser(int id) => _userService.selectUser(id);
 }

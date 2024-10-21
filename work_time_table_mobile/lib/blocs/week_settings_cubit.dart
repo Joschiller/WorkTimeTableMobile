@@ -6,12 +6,12 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 typedef WeekSettingsCubitState = ContextDependentValue<WeekSetting>;
 
 class WeekSettingsCubit extends ContextDependentCubit<WeekSetting> {
-  WeekSettingsCubit(this.weekSettingsService) : super() {
-    weekSettingsService.weekSettingStream.listen(emit);
+  WeekSettingsCubit(this._weekSettingsService) : super() {
+    _weekSettingsService.weekSettingStream.listen(emit);
   }
 
-  WeekSettingService weekSettingsService;
+  final WeekSettingService _weekSettingsService;
 
   Future<void> updateWeekSettings(WeekSetting settings) =>
-      weekSettingsService.updateWeekSettings(settings);
+      _weekSettingsService.updateWeekSettings(settings);
 }
