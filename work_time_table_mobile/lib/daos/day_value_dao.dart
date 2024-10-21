@@ -5,13 +5,13 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/day_value_mapper.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/list/streamable_context_dependent_list_dao.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_streamable.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
-final _stream = ContextDependentListDaoStream<DayValue>();
+final _stream = ContextDependentListStream<DayValue>();
 
-class DayValueDao implements StreamableContextDependentListDao<DayValue> {
+class DayValueDao implements ContextDependentListStreamable<DayValue> {
   const DayValueDao();
 
   Future<void> loadUserValues(int? userId) async {

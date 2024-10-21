@@ -1,9 +1,9 @@
 import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
-class ContextDependentListDaoStream<T extends Identifiable>
-    extends ContextDependentDaoStream<List<T>> {
+class ContextDependentListStream<T extends Identifiable>
+    extends ContextDependentStream<List<T>> {
   /// Pushes a new state extended by the new elements.
   void emitInsertion(List<T> elements) => _emitChange(addedElements: elements);
 

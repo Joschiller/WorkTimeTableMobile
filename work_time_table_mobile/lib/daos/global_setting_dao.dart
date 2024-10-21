@@ -1,15 +1,15 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/streamable_context_dependent_dao.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_streamable.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/models/global_setting_key.dart';
 import 'package:work_time_table_mobile/models/settings_map.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 
-final _stream = ContextDependentDaoStream<SettingsMap>();
+final _stream = ContextDependentStream<SettingsMap>();
 
-class GlobalSettingDao implements StreamableContextDependentDao<SettingsMap> {
+class GlobalSettingDao implements ContextDependentStreamable<SettingsMap> {
   const GlobalSettingDao();
 
   Future<void> loadUserValues(int? userId) async {

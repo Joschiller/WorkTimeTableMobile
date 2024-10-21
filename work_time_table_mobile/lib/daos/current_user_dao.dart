@@ -3,13 +3,13 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/streamable_context_dependent_dao.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_dao_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_streamable.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
-final _stream = ContextDependentDaoStream<User>();
+final _stream = ContextDependentStream<User>();
 
-class CurrentUserDao implements StreamableContextDependentDao<User> {
+class CurrentUserDao implements ContextDependentStreamable<User> {
   Future<void> loadData() async {
     final user = await prisma.user.findFirst(
       where: const UserWhereInput(
