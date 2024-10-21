@@ -2,27 +2,35 @@ import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
-class WeekSettingService {
-  WeekSettingService(this.currentUserDao, this.weekSettingDao) {
-    currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
+final _stream = ContextDependentStream<WeekSetting>();
+
+class WeekSettingService extends StreamableService {
+  WeekSettingService(this._currentUserDao, this._weekSettingDao) {
+    _currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
           selectedUser,
           () => _loadData(null),
           (user) => _loadData(user.id),
         ));
+    prepareListen(_weekSettingDao, _stream);
   }
 
-  final CurrentUserDao currentUserDao;
-  final WeekSettingDao weekSettingDao;
+  final CurrentUserDao _currentUserDao;
+  final WeekSettingDao _weekSettingDao;
+
+  Stream<ContextDependentValue<WeekSetting>> get weekSettingStream =>
+      _stream.stream;
 
   Future<void> _loadData(int? userId) =>
-      weekSettingDao.loadUserSettings(userId);
+      _weekSettingDao.loadUserSettings(userId);
 
   Future<void> updateWeekSettings(WeekSetting settings) =>
       runContextDependentAction(
-        currentUserDao.data,
+        _currentUserDao.data,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [
@@ -94,7 +102,7 @@ class WeekSettingService {
                 ? AppError.service_weekSettings_invalid
                 : null,
           ],
-          () => weekSettingDao.updateByUserId(user.id, settings),
+          () => _weekSettingDao.updateByUserId(user.id, settings),
         ),
       );
 }

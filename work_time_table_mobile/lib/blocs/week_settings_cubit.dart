@@ -7,7 +7,7 @@ typedef WeekSettingsCubitState = ContextDependentValue<WeekSetting>;
 
 class WeekSettingsCubit extends ContextDependentCubit<WeekSetting> {
   WeekSettingsCubit(this.weekSettingsService) : super() {
-    weekSettingsService.weekSettingDao.stream.listen(emit);
+    weekSettingsService.weekSettingStream.listen(emit);
   }
 
   WeekSettingService weekSettingsService;
