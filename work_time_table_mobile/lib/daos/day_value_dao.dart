@@ -5,13 +5,12 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/day_value_mapper.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_streamable.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
 final _stream = ContextDependentListStream<DayValue>();
 
-class DayValueDao implements ContextDependentListStreamable<DayValue> {
+class DayValueDao {
   const DayValueDao();
 
   Future<void> loadUserValues(int? userId) async {
@@ -78,8 +77,5 @@ class DayValueDao implements ContextDependentListStreamable<DayValue> {
     _stream.emitDeletion(deleted.map((d) => d.toAppModel()).toList());
   }
 
-  @override
-  ContextDependentValue<List<DayValue>> get data => _stream.state;
-  @override
-  Stream<ContextDependentValue<List<DayValue>>> get stream => _stream.stream;
+  ContextDependentListStream<DayValue> get stream => _stream;
 }

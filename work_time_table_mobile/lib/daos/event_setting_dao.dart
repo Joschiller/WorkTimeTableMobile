@@ -3,13 +3,12 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/event_setting_mapper.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_streamable.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
 final _stream = ContextDependentListStream<EventSetting>();
 
-class EventSettingDao implements ContextDependentListStreamable<EventSetting> {
+class EventSettingDao {
   const EventSettingDao();
 
   Future<void> loadUserSettings(int? userId) async {
@@ -85,9 +84,5 @@ class EventSettingDao implements ContextDependentListStreamable<EventSetting> {
     }
   }
 
-  @override
-  ContextDependentValue<List<EventSetting>> get data => _stream.state;
-  @override
-  Stream<ContextDependentValue<List<EventSetting>>> get stream =>
-      _stream.stream;
+  ContextDependentListStream<EventSetting> get stream => _stream;
 }

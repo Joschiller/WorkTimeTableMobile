@@ -16,8 +16,8 @@ class UserService extends StreamableService {
     this._userDao,
     this._currentUserDao,
   ) {
-    prepareListen(_userDao, _userStream);
-    prepareListen(_currentUserDao, _currentUserStream);
+    prepareListen(_userDao.stream, _userStream);
+    prepareListen(_currentUserDao.stream, _currentUserStream);
   }
 
   final UserDao _userDao;
@@ -34,7 +34,7 @@ class UserService extends StreamableService {
 
   Future<void> selectUser(int id) => validateAndRun(
         [
-          () => !_userDao.data.any((u) => u.id == id)
+          () => !_userDao.stream.state.any((u) => u.id == id)
               ? AppError.service_user_unknownUser
               : null,
         ],
@@ -44,7 +44,7 @@ class UserService extends StreamableService {
   Future<void> addUser(String name) => validateAndRun(
         [
           () => name.isBlank ? AppError.service_user_invalidName : null,
-          () => _userDao.data.any((user) => user.name == name)
+          () => _userDao.stream.state.any((user) => user.name == name)
               ? AppError.service_user_duplicateName
               : null,
         ],
@@ -54,10 +54,10 @@ class UserService extends StreamableService {
   Future<void> renameUser(int id, String newName) => validateAndRun(
         [
           () => newName.isBlank ? AppError.service_user_invalidName : null,
-          () =>
-              _userDao.data.any((user) => user.id != id && user.name == newName)
-                  ? AppError.service_user_duplicateName
-                  : null,
+          () => _userDao.stream.state
+                  .any((user) => user.id != id && user.name == newName)
+              ? AppError.service_user_duplicateName
+              : null,
         ],
         () => _userDao.renameById(id, newName),
       );
@@ -65,7 +65,7 @@ class UserService extends StreamableService {
   Future<void> deleteUser(int id, bool isConfirmed) => validateAndRun(
         [
           () => runContextDependentAction(
-                _currentUserDao.data,
+                _currentUserDao.stream.state,
                 () => null,
                 (value) => value.id == id
                     ? AppError.service_user_forbiddenDeletion

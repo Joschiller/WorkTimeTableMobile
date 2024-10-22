@@ -3,13 +3,12 @@ import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/week_value_mapper.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_streamable.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
 final _stream = ContextDependentListStream<WeekValue>();
 
-class WeekValueDao implements ContextDependentListStreamable<WeekValue> {
+class WeekValueDao {
   const WeekValueDao();
 
   Future<void> loadUserValues(int? userId) async {
@@ -36,8 +35,5 @@ class WeekValueDao implements ContextDependentListStreamable<WeekValue> {
     _stream.emitInsertion([inserted.toAppModel()]);
   }
 
-  @override
-  ContextDependentValue<List<WeekValue>> get data => _stream.state;
-  @override
-  Stream<ContextDependentValue<List<WeekValue>>> get stream => _stream.stream;
+  ContextDependentListStream<WeekValue> get stream => _stream;
 }

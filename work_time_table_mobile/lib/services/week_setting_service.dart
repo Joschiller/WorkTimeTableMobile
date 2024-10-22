@@ -11,12 +11,13 @@ final _stream = ContextDependentStream<WeekSetting>();
 
 class WeekSettingService extends StreamableService {
   WeekSettingService(this._currentUserDao, this._weekSettingDao) {
-    _currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
-          selectedUser,
-          () => _loadData(null),
-          (user) => _loadData(user.id),
-        ));
-    prepareListen(_weekSettingDao, _stream);
+    _currentUserDao.stream.stream
+        .listen((selectedUser) => runContextDependentAction(
+              selectedUser,
+              () => _loadData(null),
+              (user) => _loadData(user.id),
+            ));
+    prepareListen(_weekSettingDao.stream, _stream);
   }
 
   final CurrentUserDao _currentUserDao;
@@ -30,7 +31,7 @@ class WeekSettingService extends StreamableService {
 
   Future<void> updateWeekSettings(WeekSetting settings) =>
       runContextDependentAction(
-        _currentUserDao.data,
+        _currentUserDao.stream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [

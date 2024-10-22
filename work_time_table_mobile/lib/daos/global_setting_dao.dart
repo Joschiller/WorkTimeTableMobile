@@ -1,6 +1,5 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_streamable.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/models/global_setting_key.dart';
@@ -9,7 +8,7 @@ import 'package:work_time_table_mobile/prisma.dart';
 
 final _stream = ContextDependentStream<SettingsMap>();
 
-class GlobalSettingDao implements ContextDependentStreamable<SettingsMap> {
+class GlobalSettingDao {
   const GlobalSettingDao();
 
   Future<void> loadUserValues(int? userId) async {
@@ -63,8 +62,5 @@ class GlobalSettingDao implements ContextDependentStreamable<SettingsMap> {
     }
   }
 
-  @override
-  ContextDependentValue<SettingsMap> get data => _stream.state;
-  @override
-  Stream<ContextDependentValue<SettingsMap>> get stream => _stream.stream;
+  ContextDependentStream<SettingsMap> get stream => _stream;
 }

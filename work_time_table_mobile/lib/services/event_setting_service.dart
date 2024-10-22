@@ -13,12 +13,13 @@ final _stream = ContextDependentListStream<EventSetting>();
 
 class EventSettingService extends StreamableService {
   EventSettingService(this._currentUserDao, this._eventSettingDao) {
-    _currentUserDao.stream.listen((selectedUser) => runContextDependentAction(
-          selectedUser,
-          () => _loadData(null),
-          (user) => _loadData(user.id),
-        ));
-    prepareListen(_eventSettingDao, _stream);
+    _currentUserDao.stream.stream
+        .listen((selectedUser) => runContextDependentAction(
+              selectedUser,
+              () => _loadData(null),
+              (user) => _loadData(user.id),
+            ));
+    prepareListen(_eventSettingDao.stream, _stream);
   }
 
   final CurrentUserDao _currentUserDao;
@@ -33,7 +34,7 @@ class EventSettingService extends StreamableService {
   // TODO: "getEventForDaTe" -> checks all events for that day and returns the correct value
 
   Future<void> addEvent(EventSetting event) => runContextDependentAction(
-        _currentUserDao.data,
+        _currentUserDao.stream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [
