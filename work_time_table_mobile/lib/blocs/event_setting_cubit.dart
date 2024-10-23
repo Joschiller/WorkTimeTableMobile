@@ -2,8 +2,8 @@ import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 
-class EventSettingsCubit extends ContextDependentCubit<List<EventSetting>> {
-  EventSettingsCubit(this._eventSettingsService) : super() {
+class EventSettingCubit extends ContextDependentCubit<List<EventSetting>> {
+  EventSettingCubit(this._eventSettingsService) : super() {
     _eventSettingsService.weekSettingStream.listen(emit);
   }
 

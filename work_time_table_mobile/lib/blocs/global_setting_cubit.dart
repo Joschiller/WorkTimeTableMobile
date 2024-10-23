@@ -3,8 +3,8 @@ import 'package:work_time_table_mobile/models/settings_map.dart';
 import 'package:work_time_table_mobile/services/global_setting_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 
-class GlobalSettingsCubit extends ContextDependentCubit<SettingsMap> {
-  GlobalSettingsCubit(this._globalSettingService) : super() {
+class GlobalSettingCubit extends ContextDependentCubit<SettingsMap> {
+  GlobalSettingCubit(this._globalSettingService) : super() {
     _globalSettingService.globalSettingStream.listen(emit);
   }
 
