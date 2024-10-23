@@ -5,6 +5,8 @@ import 'package:work_time_table_mobile/models/event_setting/month_based_repetiti
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 
 class EventService {
+  const EventService();
+
   ({bool firstHalf, bool secondHalf}) doesEventAffectDate(
       DateTime targetDate, EventSetting event) {
     var firstHalf = false;
