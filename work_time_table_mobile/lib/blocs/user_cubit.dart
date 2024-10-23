@@ -2,9 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 
-typedef UserCubitState = List<User>;
-
-class UserCubit extends Cubit<UserCubitState> {
+class UserCubit extends Cubit<List<User>> {
   UserCubit(this._userService) : super([]) {
     _userService.userStream.listen(emit);
   }

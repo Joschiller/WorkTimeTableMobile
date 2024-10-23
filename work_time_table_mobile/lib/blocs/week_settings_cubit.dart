@@ -1,9 +1,6 @@
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
-
-typedef WeekSettingsCubitState = ContextDependentValue<WeekSetting>;
 
 class WeekSettingsCubit extends ContextDependentCubit<WeekSetting> {
   WeekSettingsCubit(this._weekSettingsService) : super() {
