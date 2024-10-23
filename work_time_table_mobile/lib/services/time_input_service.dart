@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
@@ -261,7 +262,10 @@ class TimeInputService extends StreamableService {
     firstHalf = firstHalf || eventRangeCheck.firstHalf;
     secondHalf = secondHalf || eventRangeCheck.secondHalf;
 
-    final eventDuration = event.endDate.difference(event.startDate);
+    final eventDuration = DateTimeRange(
+      start: event.startDate,
+      end: event.endDate,
+    ).duration;
 
     // check repetitions
     for (final daybasedRepetition in event.dayBasedRepetitionRules) {
