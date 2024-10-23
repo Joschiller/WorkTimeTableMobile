@@ -59,6 +59,7 @@ class TimeInputService extends StreamableService {
   Stream<ContextDependentValue<List<WeekValue>>> get weekValueStream =>
       _weekValueStream.stream;
 
+  // TODO: improve caching capabilities so that not all parts have to be re-calculated if any value changes (e.g. cache default values for the current week and only re-evaluate those, if the settings change or a different week is loaded)
   ContextDependentValue<WeekInformation> getValuesForWeek(
     DateTime weekStartDate,
   ) =>
