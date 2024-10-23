@@ -8,6 +8,7 @@ import 'package:work_time_table_mobile/daos/week_value_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_type.dart';
+import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
@@ -291,8 +292,26 @@ class TimeInputService extends StreamableService {
       }
     }
     for (final monthBasedRepetitions in event.monthBasedRepetitionRules) {
-      var repetitionIndex = 1;
-      // TODO: check all repetitions
+      var currentStartDate = _getNextOccurenceOfMonthBasedRepetition(
+        event.startDate,
+        monthBasedRepetitions,
+      );
+      while (!targetDate.isBefore(currentStartDate)) {
+        // check range
+        final eventRangeCheck = _isDateInRange(targetDate, (
+          start: currentStartDate,
+          end: currentStartDate.add(eventDuration),
+          startIsHalfDay: event.startIsHalfDay,
+          endIsHalfDay: event.endIsHalfDay,
+        ));
+        firstHalf = firstHalf || eventRangeCheck.firstHalf;
+        secondHalf = secondHalf || eventRangeCheck.secondHalf;
+
+        currentStartDate = _getNextOccurenceOfMonthBasedRepetition(
+          currentStartDate,
+          monthBasedRepetitions,
+        );
+      }
     }
 
     return (firstHalf: firstHalf, secondHalf: secondHalf);
@@ -305,6 +324,46 @@ class TimeInputService extends StreamableService {
       currentDate.add(Duration(
         days: repetition.repeatAfterDays,
       ));
+
+  DateTime _getNextOccurenceOfMonthBasedRepetition(
+    DateTime currentDate,
+    MonthBasedRepetitionRule repetition,
+  ) {
+    final targetMonth = DateTime(
+      currentDate.year,
+      currentDate.month + repetition.repeatAfterMonths,
+    );
+    final countOfDaysInMonth = DateTimeRange(
+      start: targetMonth,
+      end: DateTime(targetMonth.year, targetMonth.month + 1),
+    ).duration.inDays;
+
+    final weekIndex = repetition.weekIndex;
+
+    if (weekIndex == null) {
+      return DateTime(
+        targetMonth.year,
+        targetMonth.month,
+        repetition.countFromEnd
+            ? countOfDaysInMonth - repetition.dayIndex
+            : repetition.dayIndex + 1,
+      );
+    } else {
+      final instancesOfDayOfWeek = <DateTime>[];
+      for (var i = 0; i < countOfDaysInMonth; i++) {
+        final dayToTest = targetMonth.add(Duration(days: i));
+        if (dayToTest.weekday - 1 == repetition.dayIndex
+            // check hours for some special cases (e.g. searching for sundays in 10/2024)
+            &&
+            dayToTest.hour == 0) {
+          instancesOfDayOfWeek.add(dayToTest);
+        }
+      }
+      return instancesOfDayOfWeek[repetition.countFromEnd
+          ? instancesOfDayOfWeek.length - weekIndex - 1
+          : weekIndex];
+    }
+  }
 
   ({bool firstHalf, bool secondHalf}) _isDateInRange(
       DateTime targetDate,
