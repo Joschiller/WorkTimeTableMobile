@@ -17,6 +17,7 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
       ],
       () => _loadValueForWeek(0),
     );
+    // TODO: logic for loading the initial values once a user is loaded => should load current week
   }
 
   TimeInputService timeInputService;
