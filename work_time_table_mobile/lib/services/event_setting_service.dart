@@ -31,7 +31,7 @@ class EventSettingService extends StreamableService {
   Future<void> _loadData(int? userId) =>
       _eventSettingDao.loadUserSettings(userId);
 
-  // TODO: "getEventForDaTe" -> checks all events for that day and returns the correct value
+  // TODO: "getEventForDate" -> checks all events for that day and returns the correct value (this is currently done in the time input service but should be move over to here)
 
   Future<void> addEvent(EventSetting event) => runContextDependentAction(
         _currentUserDao.stream.state,

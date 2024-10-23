@@ -9,5 +9,3 @@ enum EventType {
 
   final int priority;
 }
-
-// TODO: the priority is used to select the event for a day -> lowest index wins if there is a duplicate for a certain day
