@@ -295,7 +295,9 @@ class TimeInputService extends StreamableService {
   }
 
   DateTime _getNextOccurenceOfDayBasedRepetition(
-          DateTime currentDate, DayBasedRepetitionRule repetition) =>
+    DateTime currentDate,
+    DayBasedRepetitionRule repetition,
+  ) =>
       currentDate.add(Duration(
         days: repetition.repeatAfterDays,
       ));
