@@ -352,7 +352,8 @@ class TimeInputService extends StreamableService {
       final instancesOfDayOfWeek = <DateTime>[];
       for (var i = 0; i < countOfDaysInMonth; i++) {
         final dayToTest = targetMonth.add(Duration(days: i));
-        if (dayToTest.weekday - 1 == repetition.dayIndex
+        if (DayOfWeek.fromDateTime(dayToTest) ==
+                DayOfWeek.values[repetition.dayIndex]
             // check hours for some special cases (e.g. searching for sundays in 10/2024)
             &&
             dayToTest.hour == 0) {
