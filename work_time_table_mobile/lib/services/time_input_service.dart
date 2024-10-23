@@ -10,39 +10,12 @@ import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
-import 'package:work_time_table_mobile/services/day_value_service.dart';
+import 'package:work_time_table_mobile/services/week_value_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
-import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
 import 'package:work_time_table_mobile/utils.dart';
-
-class WeekInformation implements Identifiable {
-  final DateTime weekStartDate;
-  final int resultOfPredecessorWeek;
-  final Map<DayOfWeek, DayValue> days;
-  final int weekResult;
-  final bool weekClosed;
-
-  WeekInformation({
-    required this.weekStartDate,
-    required this.resultOfPredecessorWeek,
-    required this.days,
-    required this.weekResult,
-    required this.weekClosed,
-  });
-
-  @override
-  get identity => weekStartDate;
-}
-
-typedef MergedDaoValues = ({
-  WeekSetting weekSetting,
-  List<EventSetting> eventSettings,
-  List<DayValue> dayValues,
-  List<WeekValue> weekValues,
-});
 
 final _weekSettingStream = ContextDependentStream<WeekSetting>();
 final _eventSettingStream = ContextDependentListStream<EventSetting>();
@@ -56,7 +29,7 @@ class TimeInputService extends StreamableService {
     this._eventSettingDao,
     this._dayValueDao,
     this._weekValueDao,
-    this._dayValueService,
+    this._weekValueService,
   ) {
     _currentUserDao.stream.stream
         .listen((selectedUser) => runContextDependentAction(
@@ -75,7 +48,7 @@ class TimeInputService extends StreamableService {
   final EventSettingDao _eventSettingDao;
   final DayValueDao _dayValueDao;
   final WeekValueDao _weekValueDao;
-  final DayValueService _dayValueService;
+  final WeekValueService _weekValueService;
 
   Stream<ContextDependentValue<WeekSetting>> get weekSettingStream =>
       _weekSettingStream.stream;
@@ -91,7 +64,8 @@ class TimeInputService extends StreamableService {
   ) =>
       switch (_getValuesFromDaos()) {
         NoContextValue() => NoContextValue(),
-        ContextValue(value: var values) => ContextValue(_getValuesForWeek(
+        ContextValue(value: var values) =>
+          ContextValue(_weekValueService.getValuesForWeek(
             weekStartDate,
             values,
           )),
@@ -119,54 +93,6 @@ class TimeInputService extends StreamableService {
               }
           }
       };
-
-  WeekInformation _getValuesForWeek(
-    DateTime weekStartDate,
-    MergedDaoValues values,
-  ) {
-    // week value
-    final week = values.weekValues
-        .where((week) => week.weekStartDate == weekStartDate)
-        .firstOrNull;
-
-    // day values
-    final days = <DayOfWeek, DayValue>{};
-    for (final dayOfWeek in DayOfWeek.values) {
-      final dateOfDay = weekStartDate.add(Duration(days: dayOfWeek.index));
-      days[dayOfWeek] =
-          // stored value
-          (values.dayValues
-                  .where((day) => day.date == dateOfDay)
-                  .firstOrNull) ??
-              _dayValueService.getInitialValueForDay(
-                dateOfDay,
-                values.weekSetting,
-                values.eventSettings,
-              );
-    }
-    final resultOfPredecessorWeek = values.dayValues
-            .where((day) => day.date.isBefore(weekStartDate))
-            .map((day) =>
-                day.workTimeEnd - day.workTimeStart - day.breakDuration)
-            .reduce((a, b) => a + b) -
-        values.weekValues
-            .where((week) => week.weekStartDate.isBefore(weekStartDate))
-            .map((week) => week.targetTime)
-            .reduce((a, b) => a + b);
-    // TODO: theoretically needs to also substract all target values for the unsaved week sbefore the current week, but this may be a theoretical scenario
-    return WeekInformation(
-      weekStartDate: weekStartDate,
-      resultOfPredecessorWeek: resultOfPredecessorWeek,
-      days: days,
-      weekResult: resultOfPredecessorWeek +
-          days.values
-              .map((day) =>
-                  day.workTimeEnd - day.workTimeStart - day.breakDuration)
-              .reduce((a, b) => a + b) -
-          (week?.targetTime ?? values.weekSetting.targetWorkTimePerWeek),
-      weekClosed: week != null,
-    );
-  }
 
   static DateTime getStartDateOfWeek(DateTime date) =>
       date.subtract(Duration(days: date.weekday - 1));
