@@ -21,8 +21,8 @@ class EventService {
     EventSetting event,
   ) {
     EventRangeCheckResult result = (firstHalf: false, secondHalf: false);
-    // check event base values
 
+    // check event base values
     result = result |
         _isDateInRange(targetDate, (
           start: event.startDate,
