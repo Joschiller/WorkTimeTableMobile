@@ -4,22 +4,30 @@ import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 
+typedef EventRangeCheckResult = ({bool firstHalf, bool secondHalf});
+
+extension EventRangeCheckResultOr on EventRangeCheckResult {
+  EventRangeCheckResult operator |(EventRangeCheckResult other) => (
+        firstHalf: this.firstHalf || other.firstHalf,
+        secondHalf: this.secondHalf || other.secondHalf,
+      );
+}
+
 class EventService {
   const EventService();
 
-  ({bool firstHalf, bool secondHalf}) doesEventAffectDate(
+  EventRangeCheckResult doesEventAffectDate(
       DateTime targetDate, EventSetting event) {
-    var firstHalf = false;
-    var secondHalf = false;
+    EventRangeCheckResult result = (firstHalf: false, secondHalf: false);
     // check event base values
-    final eventRangeCheck = _isDateInRange(targetDate, (
-      start: event.startDate,
-      end: event.endDate,
-      startIsHalfDay: event.startIsHalfDay,
-      endIsHalfDay: event.endIsHalfDay,
-    ));
-    firstHalf = firstHalf || eventRangeCheck.firstHalf;
-    secondHalf = secondHalf || eventRangeCheck.secondHalf;
+
+    result = result |
+        _isDateInRange(targetDate, (
+          start: event.startDate,
+          end: event.endDate,
+          startIsHalfDay: event.startIsHalfDay,
+          endIsHalfDay: event.endIsHalfDay,
+        ));
 
     final eventDuration = DateTimeRange(
       start: event.startDate,
@@ -34,14 +42,13 @@ class EventService {
       );
       while (!targetDate.isBefore(currentStartDate)) {
         // check range
-        final eventRangeCheck = _isDateInRange(targetDate, (
-          start: currentStartDate,
-          end: currentStartDate.add(eventDuration),
-          startIsHalfDay: event.startIsHalfDay,
-          endIsHalfDay: event.endIsHalfDay,
-        ));
-        firstHalf = firstHalf || eventRangeCheck.firstHalf;
-        secondHalf = secondHalf || eventRangeCheck.secondHalf;
+        result = result |
+            _isDateInRange(targetDate, (
+              start: currentStartDate,
+              end: currentStartDate.add(eventDuration),
+              startIsHalfDay: event.startIsHalfDay,
+              endIsHalfDay: event.endIsHalfDay,
+            ));
 
         currentStartDate = _getNextOccurenceOfDayBasedRepetition(
           currentStartDate,
@@ -56,14 +63,13 @@ class EventService {
       );
       while (!targetDate.isBefore(currentStartDate)) {
         // check range
-        final eventRangeCheck = _isDateInRange(targetDate, (
-          start: currentStartDate,
-          end: currentStartDate.add(eventDuration),
-          startIsHalfDay: event.startIsHalfDay,
-          endIsHalfDay: event.endIsHalfDay,
-        ));
-        firstHalf = firstHalf || eventRangeCheck.firstHalf;
-        secondHalf = secondHalf || eventRangeCheck.secondHalf;
+        result = result |
+            _isDateInRange(targetDate, (
+              start: currentStartDate,
+              end: currentStartDate.add(eventDuration),
+              startIsHalfDay: event.startIsHalfDay,
+              endIsHalfDay: event.endIsHalfDay,
+            ));
 
         currentStartDate = _getNextOccurenceOfMonthBasedRepetition(
           currentStartDate,
@@ -72,7 +78,7 @@ class EventService {
       }
     }
 
-    return (firstHalf: firstHalf, secondHalf: secondHalf);
+    return result;
   }
 
   DateTime _getNextOccurenceOfDayBasedRepetition(
@@ -124,20 +130,19 @@ class EventService {
     }
   }
 
-  ({bool firstHalf, bool secondHalf}) _isDateInRange(
-      DateTime targetDate,
-      ({
-        DateTime start,
-        DateTime end,
-        bool startIsHalfDay,
-        bool endIsHalfDay,
-      }) range) {
-    if (!targetDate.isBefore(range.start) && !targetDate.isAfter(range.end)) {
-      final firstHalf =
-          !range.startIsHalfDay || range.start.isBefore(targetDate);
-      final secondHalf = !range.endIsHalfDay || range.end.isAfter(targetDate);
-      return (firstHalf: firstHalf, secondHalf: secondHalf);
-    }
-    return (firstHalf: false, secondHalf: false);
-  }
+  EventRangeCheckResult _isDateInRange(
+          DateTime targetDate,
+          ({
+            DateTime start,
+            DateTime end,
+            bool startIsHalfDay,
+            bool endIsHalfDay,
+          }) range) =>
+      (!targetDate.isBefore(range.start) && !targetDate.isAfter(range.end))
+          ? (
+              firstHalf:
+                  !range.startIsHalfDay || range.start.isBefore(targetDate),
+              secondHalf: !range.endIsHalfDay || range.end.isAfter(targetDate),
+            )
+          : (firstHalf: false, secondHalf: false);
 }
