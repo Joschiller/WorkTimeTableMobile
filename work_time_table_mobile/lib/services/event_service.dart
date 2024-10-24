@@ -37,45 +37,64 @@ class EventService {
     ).duration;
 
     // check repetitions
-    for (final daybasedRepetition in event.dayBasedRepetitionRules) {
-      var currentStartDate = _getNextOccurenceOfDayBasedRepetition(
-        event.startDate,
-        daybasedRepetition,
+    result = result |
+        _checkRepetitions(
+            targetDate,
+            (
+              startDate: event.startDate,
+              duration: eventDuration,
+              startIsHalfDay: event.startIsHalfDay,
+              endIsHalfDay: event.endIsHalfDay,
+              repetitions: event.dayBasedRepetitionRules,
+            ),
+            _getNextOccurenceOfDayBasedRepetition);
+    result = result |
+        _checkRepetitions(
+            targetDate,
+            (
+              startDate: event.startDate,
+              duration: eventDuration,
+              startIsHalfDay: event.startIsHalfDay,
+              endIsHalfDay: event.endIsHalfDay,
+              repetitions: event.monthBasedRepetitionRules,
+            ),
+            _getNextOccurenceOfMonthBasedRepetition);
+
+    return result;
+  }
+
+  EventRangeCheckResult _checkRepetitions<T>(
+    DateTime targetDate,
+    ({
+      DateTime startDate,
+      Duration duration,
+      bool startIsHalfDay,
+      bool endIsHalfDay,
+      List<T> repetitions,
+    }) eventInfo,
+    DateTime Function(DateTime currentStartDate, T repetition)
+        getNextRepetition,
+  ) {
+    EventRangeCheckResult result = (firstHalf: false, secondHalf: false);
+
+    for (final repetition in eventInfo.repetitions) {
+      var currentStartDate = getNextRepetition(
+        eventInfo.startDate,
+        repetition,
       );
       while (!targetDate.isBefore(currentStartDate)) {
         // check range
         result = result |
             _isDateInRange(targetDate, (
               start: currentStartDate,
-              end: currentStartDate.add(eventDuration),
-              startIsHalfDay: event.startIsHalfDay,
-              endIsHalfDay: event.endIsHalfDay,
+              end: currentStartDate.add(eventInfo.duration),
+              startIsHalfDay: eventInfo.startIsHalfDay,
+              endIsHalfDay: eventInfo.endIsHalfDay,
             ));
 
-        currentStartDate = _getNextOccurenceOfDayBasedRepetition(
+        currentStartDate = getNextRepetition(
           currentStartDate,
-          daybasedRepetition,
-        );
-      }
-    }
-    for (final monthBasedRepetitions in event.monthBasedRepetitionRules) {
-      var currentStartDate = _getNextOccurenceOfMonthBasedRepetition(
-        event.startDate,
-        monthBasedRepetitions,
-      );
-      while (!targetDate.isBefore(currentStartDate)) {
-        // check range
-        result = result |
-            _isDateInRange(targetDate, (
-              start: currentStartDate,
-              end: currentStartDate.add(eventDuration),
-              startIsHalfDay: event.startIsHalfDay,
-              endIsHalfDay: event.endIsHalfDay,
-            ));
-
-        currentStartDate = _getNextOccurenceOfMonthBasedRepetition(
-          currentStartDate,
-          monthBasedRepetitions,
+          repetition,
         );
       }
     }
