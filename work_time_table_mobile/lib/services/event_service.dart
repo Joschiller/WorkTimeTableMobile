@@ -20,47 +20,44 @@ class EventService {
     DateTime targetDate,
     EventSetting event,
   ) {
-    EventRangeCheckResult result = (firstHalf: false, secondHalf: false);
-
-    // check event base values
-    result = result |
-        _isDateInRange(targetDate, (
-          start: event.startDate,
-          end: event.endDate,
-          startIsHalfDay: event.startIsHalfDay,
-          endIsHalfDay: event.endIsHalfDay,
-        ));
-
     final eventDuration = DateTimeRange(
       start: event.startDate,
       end: event.endDate,
     ).duration;
 
-    // check repetitions
-    result = result |
+    return _isDateInRange(
+          // check event base values
+          targetDate,
+          (
+            start: event.startDate,
+            end: event.endDate,
+            startIsHalfDay: event.startIsHalfDay,
+            endIsHalfDay: event.endIsHalfDay,
+          ),
+        ) |
+        // check repetitions
         _checkRepetitions(
-            targetDate,
-            (
-              startDate: event.startDate,
-              duration: eventDuration,
-              startIsHalfDay: event.startIsHalfDay,
-              endIsHalfDay: event.endIsHalfDay,
-              repetitions: event.dayBasedRepetitionRules,
-            ),
-            _getNextOccurenceOfDayBasedRepetition);
-    result = result |
+          targetDate,
+          (
+            startDate: event.startDate,
+            duration: eventDuration,
+            startIsHalfDay: event.startIsHalfDay,
+            endIsHalfDay: event.endIsHalfDay,
+            repetitions: event.dayBasedRepetitionRules,
+          ),
+          _getNextOccurenceOfDayBasedRepetition,
+        ) |
         _checkRepetitions(
-            targetDate,
-            (
-              startDate: event.startDate,
-              duration: eventDuration,
-              startIsHalfDay: event.startIsHalfDay,
-              endIsHalfDay: event.endIsHalfDay,
-              repetitions: event.monthBasedRepetitionRules,
-            ),
-            _getNextOccurenceOfMonthBasedRepetition);
-
-    return result;
+          targetDate,
+          (
+            startDate: event.startDate,
+            duration: eventDuration,
+            startIsHalfDay: event.startIsHalfDay,
+            endIsHalfDay: event.endIsHalfDay,
+            repetitions: event.monthBasedRepetitionRules,
+          ),
+          _getNextOccurenceOfMonthBasedRepetition,
+        );
   }
 
   EventRangeCheckResult _checkRepetitions<T>(
