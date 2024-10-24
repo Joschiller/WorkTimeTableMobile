@@ -55,6 +55,7 @@ class WeekValueService {
           (values.dayValues
                   .where((day) => day.date == dateOfDay)
                   .firstOrNull) ??
+              // or initial value
               _dayValueService.getInitialValueForDay(
                 dateOfDay,
                 values.weekSetting,
