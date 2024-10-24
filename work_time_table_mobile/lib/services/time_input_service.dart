@@ -63,7 +63,7 @@ class TimeInputService extends StreamableService {
   // Re-calculating will only happen, if:
   // - a different week is selected which has no values yet OR the values of the current week are reset
   // or
-  // - any settings changed.
+  // - any settings changed WHILST a week with empty values is opened.
   // If just the values of the current week change, no evaluation of default values will be performed, thus not being ressource intensive.
   ContextDependentValue<WeekInformation> getValuesForWeek(
     DateTime weekStartDate,
