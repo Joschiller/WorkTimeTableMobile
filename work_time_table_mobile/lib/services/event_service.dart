@@ -17,7 +17,9 @@ class EventService {
   const EventService();
 
   EventRangeCheckResult doesEventAffectDate(
-      DateTime targetDate, EventSetting event) {
+    DateTime targetDate,
+    EventSetting event,
+  ) {
     EventRangeCheckResult result = (firstHalf: false, secondHalf: false);
     // check event base values
 
@@ -131,13 +133,14 @@ class EventService {
   }
 
   EventRangeCheckResult _isDateInRange(
-          DateTime targetDate,
-          ({
-            DateTime start,
-            DateTime end,
-            bool startIsHalfDay,
-            bool endIsHalfDay,
-          }) range) =>
+    DateTime targetDate,
+    ({
+      DateTime start,
+      DateTime end,
+      bool startIsHalfDay,
+      bool endIsHalfDay,
+    }) range,
+  ) =>
       (!targetDate.isBefore(range.start) && !targetDate.isAfter(range.end))
           ? (
               firstHalf:
