@@ -1,17 +1,21 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/event_setting_mapper.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
-final _stream = ListDaoStream<EventSetting>([]);
+final _stream = ContextDependentListStream<EventSetting>();
 
-class EventSettingDao implements StreamableListDao<EventSetting> {
+class EventSettingDao {
   const EventSettingDao();
 
-  Future<void> loadUserSettings(int userId) async {
+  Future<void> loadUserSettings(int? userId) async {
+    if (userId == null) {
+      _stream.emitReload(NoContextValue());
+      return;
+    }
     final settings = await prisma.eventSetting.findMany(
       where: EventSettingWhereInput(userId: PrismaUnion.$2(userId)),
       include: const EventSettingInclude(
@@ -19,7 +23,8 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
         monthBasedRepetitionRule: PrismaUnion.$1(true),
       ),
     );
-    _stream.emitReload(settings.map((s) => s.toAppModel()).toList());
+    _stream
+        .emitReload(ContextValue(settings.map((s) => s.toAppModel()).toList()));
   }
 
   Future<void> create(int userId, EventSetting event) async {
@@ -79,8 +84,5 @@ class EventSettingDao implements StreamableListDao<EventSetting> {
     }
   }
 
-  @override
-  List<EventSetting> get data => _stream.state;
-  @override
-  Stream<List<EventSetting>> get stream => _stream.stream;
+  ContextDependentListStream<EventSetting> get stream => _stream;
 }

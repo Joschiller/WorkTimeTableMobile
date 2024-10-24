@@ -1,24 +1,29 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/models/global_setting_key.dart';
 import 'package:work_time_table_mobile/models/settings_map.dart';
 import 'package:work_time_table_mobile/prisma.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_dao.dart';
 
-final _stream = DaoStream<SettingsMap>({});
+final _stream = ContextDependentStream<SettingsMap>();
 
-class GlobalSettingDao implements StreamableDao<SettingsMap> {
+class GlobalSettingDao {
   const GlobalSettingDao();
 
-  Future<void> loadUserValues(int userId) async {
+  Future<void> loadUserValues(int? userId) async {
+    if (userId == null) {
+      _stream.emitReload(NoContextValue());
+      return;
+    }
     final settings = await prisma.globalSetting.findMany(
       where: GlobalSettingWhereInput(userId: PrismaUnion.$2(userId)),
     );
-    _stream.emitReload(Map.fromIterable(settings.map((setting) => MapEntry(
-          GlobalSettingKey.values.firstWhere((d) => d.name == setting.key),
-          setting.value,
-        ))));
+    _stream.emitReload(
+        ContextValue(Map.fromIterable(settings.map((setting) => MapEntry(
+              GlobalSettingKey.values.firstWhere((d) => d.name == setting.key),
+              setting.value,
+            )))));
   }
 
   Future<void> updateByUserIdAndKey(
@@ -57,8 +62,5 @@ class GlobalSettingDao implements StreamableDao<SettingsMap> {
     }
   }
 
-  @override
-  SettingsMap get data => _stream.state;
-  @override
-  Stream<SettingsMap> get stream => _stream.stream;
+  ContextDependentStream<SettingsMap> get stream => _stream;
 }

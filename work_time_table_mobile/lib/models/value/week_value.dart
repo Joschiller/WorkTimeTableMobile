@@ -1,4 +1,4 @@
-import 'package:work_time_table_mobile/streamed_dao_helpers/identifiable.dart';
+import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
 
 class WeekValue implements Identifiable {
   final DateTime weekStartDate;

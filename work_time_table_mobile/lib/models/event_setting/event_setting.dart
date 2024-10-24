@@ -1,6 +1,6 @@
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/identifiable.dart';
+import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_type.dart';
 
 class EventSetting implements Identifiable {

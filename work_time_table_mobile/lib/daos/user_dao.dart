@@ -1,14 +1,13 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/user_mapper.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
+import 'package:work_time_table_mobile/stream_helpers/list/list_stream.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 
-final _stream = ListDaoStream<User>([]);
+final _stream = ListStream<User>([]);
 
-class UserDao implements StreamableListDao<User> {
+class UserDao {
   const UserDao();
 
   Future<void> loadData() async {
@@ -21,6 +20,7 @@ class UserDao implements StreamableListDao<User> {
         data: PrismaUnion.$1(
       UserCreateInput(
         name: name,
+        currentlySelected: false,
         defaultWorkTimeStart: 0,
         defaultWorkTimeEnd: 0,
         defaultMandatoryWorkTimeStart: 0,
@@ -51,8 +51,5 @@ class UserDao implements StreamableListDao<User> {
     }
   }
 
-  @override
-  List<User> get data => _stream.state;
-  @override
-  Stream<List<User>> get stream => _stream.stream;
+  ListStream<User> get stream => _stream;
 }

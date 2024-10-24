@@ -1,21 +1,26 @@
 import 'package:orm/orm.dart';
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/week_value_mapper.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/list_dao_stream.dart';
-import 'package:work_time_table_mobile/streamed_dao_helpers/streamable_list_dao.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/prisma.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
-final _stream = ListDaoStream<WeekValue>([]);
+final _stream = ContextDependentListStream<WeekValue>();
 
-class WeekValueDao implements StreamableListDao<WeekValue> {
+class WeekValueDao {
   const WeekValueDao();
 
-  Future<void> loadUserValues(int userId) async {
+  Future<void> loadUserValues(int? userId) async {
+    if (userId == null) {
+      _stream.emitReload(NoContextValue());
+      return;
+    }
     final values = await prisma.weekValue.findMany(
       where: WeekValueWhereInput(userId: PrismaUnion.$2(userId)),
     );
-    _stream.emitReload(values.map((v) => v.toAppModel()).toList());
+    _stream
+        .emitReload(ContextValue(values.map((v) => v.toAppModel()).toList()));
   }
 
   Future<void> create(int userId, WeekValue value) async {
@@ -30,8 +35,5 @@ class WeekValueDao implements StreamableListDao<WeekValue> {
     _stream.emitInsertion([inserted.toAppModel()]);
   }
 
-  @override
-  List<WeekValue> get data => _stream.state;
-  @override
-  Stream<List<WeekValue>> get stream => _stream.stream;
+  ContextDependentListStream<WeekValue> get stream => _stream;
 }

@@ -2,6 +2,7 @@
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
+    "currentlySelected" BOOLEAN NOT NULL,
     "defaultWorkTimeStart" INTEGER NOT NULL,
     "defaultWorkTimeEnd" INTEGER NOT NULL,
     "defaultMandatoryWorkTimeStart" INTEGER NOT NULL,
@@ -70,7 +71,8 @@ CREATE TABLE "DayValue" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "userId" INTEGER NOT NULL,
     "date" DATETIME NOT NULL,
-    "mode" TEXT NOT NULL,
+    "firstHalfMode" TEXT NOT NULL,
+    "secondHalfMode" TEXT NOT NULL,
     "workTimeStart" INTEGER NOT NULL,
     "workTimeEnd" INTEGER NOT NULL,
     "breakDuration" INTEGER NOT NULL,

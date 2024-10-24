@@ -16,6 +16,8 @@ model User {
   id   Int @id @default(autoincrement())
   name String @unique
 
+  currentlySelected Boolean
+
   defaultWorkTimeStart          Int
   defaultWorkTimeEnd            Int
   defaultMandatoryWorkTimeStart Int
@@ -105,10 +107,11 @@ model DayValue {
   userId Int
   date   DateTime
 
-  mode          String
-  workTimeStart Int
-  workTimeEnd   Int
-  breakDuration Int
+  firstHalfMode  String
+  secondHalfMode String
+  workTimeStart  Int
+  workTimeEnd    Int
+  breakDuration  Int
 
   @@unique([userId, date])
 
