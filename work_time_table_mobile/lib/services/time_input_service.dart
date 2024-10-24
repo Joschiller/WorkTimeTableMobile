@@ -1,17 +1,14 @@
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
-import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
-import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/services/week_value_service.dart';
-import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
@@ -46,10 +43,6 @@ class TimeInputService extends StreamableService {
   final WeekValueDao _weekValueDao;
   final WeekValueService _weekValueService;
 
-  ContextDependentStream<WeekSetting> get weekSettingStream =>
-      _weekSettingService.weekSettingStream;
-  ContextDependentListStream<EventSetting> get eventSettingStream =>
-      _eventSettingService.eventSettingStream;
   ContextDependentListStream<DayValue> get dayValueStream => _dayValueStream;
   ContextDependentListStream<WeekValue> get weekValueStream => _weekValueStream;
 
