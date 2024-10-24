@@ -25,17 +25,22 @@ class EventService {
       end: event.endDate,
     ).duration;
 
-    return _isDateInRange(
-          // check event base values
-          targetDate,
-          (
-            start: event.startDate,
-            end: event.endDate,
-            startIsHalfDay: event.startIsHalfDay,
-            endIsHalfDay: event.endIsHalfDay,
-          ),
-        ) |
-        // check repetitions
+    var result = _isDateInRange(
+      // check event base values
+      targetDate,
+      (
+        start: event.startDate,
+        end: event.endDate,
+        startIsHalfDay: event.startIsHalfDay,
+        endIsHalfDay: event.endIsHalfDay,
+      ),
+    );
+    if (result.firstHalf && result.secondHalf) {
+      return result;
+    }
+
+    // check repetitions
+    result = result |
         _checkRepetitions(
           targetDate,
           (
@@ -46,7 +51,12 @@ class EventService {
             repetitions: event.dayBasedRepetitionRules,
           ),
           _getNextOccurenceOfDayBasedRepetition,
-        ) |
+        );
+    if (result.firstHalf && result.secondHalf) {
+      return result;
+    }
+
+    result = result |
         _checkRepetitions(
           targetDate,
           (
@@ -58,6 +68,7 @@ class EventService {
           ),
           _getNextOccurenceOfMonthBasedRepetition,
         );
+    return result;
   }
 
   EventRangeCheckResult _checkRepetitions<T>(
@@ -88,6 +99,10 @@ class EventService {
               startIsHalfDay: eventInfo.startIsHalfDay,
               endIsHalfDay: eventInfo.endIsHalfDay,
             ));
+
+        if (result.firstHalf && result.secondHalf) {
+          return result;
+        }
 
         currentStartDate = getNextRepetition(
           currentStartDate,
