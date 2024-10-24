@@ -23,8 +23,7 @@ class GlobalSettingService extends StreamableService {
   final CurrentUserDao _currentUserDao;
   final GlobalSettingDao _globalSettingDao;
 
-  Stream<ContextDependentValue<SettingsMap>> get globalSettingStream =>
-      _stream.stream;
+  ContextDependentStream<SettingsMap> get globalSettingStream => _stream;
 
   Future<void> _loadData(int? userId) =>
       _globalSettingDao.loadUserValues(userId);

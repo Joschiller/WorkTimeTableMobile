@@ -5,7 +5,7 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 
 class GlobalSettingCubit extends ContextDependentCubit<SettingsMap> {
   GlobalSettingCubit(this._globalSettingService) : super() {
-    _globalSettingService.globalSettingStream.listen(emit);
+    _globalSettingService.globalSettingStream.stream.listen(emit);
   }
 
   final GlobalSettingService _globalSettingService;

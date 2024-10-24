@@ -10,10 +10,10 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   TimeInputCubit(this.timeInputService) : super() {
     listenForStreams(
       [
-        timeInputService.weekSettingStream,
-        timeInputService.eventSettingStream,
-        timeInputService.dayValueStream,
-        timeInputService.weekValueStream,
+        timeInputService.weekSettingStream.stream,
+        timeInputService.eventSettingStream.stream,
+        timeInputService.dayValueStream.stream,
+        timeInputService.weekValueStream.stream,
       ],
       () => _loadValueForWeek(0),
     );

@@ -4,7 +4,7 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 
 class WeekSettingCubit extends ContextDependentCubit<WeekSetting> {
   WeekSettingCubit(this._weekSettingsService) : super() {
-    _weekSettingsService.weekSettingStream.listen(emit);
+    _weekSettingsService.weekSettingStream.stream.listen(emit);
   }
 
   final WeekSettingService _weekSettingsService;

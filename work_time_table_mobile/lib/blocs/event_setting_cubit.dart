@@ -4,7 +4,7 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 
 class EventSettingCubit extends ContextDependentCubit<List<EventSetting>> {
   EventSettingCubit(this._eventSettingsService) : super() {
-    _eventSettingsService.weekSettingStream.listen(emit);
+    _eventSettingsService.eventSettingStream.stream.listen(emit);
   }
 
   final EventSettingService _eventSettingsService;

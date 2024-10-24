@@ -4,7 +4,7 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 
 class CurrentUserCubit extends ContextDependentCubit<User> {
   CurrentUserCubit(this._userService) : super() {
-    _userService.currentUserStream.listen(emit);
+    _userService.currentUserStream.stream.listen(emit);
     _userService.loadData();
   }
 

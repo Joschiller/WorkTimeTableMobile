@@ -1,7 +1,7 @@
 import 'package:work_time_table_mobile/app_error.dart';
-import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
+import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
@@ -10,8 +10,8 @@ import 'package:work_time_table_mobile/utils.dart';
 final _stream = ContextDependentStream<WeekSetting>();
 
 class WeekSettingService extends StreamableService {
-  WeekSettingService(this._currentUserDao, this._weekSettingDao) {
-    _currentUserDao.stream.stream
+  WeekSettingService(this._userService, this._weekSettingDao) {
+    _userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
               () => _loadData(null),
@@ -20,18 +20,17 @@ class WeekSettingService extends StreamableService {
     prepareListen(_weekSettingDao.stream, _stream);
   }
 
-  final CurrentUserDao _currentUserDao;
+  final UserService _userService;
   final WeekSettingDao _weekSettingDao;
 
-  Stream<ContextDependentValue<WeekSetting>> get weekSettingStream =>
-      _stream.stream;
+  ContextDependentStream<WeekSetting> get weekSettingStream => _stream;
 
   Future<void> _loadData(int? userId) =>
       _weekSettingDao.loadUserSettings(userId);
 
   Future<void> updateWeekSettings(WeekSetting settings) =>
       runContextDependentAction(
-        _currentUserDao.stream.state,
+        _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [

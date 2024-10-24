@@ -1,8 +1,5 @@
 import 'package:work_time_table_mobile/app_error.dart';
-import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
-import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
-import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/value/day_mode.dart';
@@ -10,6 +7,9 @@ import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
+import 'package:work_time_table_mobile/services/event_setting_service.dart';
+import 'package:work_time_table_mobile/services/user_service.dart';
+import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/services/week_value_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
@@ -17,47 +17,41 @@ import 'package:work_time_table_mobile/stream_helpers/context/list/context_depen
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
-final _weekSettingStream = ContextDependentStream<WeekSetting>();
-final _eventSettingStream = ContextDependentListStream<EventSetting>();
 final _dayValueStream = ContextDependentListStream<DayValue>();
 final _weekValueStream = ContextDependentListStream<WeekValue>();
 
 class TimeInputService extends StreamableService {
   TimeInputService(
-    this._currentUserDao,
-    this._weekSettingDao,
-    this._eventSettingDao,
+    this._userService,
+    this._weekSettingService,
+    this._eventSettingService,
     this._dayValueDao,
     this._weekValueDao,
     this._weekValueService,
   ) {
-    _currentUserDao.stream.stream
+    _userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
               () => _loadData(null),
               (user) => _loadData(user.id),
             ));
-    prepareListen(_weekSettingDao.stream, _weekSettingStream);
-    prepareListen(_eventSettingDao.stream, _eventSettingStream);
     prepareListen(_dayValueDao.stream, _dayValueStream);
     prepareListen(_weekValueDao.stream, _weekValueStream);
   }
 
-  final CurrentUserDao _currentUserDao;
-  final WeekSettingDao _weekSettingDao;
-  final EventSettingDao _eventSettingDao;
+  final UserService _userService;
+  final WeekSettingService _weekSettingService;
+  final EventSettingService _eventSettingService;
   final DayValueDao _dayValueDao;
   final WeekValueDao _weekValueDao;
   final WeekValueService _weekValueService;
 
-  Stream<ContextDependentValue<WeekSetting>> get weekSettingStream =>
-      _weekSettingStream.stream;
-  Stream<ContextDependentValue<List<EventSetting>>> get eventSettingStream =>
-      _eventSettingStream.stream;
-  Stream<ContextDependentValue<List<DayValue>>> get dayValueStream =>
-      _dayValueStream.stream;
-  Stream<ContextDependentValue<List<WeekValue>>> get weekValueStream =>
-      _weekValueStream.stream;
+  ContextDependentStream<WeekSetting> get weekSettingStream =>
+      _weekSettingService.weekSettingStream;
+  ContextDependentListStream<EventSetting> get eventSettingStream =>
+      _eventSettingService.eventSettingStream;
+  ContextDependentListStream<DayValue> get dayValueStream => _dayValueStream;
+  ContextDependentListStream<WeekValue> get weekValueStream => _weekValueStream;
 
   // NOTE: The initial values are not cached here as they will only be calculated, if the week has no stored values yet.
   // Re-calculating will only happen, if:
@@ -78,10 +72,10 @@ class TimeInputService extends StreamableService {
       };
 
   ContextDependentValue<MergedDaoValues> _getValuesFromDaos() =>
-      switch (_weekSettingDao.stream.state) {
+      switch (_weekSettingService.weekSettingStream.state) {
         NoContextValue() => NoContextValue(),
         ContextValue(value: var weekSetting) => switch (
-              _eventSettingDao.stream.state) {
+              _eventSettingService.eventSettingStream.state) {
             NoContextValue() => NoContextValue(),
             ContextValue(value: var eventSettings) => switch (
                   _dayValueDao.stream.state) {
@@ -116,7 +110,7 @@ class TimeInputService extends StreamableService {
 
   Future<void> updateDaysOfWeek(List<DayValue> values) =>
       runContextDependentAction(
-        _currentUserDao.stream.state,
+        _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [
@@ -150,7 +144,7 @@ class TimeInputService extends StreamableService {
                 : null,
             // settings dependent validations
             () => runContextDependentAction(
-                  _weekSettingDao.stream.state,
+                  _weekSettingService.weekSettingStream.state,
                   () => AppError.service_noUserLoaded,
                   (weekSettings) => validateAndRun(
                     [
@@ -199,7 +193,7 @@ class TimeInputService extends StreamableService {
 
   Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
       runContextDependentAction(
-        _currentUserDao.stream.state,
+        _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
           [
@@ -233,7 +227,7 @@ class TimeInputService extends StreamableService {
     bool isConfirmed,
   ) =>
       runContextDependentAction(
-        _currentUserDao.stream.state,
+        _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) async {
           // save all days in this week

@@ -4,7 +4,7 @@ import 'package:work_time_table_mobile/services/user_service.dart';
 
 class UserCubit extends Cubit<List<User>> {
   UserCubit(this._userService) : super([]) {
-    _userService.userStream.listen(emit);
+    _userService.userStream.stream.listen(emit);
   }
 
   final UserService _userService;

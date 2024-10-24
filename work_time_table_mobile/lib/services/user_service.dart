@@ -23,9 +23,8 @@ class UserService extends StreamableService {
   final UserDao _userDao;
   final CurrentUserDao _currentUserDao;
 
-  Stream<List<User>> get userStream => _userStream.stream;
-  Stream<ContextDependentValue<User>> get currentUserStream =>
-      _currentUserStream.stream;
+  ListStream<User> get userStream => _userStream;
+  ContextDependentStream<User> get currentUserStream => _currentUserStream;
 
   Future<void> loadData() async {
     await _userDao.loadData();
