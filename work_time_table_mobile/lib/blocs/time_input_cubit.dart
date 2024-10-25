@@ -8,6 +8,7 @@ import 'package:work_time_table_mobile/services/week_value_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/multi_stream_listener.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   TimeInputCubit(
@@ -57,16 +58,7 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   ) =>
       _timeInputService.closeWeek(value, dayValues, isConfirmed);
 
-  void _intializeValues() {
-    final now = DateTime.now();
-    emit(_timeInputService.getValuesForWeek(
-      TimeInputService.getStartDateOfWeek(DateTime(
-        now.year,
-        now.month,
-        now.day,
-      )),
-    ));
-  }
+  void _intializeValues() => DateTime.now().toDay();
 
   void _loadValueForWeek(int relativeWeeks) => emit(switch (state) {
         NoContextValue() => NoContextValue(),
