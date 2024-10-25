@@ -19,6 +19,7 @@ import 'package:work_time_table_mobile/daos/global_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
+import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/services/day_value_service.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
@@ -28,7 +29,9 @@ import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/services/week_value_service.dart';
 
-void main() {
+Future<void> main() async {
+  await initPrismaClient();
+
   Bloc.observer = const AppObserver();
 
   final userService = UserService(const UserDao(), CurrentUserDao());
