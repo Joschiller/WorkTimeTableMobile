@@ -58,7 +58,9 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   ) =>
       _timeInputService.closeWeek(value, dayValues, isConfirmed);
 
-  void _intializeValues() => DateTime.now().toDay();
+  void _intializeValues() => emit(_timeInputService.getValuesForWeek(
+        TimeInputService.getStartDateOfWeek(DateTime.now().toDay()),
+      ));
 
   void _loadValueForWeek(int relativeWeeks) => emit(switch (state) {
         NoContextValue() => NoContextValue(),
