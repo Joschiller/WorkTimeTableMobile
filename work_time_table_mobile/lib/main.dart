@@ -9,6 +9,7 @@ import 'package:work_time_table_mobile/blocs/time_input_cubit.dart';
 import 'package:work_time_table_mobile/blocs/user_cubit.dart';
 import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
 import 'package:work_time_table_mobile/constants/app_name.dart';
+import 'package:work_time_table_mobile/constants/app_observer.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
 import 'package:work_time_table_mobile/constants/theme.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
@@ -28,6 +29,8 @@ import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/services/week_value_service.dart';
 
 void main() {
+  Bloc.observer = const AppObserver();
+
   final userService = UserService(const UserDao(), CurrentUserDao());
   final globalSettingService =
       GlobalSettingService(userService, const GlobalSettingDao());
