@@ -3,12 +3,12 @@ import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 
 class WeekSettingCubit extends ContextDependentCubit<WeekSetting> {
-  WeekSettingCubit(this._weekSettingsService) : super() {
-    _weekSettingsService.weekSettingStream.stream.listen(emit);
+  WeekSettingCubit(this._weekSettingService) : super() {
+    _weekSettingService.weekSettingStream.stream.listen(emit);
   }
 
-  final WeekSettingService _weekSettingsService;
+  final WeekSettingService _weekSettingService;
 
   Future<void> updateWeekSettings(WeekSetting settings) =>
-      _weekSettingsService.updateWeekSettings(settings);
+      _weekSettingService.updateWeekSettings(settings);
 }

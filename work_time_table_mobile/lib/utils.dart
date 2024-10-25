@@ -34,3 +34,7 @@ T validateAndRun<T>(
   }
   return action();
 }
+
+extension DateTimeToDay on DateTime {
+  DateTime toDay() => DateTime(year, month, day);
+}

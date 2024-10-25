@@ -242,6 +242,10 @@ class TimeInputService extends StreamableService {
                             ? AppError.service_timeInput_alreadyClosed
                             : null,
                   ),
+              // at least one day must have passed
+              () => DateTime.now().toDay().isBefore(value.weekStartDate)
+                  ? AppError.service_timeInput_earlyClose
+                  : null,
               // unconfirmed
               () => !isConfirmed
                   ? AppError.service_timeInput_unconfirmedClose
