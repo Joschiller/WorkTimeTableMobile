@@ -11,12 +11,12 @@ import 'package:work_time_table_mobile/stream_helpers/multi_stream_listener.dart
 
 class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   TimeInputCubit(
-    this.userService,
-    this.weekSettingService,
-    this.eventSettingService,
-    this.timeInputService,
+    this._userService,
+    this._weekSettingService,
+    this._eventSettingService,
+    this._timeInputService,
   ) : super() {
-    userService.currentUserStream.stream
+    _userService.currentUserStream.stream
         .listen((user) => runContextDependentAction(
               user,
               () => emit(NoContextValue()),
@@ -24,19 +24,19 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
             ));
     listenForStreams(
       [
-        weekSettingService.weekSettingStream.stream,
-        eventSettingService.eventSettingStream.stream,
-        timeInputService.dayValueStream.stream,
-        timeInputService.weekValueStream.stream,
+        _weekSettingService.weekSettingStream.stream,
+        _eventSettingService.eventSettingStream.stream,
+        _timeInputService.dayValueStream.stream,
+        _timeInputService.weekValueStream.stream,
       ],
       () => _loadValueForWeek(0),
     );
   }
 
-  UserService userService;
-  WeekSettingService weekSettingService;
-  EventSettingService eventSettingService;
-  TimeInputService timeInputService;
+  UserService _userService;
+  WeekSettingService _weekSettingService;
+  EventSettingService _eventSettingService;
+  TimeInputService _timeInputService;
 
   static bool isWeekClosed(
     List<WeekValue> weekValues,
@@ -45,21 +45,21 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
       TimeInputService.isWeekClosed(weekValues, weekStartDate);
 
   Future<void> updateDaysOfWeek(List<DayValue> values) =>
-      timeInputService.updateDaysOfWeek(values);
+      _timeInputService.updateDaysOfWeek(values);
 
   Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
-      timeInputService.resetDaysOfWeek(weekStartDate, isConfirmed);
+      _timeInputService.resetDaysOfWeek(weekStartDate, isConfirmed);
 
   Future<void> closeWeek(
     WeekValue value,
     List<DayValue> dayValues,
     bool isConfirmed,
   ) =>
-      timeInputService.closeWeek(value, dayValues, isConfirmed);
+      _timeInputService.closeWeek(value, dayValues, isConfirmed);
 
   void _intializeValues() {
     final now = DateTime.now();
-    emit(timeInputService.getValuesForWeek(
+    emit(_timeInputService.getValuesForWeek(
       TimeInputService.getStartDateOfWeek(DateTime(
         now.year,
         now.month,
@@ -71,7 +71,7 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   void _loadValueForWeek(int relativeWeeks) => emit(switch (state) {
         NoContextValue() => NoContextValue(),
         ContextValue(value: var weekInformation) =>
-          timeInputService.getValuesForWeek(
+          _timeInputService.getValuesForWeek(
             weekInformation.weekStartDate
                 .add(Duration(days: 7 * relativeWeeks)),
           ),
