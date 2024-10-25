@@ -34,10 +34,10 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
     );
   }
 
-  UserService _userService;
-  WeekSettingService _weekSettingService;
-  EventSettingService _eventSettingService;
-  TimeInputService _timeInputService;
+  final UserService _userService;
+  final WeekSettingService _weekSettingService;
+  final EventSettingService _eventSettingService;
+  final TimeInputService _timeInputService;
 
   static bool isWeekClosed(
     List<WeekValue> weekValues,
