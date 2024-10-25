@@ -46,3 +46,4 @@ app.*.map.json
 /lib/_generated_prisma_client
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
+*.g.dart
