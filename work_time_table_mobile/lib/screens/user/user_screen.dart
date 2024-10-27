@@ -24,6 +24,7 @@ class UserScreen extends StatelessWidget {
         context: context,
         builder: (context) => UserInputDialog(
           dialogTitle: 'Add User',
+          actionText: 'Add',
           initialValue: '',
           occupiedNames: occupiedNames,
           onConfirm: (name) {
@@ -61,6 +62,7 @@ class UserScreen extends StatelessWidget {
         context: context,
         builder: (context) => UserInputDialog(
           dialogTitle: 'Rename User',
+          actionText: 'Rename',
           initialValue: currentName,
           occupiedNames: occupiedNames,
           onConfirm: (name) {

@@ -6,12 +6,14 @@ class UserInputDialog extends StatefulWidget {
   const UserInputDialog({
     super.key,
     required this.dialogTitle,
+    required this.actionText,
     required this.initialValue,
     required this.occupiedNames,
     required this.onConfirm,
   });
 
   final String dialogTitle;
+  final String actionText;
 
   final String initialValue;
   final List<String> occupiedNames;
@@ -61,7 +63,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
           ),
           controller: _textEditingController,
         ),
-        actionText: 'Add',
+        actionText: widget.actionText,
         onCancel: Navigator.of(context).pop,
         onConfirm: _addButtonEnabled ? _onConfirm : null,
       );
