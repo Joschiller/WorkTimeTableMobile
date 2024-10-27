@@ -27,10 +27,7 @@ class UserScreen extends StatelessWidget {
           actionText: 'Add',
           initialValue: '',
           occupiedNames: occupiedNames,
-          onConfirm: (name) {
-            doAdd(name);
-            Navigator.pop(context);
-          },
+          onConfirm: doAdd,
         ),
       );
 
@@ -45,10 +42,7 @@ class UserScreen extends StatelessWidget {
           actionText: 'Delete',
           isActionNegative: true,
           onCancel: Navigator.of(context).pop,
-          onConfirm: () {
-            doDelete();
-            Navigator.pop(context);
-          },
+          onConfirm: doDelete,
         ),
       );
 
@@ -65,10 +59,7 @@ class UserScreen extends StatelessWidget {
           actionText: 'Rename',
           initialValue: currentName,
           occupiedNames: occupiedNames,
-          onConfirm: (name) {
-            doRename(name);
-            Navigator.pop(context);
-          },
+          onConfirm: doRename,
         ),
       );
 
