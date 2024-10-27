@@ -9,6 +9,8 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 final _stream = ContextDependentStream<User>();
 
 class CurrentUserDao {
+  const CurrentUserDao();
+
   Future<void> loadData() async {
     final user = await prisma.user.findFirst(
       where: const UserWhereInput(
