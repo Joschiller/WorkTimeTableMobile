@@ -24,50 +24,50 @@ Future<void> main() async {
 
   Bloc.observer = const AppObserver();
 
-  runApp(const MyApp());
+  runApp(MultiRepositoryProvider(
+    providers: [
+      RepositoryProvider(create: (_) => const UserDao()),
+      RepositoryProvider(create: (_) => const CurrentUserDao()),
+      RepositoryProvider(create: (_) => const GlobalSettingDao()),
+      RepositoryProvider(create: (_) => const WeekSettingDao()),
+      RepositoryProvider(create: (_) => const EventSettingDao()),
+      RepositoryProvider(create: (_) => const DayValueDao()),
+      RepositoryProvider(create: (_) => const WeekValueDao()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MultiRepositoryProvider(
+  Widget build(BuildContext context) => MultiBlocProvider(
         providers: [
-          RepositoryProvider(create: (_) => const UserDao()),
-          RepositoryProvider(create: (_) => const CurrentUserDao()),
-          RepositoryProvider(create: (_) => const GlobalSettingDao()),
-          RepositoryProvider(create: (_) => const WeekSettingDao()),
-          RepositoryProvider(create: (_) => const EventSettingDao()),
-          RepositoryProvider(create: (_) => const DayValueDao()),
-          RepositoryProvider(create: (_) => const WeekValueDao()),
-        ],
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (_) => ErrorCubit()),
-            BlocProvider(
-                create: (_) => CurrentUserCubit(UserService(
+          BlocProvider(create: (_) => ErrorCubit()),
+          BlocProvider(
+              create: (_) => CurrentUserCubit(UserService(
+                    context.read<UserDao>(),
+                    context.read<CurrentUserDao>(),
+                  ))),
+          BlocProvider(
+              create: (_) => GlobalSettingCubit(GlobalSettingService(
+                    UserService(
                       context.read<UserDao>(),
                       context.read<CurrentUserDao>(),
-                    ))),
-            BlocProvider(
-                create: (_) => GlobalSettingCubit(GlobalSettingService(
-                      UserService(
-                        context.read<UserDao>(),
-                        context.read<CurrentUserDao>(),
-                      ),
-                      context.read<GlobalSettingDao>(),
-                    ))),
-          ],
-          child: MaterialApp.router(
-            title: appName,
-            theme: ThemeData(
-              colorScheme: colorScheme,
-              useMaterial3: true,
-              buttonTheme: buttonTheme,
-              cardTheme: cardTheme,
-            ),
-            routerConfig: GoRouter(routes: $appRoutes),
+                    ),
+                    context.read<GlobalSettingDao>(),
+                  ))),
+        ],
+        child: MaterialApp.router(
+          title: appName,
+          theme: ThemeData(
+            colorScheme: colorScheme,
+            useMaterial3: true,
+            buttonTheme: buttonTheme,
+            cardTheme: cardTheme,
           ),
+          routerConfig: GoRouter(routes: $appRoutes),
         ),
       );
 }
