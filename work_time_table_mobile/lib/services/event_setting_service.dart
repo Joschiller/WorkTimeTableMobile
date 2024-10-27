@@ -13,12 +13,12 @@ final _stream = ContextDependentListStream<EventSetting>();
 
 class EventSettingService extends StreamableService {
   EventSettingService(this._userService, this._eventSettingDao) {
-    _userService.currentUserStream.stream
+    registerSubscription(_userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
               () => _loadData(null),
               (user) => _loadData(user.id),
-            ));
+            )));
     prepareListen(_eventSettingDao.stream, _stream);
   }
 
@@ -64,6 +64,12 @@ class EventSettingService extends StreamableService {
             ? AppError.service_eventSettings_unconfirmedDeletion
             : null,
       ], () => _eventSettingDao.deleteById(id));
+
+  @override
+  close() {
+    super.close();
+    _userService.close();
+  }
 }
 
 bool _isDayBasedRepetitionRuleValid(DayBasedRepetitionRule rule) =>

@@ -11,12 +11,12 @@ final _stream = ContextDependentStream<WeekSetting>();
 
 class WeekSettingService extends StreamableService {
   WeekSettingService(this._userService, this._weekSettingDao) {
-    _userService.currentUserStream.stream
+    registerSubscription(_userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
               () => _loadData(null),
               (user) => _loadData(user.id),
-            ));
+            )));
     prepareListen(_weekSettingDao.stream, _stream);
   }
 
@@ -105,4 +105,10 @@ class WeekSettingService extends StreamableService {
           () => _weekSettingDao.updateByUserId(user.id, settings),
         ),
       );
+
+  @override
+  void close() {
+    super.close();
+    _userService.close();
+  }
 }
