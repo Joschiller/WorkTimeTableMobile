@@ -8,11 +8,14 @@ class UserItem extends StatelessWidget {
     required this.user,
     required this.selected,
     required this.currentUser,
+    required this.onEditTap,
   });
 
   final User user;
   final bool selected;
   final bool currentUser;
+
+  final void Function() onEditTap;
 
   @override
   Widget build(BuildContext context) => SelectableCard(
@@ -22,7 +25,18 @@ class UserItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Flexible(child: Text(user.name)),
-            if (currentUser) const Icon(Icons.person),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (currentUser) const Icon(Icons.person),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: onEditTap,
+                  child: const Icon(Icons.edit),
+                ),
+              ],
+            ),
           ],
         ),
       );
