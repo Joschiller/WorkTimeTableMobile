@@ -7,7 +7,8 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 class CurrentUserCubit extends ContextDependentCubit<User> {
   late StreamSubscription _subscription;
 
-  CurrentUserCubit(this._userService) : super() {
+  CurrentUserCubit(this._userService)
+      : super(_userService.currentUserStream.state) {
     _subscription = _userService.currentUserStream.stream.listen(emit);
     _userService.loadData();
   }

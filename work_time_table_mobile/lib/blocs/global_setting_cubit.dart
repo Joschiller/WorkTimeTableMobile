@@ -8,7 +8,8 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 class GlobalSettingCubit extends ContextDependentCubit<SettingsMap> {
   late StreamSubscription _subscription;
 
-  GlobalSettingCubit(this._globalSettingService) : super() {
+  GlobalSettingCubit(this._globalSettingService)
+      : super(_globalSettingService.globalSettingStream.state) {
     _subscription =
         _globalSettingService.globalSettingStream.stream.listen(emit);
   }

@@ -7,7 +7,8 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 class EventSettingCubit extends ContextDependentCubit<List<EventSetting>> {
   late StreamSubscription _subscription;
 
-  EventSettingCubit(this._eventSettingService) : super() {
+  EventSettingCubit(this._eventSettingService)
+      : super(_eventSettingService.eventSettingStream.state) {
     _subscription = _eventSettingService.eventSettingStream.stream.listen(emit);
   }
 
