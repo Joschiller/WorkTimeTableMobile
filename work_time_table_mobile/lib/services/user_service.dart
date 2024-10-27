@@ -64,20 +64,6 @@ class UserService extends StreamableService {
         () => _userDao.renameById(id, newName),
       );
 
-  Future<void> deleteUser(int id, bool isConfirmed) => validateAndRun(
-        [
-          () => runContextDependentAction(
-                _currentUserDao.stream.state,
-                () => null,
-                (value) => value.id == id
-                    ? AppError.service_user_forbiddenDeletion
-                    : null,
-              ),
-          () => !isConfirmed ? AppError.service_user_unconfirmedDeletion : null,
-        ],
-        () => _userDao.deleteById(id),
-      );
-
   Future<void> deleteUsers(List<int> ids, bool isConfirmed) => validateAndRun(
         [
           () => runContextDependentAction(
