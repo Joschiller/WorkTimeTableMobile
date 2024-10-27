@@ -26,6 +26,9 @@ class UserService extends StreamableService {
   ListStream<User> get userStream => _userStream;
   ContextDependentStream<User> get currentUserStream => _currentUserStream;
 
+  static bool isUserValid(String name, List<String> occupiedNames) =>
+      !name.isBlank && !occupiedNames.contains(name);
+
   Future<void> loadData() async {
     await _userDao.loadData();
     await _currentUserDao.loadData();
