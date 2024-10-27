@@ -16,4 +16,7 @@ class UserCubit extends Cubit<List<User>> {
 
   Future<void> deleteUser(int id, bool isConfirmed) =>
       _userService.deleteUser(id, isConfirmed);
+
+  Future<void> deleteUsers(List<int> ids, bool isConfirmed) =>
+      _userService.deleteUsers(ids, isConfirmed);
 }
