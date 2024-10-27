@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
@@ -11,19 +13,21 @@ import 'package:work_time_table_mobile/stream_helpers/multi_stream_listener.dart
 import 'package:work_time_table_mobile/utils.dart';
 
 class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
+  final _subscriptions = <StreamSubscription>[];
+
   TimeInputCubit(
     this._userService,
     this._weekSettingService,
     this._eventSettingService,
     this._timeInputService,
   ) : super() {
-    _userService.currentUserStream.stream
+    _subscriptions.add(_userService.currentUserStream.stream
         .listen((user) => runContextDependentAction(
               user,
               () => emit(NoContextValue()),
               (user) => _intializeValues(),
-            ));
-    listenForStreams(
+            )));
+    _subscriptions.addAll(listenForStreams(
       [
         _weekSettingService.weekSettingStream.stream,
         _eventSettingService.eventSettingStream.stream,
@@ -31,7 +35,7 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
         _timeInputService.weekValueStream.stream,
       ],
       () => _loadValueForWeek(0),
-    );
+    ));
   }
 
   final UserService _userService;
@@ -74,4 +78,16 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   void weekForwards() => _loadValueForWeek(1);
 
   void weekBackwards() => _loadValueForWeek(-1);
+
+  @override
+  Future<void> close() {
+    for (var s in _subscriptions) {
+      s.cancel();
+    }
+    _userService.close();
+    _weekSettingService.close();
+    _eventSettingService.close();
+    _timeInputService.close();
+    return super.close();
+  }
 }
