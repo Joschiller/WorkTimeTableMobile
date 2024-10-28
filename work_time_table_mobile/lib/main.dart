@@ -22,6 +22,10 @@ import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/services/global_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 
+// TODO:
+// - transactions do not work properly
+// - deleting users throws error - also due to the transaction problem
+
 void displayAppError(AppError error) =>
     MyApp.scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(content: Text(error.displayText)),
