@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/blocs/current_user_cubit.dart';
 import 'package:work_time_table_mobile/blocs/error_cubit.dart';
 import 'package:work_time_table_mobile/blocs/global_setting_cubit.dart';
@@ -19,10 +22,29 @@ import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/services/global_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 
+void displayAppError(AppError error) =>
+    MyApp.scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(content: Text(error.displayText)),
+    );
+
 Future<void> main() async {
   await initPrismaClient();
 
   Bloc.observer = const AppObserver();
+
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    if (details.exception is AppError) {
+      displayAppError(details.exception as AppError);
+    }
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    if (error is AppError) {
+      displayAppError(error);
+    }
+    return false;
+  };
 
   runApp(MultiRepositoryProvider(
     providers: [
@@ -40,6 +62,8 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  static final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
@@ -68,6 +92,7 @@ class MyApp extends StatelessWidget {
             cardTheme: cardTheme,
           ),
           routerConfig: GoRouter(routes: $appRoutes),
+          scaffoldMessengerKey: scaffoldMessengerKey,
         ),
       );
 }
