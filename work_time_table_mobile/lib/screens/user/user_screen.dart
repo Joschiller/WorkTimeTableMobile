@@ -42,7 +42,10 @@ class UserScreen extends StatelessWidget {
           actionText: 'Delete',
           isActionNegative: true,
           onCancel: Navigator.of(context).pop,
-          onConfirm: doDelete,
+          onConfirm: () {
+            doDelete();
+            Navigator.pop(context);
+          },
         ),
       );
 
