@@ -71,9 +71,12 @@ class _EditableListState<T extends Identifiable>
                   Icons.delete,
                   color: Theme.of(context).colorScheme.error,
                 ),
-                onPressed: () => widget.onRemove(widget.items
-                    .where((item) => _selectedItems.contains(item.identity))
-                    .toList()),
+                onPressed: () {
+                  widget.onRemove(widget.items
+                      .where((item) => _selectedItems.contains(item.identity))
+                      .toList());
+                  _selectedItems.clear();
+                },
               ),
       );
 }
