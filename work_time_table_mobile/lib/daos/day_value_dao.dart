@@ -1,12 +1,11 @@
 import 'package:orm/orm.dart';
-import 'package:work_time_table_mobile/_generated_prisma_client/model.dart'
-    as prisma_model;
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/day_value_mapper.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/dao_deletion_helper.dart';
 
 final _stream = ContextDependentListStream<DayValue>();
 
@@ -55,27 +54,19 @@ class DayValueDao {
     _stream.emitUpdate([updated.toAppModel()]);
   }
 
-  Future<void> deleteByUserIdAndDates(int userId, List<DateTime> dates) async {
-    final deleted = <prisma_model.DayValue>[];
-    await prisma.$transaction(
-      (prisma) async {
-        for (final date in dates) {
-          final del = await prisma.dayValue.delete(
-            where: DayValueWhereUniqueInput(
-              userIdDate: DayValueUserIdDateCompoundUniqueInput(
-                userId: userId,
-                date: date,
-              ),
-            ),
-          );
-          if (del != null) {
-            deleted.add(del);
-          }
-        }
-      },
-    );
-    _stream.emitDeletion(deleted.map((d) => d.toAppModel()).toList());
-  }
+  Future<void> deleteByUserIdAndDates(int userId, List<DateTime> dates) async =>
+      _stream.emitDeletion((await trackedDeleteMany(
+              dates,
+              (date) => prisma.dayValue.delete(
+                    where: DayValueWhereUniqueInput(
+                      userIdDate: DayValueUserIdDateCompoundUniqueInput(
+                        userId: userId,
+                        date: date,
+                      ),
+                    ),
+                  )))
+          .map((d) => d.toAppModel())
+          .toList());
 
   ContextDependentListStream<DayValue> get stream => _stream;
 }

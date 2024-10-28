@@ -5,14 +5,12 @@ import 'package:work_time_table_mobile/screens/setting/event_setting/event_setti
 import 'package:work_time_table_mobile/screens/setting/week_setting/week_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/settings_screen.dart';
 import 'package:work_time_table_mobile/screens/time_input/time_input_screen.dart';
-import 'package:work_time_table_mobile/screens/user/edit_user_screen.dart';
 import 'package:work_time_table_mobile/screens/user/user_screen.dart';
 
 part 'routes.g.dart';
 
 @TypedGoRoute<TimeInputScreenRoute>(path: '/', routes: [
   TypedGoRoute<UserScreenRoute>(path: 'user'),
-  TypedGoRoute<EditUserScreenRoute>(path: 'userEdit'),
   TypedGoRoute<SettingsScreenRoute>(path: 'settings'),
   TypedGoRoute<WeekSettingScreenRoute>(path: 'weekSetting'),
   TypedGoRoute<EventSettingScreenRoute>(path: 'eventSetting'),
@@ -31,20 +29,6 @@ class UserScreenRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const UserScreen();
-  }
-}
-
-@immutable
-class EditUserScreenRoute extends GoRouteData {
-  final int? userId;
-
-  const EditUserScreenRoute({
-    required this.userId,
-  });
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return EditUserScreen(userId: userId);
   }
 }
 

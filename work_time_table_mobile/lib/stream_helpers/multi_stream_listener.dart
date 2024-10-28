@@ -1,5 +1,7 @@
-void listenForStreams(List<Stream> streams, void Function() action) {
-  for (var s in streams) {
-    s.listen((event) => action());
-  }
-}
+import 'dart:async';
+
+List<StreamSubscription> listenForStreams(
+  List<Stream> streams,
+  void Function() action,
+) =>
+    streams.map((s) => s.listen((event) => action())).toList();

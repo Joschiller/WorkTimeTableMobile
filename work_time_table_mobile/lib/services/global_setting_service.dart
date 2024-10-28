@@ -11,12 +11,12 @@ final _stream = ContextDependentStream<SettingsMap>();
 
 class GlobalSettingService extends StreamableService {
   GlobalSettingService(this._userService, this._globalSettingDao) {
-    _userService.currentUserStream.stream
+    registerSubscription(_userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
               () => _loadData(null),
               (user) => _loadData(user.id),
-            ));
+            )));
     prepareListen(_globalSettingDao.stream, _stream);
   }
 
@@ -38,4 +38,10 @@ class GlobalSettingService extends StreamableService {
         // TODO: Validation
         (user) => _globalSettingDao.updateByUserIdAndKey(user.id, key, value),
       );
+
+  @override
+  void close() {
+    super.close();
+    _userService.close();
+  }
 }

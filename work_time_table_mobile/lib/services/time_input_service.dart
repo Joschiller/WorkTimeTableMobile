@@ -26,12 +26,12 @@ class TimeInputService extends StreamableService {
     this._weekValueDao,
     this._weekValueService,
   ) {
-    _userService.currentUserStream.stream
+    registerSubscription(_userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
               () => _loadData(null),
               (user) => _loadData(user.id),
-            ));
+            )));
     prepareListen(_dayValueDao.stream, _dayValueStream);
     prepareListen(_weekValueDao.stream, _weekValueStream);
   }
@@ -255,4 +255,12 @@ class TimeInputService extends StreamableService {
           );
         },
       );
+
+  @override
+  void close() {
+    super.close();
+    _userService.close();
+    _weekSettingService.close();
+    _eventSettingService.close();
+  }
 }

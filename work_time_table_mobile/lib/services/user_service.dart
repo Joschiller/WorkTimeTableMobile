@@ -26,6 +26,9 @@ class UserService extends StreamableService {
   ListStream<User> get userStream => _userStream;
   ContextDependentStream<User> get currentUserStream => _currentUserStream;
 
+  static bool isUserValid(String name, List<String> occupiedNames) =>
+      !name.isBlank && !occupiedNames.contains(name);
+
   Future<void> loadData() async {
     await _userDao.loadData();
     await _currentUserDao.loadData();
@@ -61,17 +64,17 @@ class UserService extends StreamableService {
         () => _userDao.renameById(id, newName),
       );
 
-  Future<void> deleteUser(int id, bool isConfirmed) => validateAndRun(
+  Future<void> deleteUsers(List<int> ids, bool isConfirmed) => validateAndRun(
         [
           () => runContextDependentAction(
                 _currentUserDao.stream.state,
                 () => null,
-                (value) => value.id == id
+                (value) => ids.any((id) => value.id == id)
                     ? AppError.service_user_forbiddenDeletion
                     : null,
               ),
           () => !isConfirmed ? AppError.service_user_unconfirmedDeletion : null,
         ],
-        () => _userDao.deleteById(id),
+        () => _userDao.deleteByIds(ids),
       );
 }
