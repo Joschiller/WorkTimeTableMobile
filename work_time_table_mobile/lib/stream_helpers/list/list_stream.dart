@@ -2,7 +2,7 @@ import 'package:work_time_table_mobile/stream_helpers/cached_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/identifiable.dart';
 
 class ListStream<T extends Identifiable> extends CachedStream<List<T>> {
-  ListStream(super.state);
+  ListStream(super._state);
 
   /// Pushes a new state extended by the new elements.
   void emitInsertion(List<T> elements) => _emitChange(addedElements: elements);

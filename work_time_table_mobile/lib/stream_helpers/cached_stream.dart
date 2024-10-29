@@ -2,11 +2,12 @@ import 'dart:async';
 
 class CachedStream<T> {
   final _streamController = StreamController<T>.broadcast();
-  T state;
+  T _state;
+  T get state => _state;
   Stream<T> get stream => _streamController.stream;
 
-  CachedStream(this.state) {
-    stream.listen((newState) => state = newState);
+  CachedStream(this._state) {
+    stream.listen((newState) => _state = newState);
   }
 
   /// Pushes a new state to the stream.
