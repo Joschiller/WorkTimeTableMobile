@@ -55,7 +55,7 @@ class DayValueDao {
   }
 
   Future<void> deleteByUserIdAndDates(int userId, List<DateTime> dates) async =>
-      _stream.emitDeletion((await trackedDeleteMany(
+      _stream.emitDeletion((await deleteManyAndReturn(
               dates,
               (date) => prisma.dayValue.delete(
                     where: DayValueWhereUniqueInput(

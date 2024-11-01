@@ -1,6 +1,6 @@
 import 'package:work_time_table_mobile/prisma.dart';
 
-Future<List<D>> trackedDeleteMany<T, D>(
+Future<List<D>> deleteManyAndReturn<T, D>(
   List<T> itemsToDelete,
   Future<D?> Function(T item) doDelete,
 ) async {
