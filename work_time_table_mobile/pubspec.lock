@@ -449,18 +449,18 @@ packages:
     dependency: "direct main"
     description:
       name: orm
-      sha256: "42ae12b3647bff115cd5c4b9766eab4a688148d79b0f8488c72d8ace1d653229"
+      sha256: "3e3413f5c55ff2ac09c19f5e27f1028bed8de892c4a7233655882c95373cc9c0"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.1"
+    version: "5.2.0"
   orm_flutter:
     dependency: "direct main"
     description:
       name: orm_flutter
-      sha256: "778d5a2a137b7d48c7972791a3f94bf3d766af5c8e27c00df43985b011715f70"
+      sha256: ec8c53ba979dace43ad21719ce1e92ebf8e78a6b368c4e19e43fb2bcbc286e00
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.0"
+    version: "0.3.1"
   package_config:
     dependency: transitive
     description:
