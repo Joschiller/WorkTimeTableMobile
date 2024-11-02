@@ -44,9 +44,9 @@ class UserDao {
   }
 
   Future<void> deleteByIds(List<int> ids) async =>
-      _stream.emitDeletion((await trackedDeleteMany(
+      _stream.emitDeletion((await deleteManyAndReturn(
               ids,
-              (id) => prisma.user.delete(
+              (tx, id) => tx.user.delete(
                     where: UserWhereUniqueInput(id: id),
                   )))
           .map((d) => d.toAppModel())
