@@ -40,7 +40,7 @@ class UserService extends StreamableService {
   ) =>
       Validator([
         () => name.isBlank ? AppError.service_user_invalidBlankName : null,
-        () => occupiedNames.contains(name)
+        () => occupiedNames.contains(name.trim())
             ? AppError.service_user_duplicateName
             : null,
       ]);
