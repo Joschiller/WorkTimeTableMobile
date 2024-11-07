@@ -5,6 +5,8 @@ class Validator {
 
   final List<AppError? Function()> validations;
 
+  bool get isValid => validate() == null;
+
   AppError? validate() {
     for (final v in validations) {
       final err = v();
@@ -23,6 +25,8 @@ class AsyncValidator {
   AsyncValidator(this.validations);
 
   final List<Future<AppError?> Function()> validations;
+
+  Future<bool> get isValid async => (await validate()) == null;
 
   Future<AppError?> validate() async {
     for (final v in validations) {
