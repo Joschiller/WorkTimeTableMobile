@@ -83,7 +83,9 @@ class TimeInputService extends StreamableService {
       ]);
 
   Validator _getDayValueAgainstSettingsValidator(
-          List<DayValue> values, WeekSetting weekSettings) =>
+    List<DayValue> values,
+    WeekSetting weekSettings,
+  ) =>
       Validator([
         () => values.any((day) {
               final settingForDay = weekSettings
