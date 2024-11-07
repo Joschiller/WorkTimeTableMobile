@@ -60,3 +60,11 @@ class AsyncValidator {
     return errors;
   }
 }
+
+Validator getIsConfirmedValidator(
+  bool isConfirmed,
+  AppError ifNotConfirmedError,
+) =>
+    Validator([
+      () => !isConfirmed ? ifNotConfirmedError : null,
+    ]);

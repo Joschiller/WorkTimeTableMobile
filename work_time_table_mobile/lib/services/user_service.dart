@@ -56,14 +56,6 @@ class UserService extends StreamableService {
             ),
       ]);
 
-  Validator _getIsConfirmedValidator(
-    bool isConfirmed,
-    AppError ifNotConfirmedError,
-  ) =>
-      Validator([
-        () => !isConfirmed ? ifNotConfirmedError : null,
-      ]);
-
   static bool isUserValid(String name, List<String> occupiedNames) =>
       _getUserNameValidator(name, occupiedNames).isValid;
 
@@ -99,7 +91,7 @@ class UserService extends StreamableService {
 
   Future<void> deleteUsers(List<int> ids, bool isConfirmed) => validateAndRun(
         _getUsersDeletableValidator(ids) +
-            _getIsConfirmedValidator(
+            getIsConfirmedValidator(
               isConfirmed,
               AppError.service_user_unconfirmedDeletion,
             ),
