@@ -7,6 +7,8 @@ import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_
 import 'package:work_time_table_mobile/stream_helpers/list/list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
 import 'package:work_time_table_mobile/utils.dart';
+import 'package:work_time_table_mobile/validate_and_run.dart';
+import 'package:work_time_table_mobile/validator.dart';
 
 final _userStream = ListStream<User>([]);
 final _currentUserStream = ContextDependentStream<User>();
@@ -26,8 +28,44 @@ class UserService extends StreamableService {
   ListStream<User> get userStream => _userStream;
   ContextDependentStream<User> get currentUserStream => _currentUserStream;
 
+  Validator _getUserKnownValidator(int id) => Validator([
+        () => !_userDao.stream.state.any((u) => u.id == id)
+            ? AppError.service_user_unknownUser
+            : null,
+      ]);
+
+  static Validator _getUserNameValidator(
+    String name,
+    List<String> occupiedNames,
+  ) =>
+      Validator([
+        () => name.isBlank ? AppError.service_user_invalidName : null,
+        () => occupiedNames.contains(name)
+            ? AppError.service_user_duplicateName
+            : null,
+      ]);
+
+  Validator _getUsersDeletableValidator(List<int> idsOfUsersToDelete) =>
+      Validator([
+        () => runContextDependentAction(
+              _currentUserDao.stream.state,
+              () => null,
+              (value) => idsOfUsersToDelete.any((id) => value.id == id)
+                  ? AppError.service_user_forbiddenDeletion
+                  : null,
+            ),
+      ]);
+
+  Validator _getIsConfirmedValidator(
+    bool isConfirmed,
+    AppError ifNotConfirmedError,
+  ) =>
+      Validator([
+        () => !isConfirmed ? ifNotConfirmedError : null,
+      ]);
+
   static bool isUserValid(String name, List<String> occupiedNames) =>
-      !name.isBlank && !occupiedNames.contains(name);
+      _getUserNameValidator(name, occupiedNames).isValid;
 
   Future<void> loadData() async {
     await _userDao.loadData();
@@ -35,46 +73,36 @@ class UserService extends StreamableService {
   }
 
   Future<void> selectUser(int id) => validateAndRun(
-        [
-          () => !_userDao.stream.state.any((u) => u.id == id)
-              ? AppError.service_user_unknownUser
-              : null,
-        ],
+        _getUserKnownValidator(id),
         () => _currentUserDao.setSelectedUser(id),
       );
 
   Future<void> addUser(String name) => validateAndRun(
-        [
-          () => name.isBlank ? AppError.service_user_invalidName : null,
-          () => _userDao.stream.state.any((user) => user.name == name)
-              ? AppError.service_user_duplicateName
-              : null,
-        ],
+        _getUserNameValidator(
+          name,
+          _userDao.stream.state.map((u) => u.name).toList(),
+        ),
         () => _userDao.create(name),
       );
 
   Future<void> renameUser(int id, String newName) => validateAndRun(
-        [
-          () => newName.isBlank ? AppError.service_user_invalidName : null,
-          () => _userDao.stream.state
-                  .any((user) => user.id != id && user.name == newName)
-              ? AppError.service_user_duplicateName
-              : null,
-        ],
+        _getUserKnownValidator(id) +
+            _getUserNameValidator(
+              newName,
+              _userDao.stream.state
+                  .where((u) => u.id != id)
+                  .map((u) => u.name)
+                  .toList(),
+            ),
         () => _userDao.renameById(id, newName),
       );
 
   Future<void> deleteUsers(List<int> ids, bool isConfirmed) => validateAndRun(
-        [
-          () => runContextDependentAction(
-                _currentUserDao.stream.state,
-                () => null,
-                (value) => ids.any((id) => value.id == id)
-                    ? AppError.service_user_forbiddenDeletion
-                    : null,
-              ),
-          () => !isConfirmed ? AppError.service_user_unconfirmedDeletion : null,
-        ],
+        _getUsersDeletableValidator(ids) +
+            _getIsConfirmedValidator(
+              isConfirmed,
+              AppError.service_user_unconfirmedDeletion,
+            ),
         () => _userDao.deleteByIds(ids),
       );
 }
