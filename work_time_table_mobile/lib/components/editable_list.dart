@@ -75,7 +75,7 @@ class _EditableListState<T extends Identifiable>
                   widget.onRemove(widget.items
                       .where((item) => _selectedItems.contains(item.identity))
                       .toList());
-                  _selectedItems.clear();
+                  setState(() => _selectedItems.clear());
                 },
               ),
       );
