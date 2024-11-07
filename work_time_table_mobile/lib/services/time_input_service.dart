@@ -5,6 +5,7 @@ import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
+import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
@@ -12,7 +13,8 @@ import 'package:work_time_table_mobile/services/week_value_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
-import 'package:work_time_table_mobile/utils.dart';
+import 'package:work_time_table_mobile/validate_and_run.dart';
+import 'package:work_time_table_mobile/validator.dart';
 
 final _dayValueStream = ContextDependentListStream<DayValue>();
 final _weekValueStream = ContextDependentListStream<WeekValue>();
@@ -45,6 +47,99 @@ class TimeInputService extends StreamableService {
 
   ContextDependentListStream<DayValue> get dayValueStream => _dayValueStream;
   ContextDependentListStream<WeekValue> get weekValueStream => _weekValueStream;
+
+  Validator _getDayUpdateValidator(List<DayValue> values) => Validator([
+        // 7 consecutive days, starting with monday
+        () => values.length != 7 ? AppError.service_timeInput_invalid : null,
+        () => values
+                .asMap()
+                .entries
+                .any((element) => element.key + 1 != element.value.date.weekday)
+            ? AppError.service_timeInput_invalid
+            : null,
+        // week not already closed
+        () => _getWeekNotAlreadyClosedValidator(values.first.date).validate(),
+        // empty values if completely not workDay
+        () => values.any((day) =>
+                day.firstHalfMode != DayMode.workDay &&
+                day.secondHalfMode != DayMode.workDay &&
+                (day.workTimeStart != 0 ||
+                    day.workTimeEnd != 0 ||
+                    day.breakDuration != 0))
+            ? AppError.service_timeInput_invalid
+            : null,
+        // start <= end
+        () => values.any((day) => day.workTimeStart > day.workTimeEnd)
+            ? AppError.service_timeInput_invalid
+            : null,
+        // settings dependent validations
+        () => runContextDependentAction(
+              _weekSettingService.weekSettingStream.state,
+              () => AppError.service_noUserLoaded,
+              (weekSettings) =>
+                  _getDayValueAgainstSettingsValidator(values, weekSettings)
+                      .validate(),
+            ),
+      ]);
+
+  Validator _getDayValueAgainstSettingsValidator(
+          List<DayValue> values, WeekSetting weekSettings) =>
+      Validator([
+        () => values.any((day) {
+              final settingForDay = weekSettings
+                  .weekDaySettings[DayOfWeek.fromDateTime(day.date)];
+              if (settingForDay == null) {
+                // configured nonWorkDays are stored as nonWorkDays
+                return day.firstHalfMode != DayMode.nonWorkDay ||
+                    day.secondHalfMode != DayMode.nonWorkDay;
+              }
+
+              // work time respects manatory time start
+              if (day.firstHalfMode == DayMode.workDay &&
+                  (day.workTimeStart >
+                      (settingForDay.mandatoryWorkTimeStart ??
+                          weekSettings.globalWeekDaySetting
+                              .defaultMandatoryWorkTimeStart))) {
+                return true;
+              }
+              // work time respects manatory time end
+              if (day.secondHalfMode == DayMode.workDay &&
+                  (day.workTimeEnd <
+                      (settingForDay.mandatoryWorkTimeEnd ??
+                          weekSettings.globalWeekDaySetting
+                              .defaultMandatoryWorkTimeEnd))) {
+                return true;
+              }
+              return false;
+            })
+                ? AppError.service_timeInput_invalid
+                : null,
+      ]);
+
+  Validator _getWeekStartIsMondayValidator(DateTime weekStartDate) =>
+      Validator([
+        () => DayOfWeek.fromDateTime(weekStartDate) != DayOfWeek.monday
+            ? AppError.service_timeInput_invalid
+            : null,
+      ]);
+
+  Validator _getWeekNotAlreadyClosedValidator(DateTime weekStartDate) =>
+      Validator([
+        () => runContextDependentAction(
+              _weekValueDao.stream.state,
+              () => null,
+              (weekValues) => isWeekClosed(weekValues, weekStartDate)
+                  ? AppError.service_timeInput_alreadyClosed
+                  : null,
+            ),
+      ]);
+
+  Validator _getHasOneDayOfWeekPassedValidator(DateTime weekStartDate) =>
+      Validator([
+        () => DateTime.now().toDay().isBefore(weekStartDate)
+            ? AppError.service_timeInput_earlyClose
+            : null,
+      ]);
 
   // NOTE: The initial values are not cached here as they will only be calculated, if the week has no stored values yet.
   // Re-calculating will only happen, if:
@@ -106,76 +201,7 @@ class TimeInputService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          [
-            // 7 consecutive days, starting with monday
-            () =>
-                values.length != 7 ? AppError.service_timeInput_invalid : null,
-            () => values.asMap().entries.any(
-                    (element) => element.key + 1 != element.value.date.weekday)
-                ? AppError.service_timeInput_invalid
-                : null,
-            // week not already closed
-            () => runContextDependentAction(
-                  _weekValueDao.stream.state,
-                  () => null,
-                  (weekValues) => isWeekClosed(weekValues, values.first.date)
-                      ? AppError.service_timeInput_alreadyClosed
-                      : null,
-                ),
-            // empty values if completely not workDay
-            () => values.any((day) =>
-                    day.firstHalfMode != DayMode.workDay &&
-                    day.secondHalfMode != DayMode.workDay &&
-                    (day.workTimeStart != 0 ||
-                        day.workTimeEnd != 0 ||
-                        day.breakDuration != 0))
-                ? AppError.service_timeInput_invalid
-                : null,
-            // start <= end
-            () => values.any((day) => day.workTimeStart > day.workTimeEnd)
-                ? AppError.service_timeInput_invalid
-                : null,
-            // settings dependent validations
-            () => runContextDependentAction(
-                  _weekSettingService.weekSettingStream.state,
-                  () => AppError.service_noUserLoaded,
-                  (weekSettings) => validateAndRun(
-                    [
-                      () => values.any((day) {
-                            final settingForDay = weekSettings.weekDaySettings[
-                                DayOfWeek.fromDateTime(day.date)];
-                            if (settingForDay == null) {
-                              // configured nonWorkDays are stored as nonWorkDays
-                              return day.firstHalfMode != DayMode.nonWorkDay ||
-                                  day.secondHalfMode != DayMode.nonWorkDay;
-                            }
-
-                            // work time respects manatory time start
-                            if (day.firstHalfMode == DayMode.workDay &&
-                                (day.workTimeStart >
-                                    (settingForDay.mandatoryWorkTimeStart ??
-                                        weekSettings.globalWeekDaySetting
-                                            .defaultMandatoryWorkTimeStart))) {
-                              return true;
-                            }
-                            // work time respects manatory time end
-                            if (day.secondHalfMode == DayMode.workDay &&
-                                (day.workTimeEnd <
-                                    (settingForDay.mandatoryWorkTimeEnd ??
-                                        weekSettings.globalWeekDaySetting
-                                            .defaultMandatoryWorkTimeEnd))) {
-                              return true;
-                            }
-                            return false;
-                          })
-                              ? AppError.service_timeInput_invalid
-                              : null,
-                    ],
-                    // settings are respected
-                    () => null,
-                  ),
-                ),
-          ],
+          _getDayUpdateValidator(values),
           () async {
             for (final day in values) {
               await _dayValueDao.upsert(user.id, day);
@@ -189,24 +215,12 @@ class TimeInputService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          [
-            // weekStartDate is a monday
-            () => DayOfWeek.fromDateTime(weekStartDate) != DayOfWeek.monday
-                ? AppError.service_timeInput_invalid
-                : null,
-            // week not already closed
-            () => runContextDependentAction(
-                  _weekValueDao.stream.state,
-                  () => null,
-                  (weekValues) => isWeekClosed(weekValues, weekStartDate)
-                      ? AppError.service_timeInput_alreadyClosed
-                      : null,
-                ),
-            // unconfirmed
-            () => !isConfirmed
-                ? AppError.service_timeInput_unconfirmedReset
-                : null,
-          ],
+          _getWeekStartIsMondayValidator(weekStartDate) +
+              _getWeekNotAlreadyClosedValidator(weekStartDate) +
+              getIsConfirmedValidator(
+                isConfirmed,
+                AppError.service_timeInput_unconfirmedReset,
+              ),
           () => _dayValueDao.deleteByUserIdAndDates(
             user.id,
             List.generate(7, (i) => weekStartDate.add(Duration(days: i))),
@@ -227,30 +241,13 @@ class TimeInputService extends StreamableService {
           await updateDaysOfWeek(dayValues);
           // close the week
           await validateAndRun(
-            [
-              // weekStartDate is a monday
-              () => DayOfWeek.fromDateTime(value.weekStartDate) !=
-                      DayOfWeek.monday
-                  ? AppError.service_timeInput_invalid
-                  : null,
-              // week not already closed
-              () => runContextDependentAction(
-                    _weekValueDao.stream.state,
-                    () => null,
-                    (weekValues) =>
-                        isWeekClosed(weekValues, value.weekStartDate)
-                            ? AppError.service_timeInput_alreadyClosed
-                            : null,
-                  ),
-              // at least one day must have passed
-              () => DateTime.now().toDay().isBefore(value.weekStartDate)
-                  ? AppError.service_timeInput_earlyClose
-                  : null,
-              // unconfirmed
-              () => !isConfirmed
-                  ? AppError.service_timeInput_unconfirmedClose
-                  : null,
-            ],
+            _getWeekStartIsMondayValidator(value.weekStartDate) +
+                _getWeekNotAlreadyClosedValidator(value.weekStartDate) +
+                _getHasOneDayOfWeekPassedValidator(value.weekStartDate) +
+                getIsConfirmedValidator(
+                  isConfirmed,
+                  AppError.service_timeInput_unconfirmedClose,
+                ),
             () => _weekValueDao.create(user.id, value),
           );
         },
