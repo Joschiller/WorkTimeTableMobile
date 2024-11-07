@@ -5,6 +5,11 @@ class Validator {
 
   final List<AppError? Function()> validations;
 
+  operator +(Validator other) => Validator([
+        ...validations,
+        ...other.validations,
+      ]);
+
   bool get isValid => validate() == null;
 
   AppError? validate() {
@@ -25,6 +30,11 @@ class AsyncValidator {
   AsyncValidator(this.validations);
 
   final List<Future<AppError?> Function()> validations;
+
+  operator +(AsyncValidator other) => AsyncValidator([
+        ...validations,
+        ...other.validations,
+      ]);
 
   Future<bool> get isValid async => (await validate()) == null;
 
