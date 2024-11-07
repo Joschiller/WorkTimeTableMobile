@@ -31,9 +31,11 @@ class UserScreen extends StatelessWidget {
         ),
       );
 
-  void _showDeletionConfirmation(
-          BuildContext context, void Function() doDelete) =>
-      showDialog(
+  Future<void> _showDeletionConfirmation(
+    BuildContext context,
+    Future<void> Function() doDelete,
+  ) async =>
+      await showDialog(
         context: context,
         builder: (context) => ConfirmableAlertDialog(
           title: 'Delete User',
@@ -42,8 +44,9 @@ class UserScreen extends StatelessWidget {
           actionText: 'Delete',
           isActionNegative: true,
           onCancel: Navigator.of(context).pop,
-          onConfirm: () {
-            doDelete();
+          onConfirm: () async {
+            await doDelete();
+            if (!context.mounted) return;
             Navigator.pop(context);
           },
         ),

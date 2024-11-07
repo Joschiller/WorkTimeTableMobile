@@ -23,7 +23,7 @@ class EditableList<T extends Identifiable> extends StatefulWidget {
   final Widget Function(T item, bool selected) buildItem;
 
   final void Function() onAdd;
-  final void Function(List<T> items) onRemove;
+  final Future<void> Function(List<T> items) onRemove;
 
   final void Function(int index)? onTapItem;
 
@@ -71,11 +71,11 @@ class _EditableListState<T extends Identifiable>
                   Icons.delete,
                   color: Theme.of(context).colorScheme.error,
                 ),
-                onPressed: () {
-                  widget.onRemove(widget.items
+                onPressed: () async {
+                  await widget.onRemove(widget.items
                       .where((item) => _selectedItems.contains(item.identity))
                       .toList());
-                  _selectedItems.clear();
+                  setState(() => _selectedItems.clear());
                 },
               ),
       );

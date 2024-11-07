@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 
@@ -25,7 +26,7 @@ class UserInputDialog extends StatefulWidget {
 
 class _UserInputDialogState extends State<UserInputDialog> {
   final _textEditingController = TextEditingController();
-  var _addButtonEnabled = false;
+  var _validationErrors = <AppError>[];
 
   @override
   void initState() {
@@ -41,10 +42,10 @@ class _UserInputDialogState extends State<UserInputDialog> {
   }
 
   void _validate() {
-    setState(() => _addButtonEnabled = UserService.isUserValid(
+    setState(() => _validationErrors = UserService.getUserNameValidator(
           _textEditingController.text,
           widget.occupiedNames,
-        ));
+        ).validateAll());
   }
 
   void _onConfirm() {
@@ -56,15 +57,27 @@ class _UserInputDialogState extends State<UserInputDialog> {
   @override
   Widget build(BuildContext context) => ConfirmableAlertDialog(
         title: widget.dialogTitle,
-        content: TextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'Enter a name',
-          ),
-          controller: _textEditingController,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter a name',
+              ),
+              controller: _textEditingController,
+            ),
+            for (final v in _validationErrors)
+              Text(
+                v.displayText,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+          ],
         ),
         actionText: widget.actionText,
         onCancel: Navigator.of(context).pop,
-        onConfirm: _addButtonEnabled ? _onConfirm : null,
+        onConfirm: _validationErrors.isEmpty ? _onConfirm : null,
       );
 }

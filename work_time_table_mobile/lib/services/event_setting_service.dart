@@ -7,7 +7,8 @@ import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
-import 'package:work_time_table_mobile/utils.dart';
+import 'package:work_time_table_mobile/validate_and_run.dart';
+import 'package:work_time_table_mobile/validator.dart';
 
 final _stream = ContextDependentListStream<EventSetting>();
 
@@ -25,6 +26,28 @@ class EventSettingService extends StreamableService {
   final UserService _userService;
   final EventSettingDao _eventSettingDao;
 
+  Validator _getEventValidator(EventSetting event) => Validator([
+        // start <= end
+        () => event.startDate.isAfter(event.endDate)
+            ? AppError.service_eventSettings_invalid
+            : null,
+        // non-empty event
+        () => event.startDate == event.endDate &&
+                event.startIsHalfDay &&
+                event.endIsHalfDay
+            ? AppError.service_eventSettings_invalid
+            : null,
+        // repetitions valid
+        () => event.dayBasedRepetitionRules
+                .any((rule) => !_isDayBasedRepetitionRuleValid(rule))
+            ? AppError.service_eventSettings_invalid
+            : null,
+        () => event.monthBasedRepetitionRules
+                .any((rule) => !_isMonthBasedRepetitionRuleValid(rule))
+            ? AppError.service_eventSettings_invalid
+            : null,
+      ]);
+
   ContextDependentListStream<EventSetting> get eventSettingStream => _stream;
 
   Future<void> _loadData(int? userId) =>
@@ -34,36 +57,17 @@ class EventSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          [
-            // start <= end
-            () => event.startDate.isAfter(event.endDate)
-                ? AppError.service_eventSettings_invalid
-                : null,
-            // non-empty event
-            () => event.startDate == event.endDate &&
-                    event.startIsHalfDay &&
-                    event.endIsHalfDay
-                ? AppError.service_eventSettings_invalid
-                : null,
-            // repetitions valid
-            () => event.dayBasedRepetitionRules
-                    .any((rule) => !_isDayBasedRepetitionRuleValid(rule))
-                ? AppError.service_eventSettings_invalid
-                : null,
-            () => event.monthBasedRepetitionRules
-                    .any((rule) => !_isMonthBasedRepetitionRuleValid(rule))
-                ? AppError.service_eventSettings_invalid
-                : null,
-          ],
+          _getEventValidator(event),
           () => _eventSettingDao.create(user.id, event),
         ),
       );
 
-  Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun([
-        () => !isConfirmed
-            ? AppError.service_eventSettings_unconfirmedDeletion
-            : null,
-      ], () => _eventSettingDao.deleteById(id));
+  Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun(
+      getIsConfirmedValidator(
+        isConfirmed,
+        AppError.service_eventSettings_unconfirmedDeletion,
+      ),
+      () => _eventSettingDao.deleteById(id));
 
   @override
   close() {
