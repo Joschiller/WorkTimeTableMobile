@@ -34,7 +34,7 @@ class UserService extends StreamableService {
             : null,
       ]);
 
-  static Validator _getUserNameValidator(
+  static Validator getUserNameValidator(
     String name,
     List<String> occupiedNames,
   ) =>
@@ -56,9 +56,6 @@ class UserService extends StreamableService {
             ),
       ]);
 
-  static bool isUserValid(String name, List<String> occupiedNames) =>
-      _getUserNameValidator(name, occupiedNames).isValid;
-
   Future<void> loadData() async {
     await _userDao.loadData();
     await _currentUserDao.loadData();
@@ -70,7 +67,7 @@ class UserService extends StreamableService {
       );
 
   Future<void> addUser(String name) => validateAndRun(
-        _getUserNameValidator(
+        getUserNameValidator(
           name,
           _userDao.stream.state.map((u) => u.name).toList(),
         ),
@@ -79,7 +76,7 @@ class UserService extends StreamableService {
 
   Future<void> renameUser(int id, String newName) => validateAndRun(
         _getUserKnownValidator(id) +
-            _getUserNameValidator(
+            getUserNameValidator(
               newName,
               _userDao.stream.state
                   .where((u) => u.id != id)
