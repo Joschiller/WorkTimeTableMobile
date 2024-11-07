@@ -71,7 +71,7 @@ class UserService extends StreamableService {
           name,
           _userDao.stream.state.map((u) => u.name).toList(),
         ),
-        () => _userDao.create(name),
+        () => _userDao.create(name.trim()),
       );
 
   Future<void> renameUser(int id, String newName) => validateAndRun(
@@ -83,7 +83,7 @@ class UserService extends StreamableService {
                   .map((u) => u.name)
                   .toList(),
             ),
-        () => _userDao.renameById(id, newName),
+        () => _userDao.renameById(id, newName.trim()),
       );
 
   Future<void> deleteUsers(List<int> ids, bool isConfirmed) => validateAndRun(
