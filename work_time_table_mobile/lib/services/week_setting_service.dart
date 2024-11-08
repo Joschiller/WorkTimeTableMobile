@@ -24,7 +24,7 @@ class WeekSettingService extends StreamableService {
   final UserService _userService;
   final WeekSettingDao _weekSettingDao;
 
-  Validator _getWeekSettingsValidator(WeekSetting settings) => Validator([
+  static Validator getWeekSettingsValidator(WeekSetting settings) => Validator([
         // targetWorkTimePerWeek <= SUM(timeEquivalent)
         () => settings.targetWorkTimePerWeek >
                 settings.weekDaySettings.values
@@ -102,7 +102,7 @@ class WeekSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          _getWeekSettingsValidator(settings),
+          getWeekSettingsValidator(settings),
           () => _weekSettingDao.updateByUserId(user.id, settings),
         ),
       );
