@@ -13,7 +13,7 @@ enum AppError {
 
   service_weekSettings_invalid('The week settings are invalid.'),
   service_weekSettings_invalidTargetWorktime(
-      'The target work time must be smaller than the sum of the time equivalents per day.'),
+      'The target work time must be smaller than or equal to the sum of the time equivalents per day.'),
 
   service_eventSettings_invalid('The event settings are invalid.'),
   service_eventSettings_unconfirmedDeletion(
