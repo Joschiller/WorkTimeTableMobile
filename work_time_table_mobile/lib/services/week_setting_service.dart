@@ -27,9 +27,11 @@ class WeekSettingService extends StreamableService {
   static Validator getWeekSettingsValidator(WeekSetting settings) => Validator([
         // targetWorkTimePerWeek <= SUM(timeEquivalent)
         () => settings.targetWorkTimePerWeek >
-                settings.weekDaySettings.values
-                    .map((s) => s.timeEquivalent)
-                    .reduce((a, b) => a + b)
+                (settings.weekDaySettings.values.isEmpty
+                    ? 0
+                    : settings.weekDaySettings.values
+                        .map((s) => s.timeEquivalent)
+                        .reduce((a, b) => a + b))
             ? AppError.service_weekSettings_invalidTargetWorktime
             : null,
         // each day of week is unique -> technical validation
