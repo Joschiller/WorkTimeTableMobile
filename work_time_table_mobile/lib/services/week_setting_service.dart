@@ -30,14 +30,14 @@ class WeekSettingService extends StreamableService {
                 settings.weekDaySettings.values
                     .map((s) => s.timeEquivalent)
                     .reduce((a, b) => a + b)
-            ? AppError.service_weekSettings_invalid
+            ? AppError.service_weekSettings_invalidTargetWorktime
             : null,
-        // each day of week is unique
+        // each day of week is unique -> technical validation
         () => settings.weekDaySettings.entries
                 .any((day) => day.key != day.value.dayOfWeek)
             ? AppError.service_weekSettings_invalid
             : null,
-        // (start == null) == (end == null)
+        // (start == null) == (end == null) -> technical validation
         () => settings.weekDaySettings.values.any((day) =>
                 (day.defaultWorkTimeStart == null) !=
                 (day.defaultWorkTimeEnd == null))
@@ -48,7 +48,7 @@ class WeekSettingService extends StreamableService {
                 (day.mandatoryWorkTimeEnd == null))
             ? AppError.service_weekSettings_invalid
             : null,
-        // start <= end
+        // start <= end -> technical validation
         () => settings.globalWeekDaySetting.defaultWorkTimeStart >
                 settings.globalWeekDaySetting.defaultWorkTimeEnd
             ? AppError.service_weekSettings_invalid
@@ -66,7 +66,7 @@ class WeekSettingService extends StreamableService {
                 (day.mandatoryWorkTimeEnd ?? 0))
             ? AppError.service_weekSettings_invalid
             : null,
-        // default time respects manatory time
+        // default time respects manatory time -> technical validation
         () => settings.globalWeekDaySetting.defaultWorkTimeStart >
                 settings.globalWeekDaySetting.defaultMandatoryWorkTimeStart
             ? AppError.service_weekSettings_invalid
