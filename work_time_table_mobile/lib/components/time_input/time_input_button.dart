@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:work_time_table_mobile/screens/setting/week_setting/week_setting_screen.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 class TimeInputButton extends StatelessWidget {
   const TimeInputButton({
