@@ -5,14 +5,15 @@ class TimeInputButton extends StatelessWidget {
   const TimeInputButton({
     super.key,
     this.initialValue,
-    this.min,
-    this.max,
+    TimeOfDay? min,
+    TimeOfDay? max,
     required this.onChange,
-  });
+  })  : min = min ?? const TimeOfDay(hour: 0, minute: 0),
+        max = max ?? const TimeOfDay(hour: 23, minute: 59);
 
   final TimeOfDay? initialValue;
-  final TimeOfDay? min;
-  final TimeOfDay? max;
+  final TimeOfDay min;
+  final TimeOfDay max;
   final void Function(TimeOfDay value) onChange;
 
   @override
@@ -22,10 +23,10 @@ class TimeInputButton extends StatelessWidget {
           initialTime: initialValue ?? const TimeOfDay(hour: 12, minute: 0),
         ).then((value) {
           if (value != null) {
-            onChange(min != null && value.toInt() < min!.toInt()
-                ? min!
-                : max != null && value.toInt() > max!.toInt()
-                    ? max!
+            onChange(value.toInt() < min.toInt()
+                ? min
+                : value.toInt() > max.toInt()
+                    ? max
                     : value);
           }
         }),
