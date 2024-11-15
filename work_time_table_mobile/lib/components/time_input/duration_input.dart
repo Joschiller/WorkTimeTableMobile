@@ -35,6 +35,8 @@ class DurationInput extends StatelessWidget {
               onChanged: (value) =>
                   _onChangeInBounds((value * 60) + (initialValue % 60)),
               zeroPad: true,
+              itemWidth: 40,
+              itemHeight: 35,
             ),
             NumberPicker(
               value: initialValue % 60,
@@ -43,6 +45,8 @@ class DurationInput extends StatelessWidget {
               onChanged: (value) =>
                   _onChangeInBounds(((initialValue ~/ 60) * 60) + value),
               zeroPad: true,
+              itemWidth: 40,
+              itemHeight: 35,
             ),
           ],
         ),
