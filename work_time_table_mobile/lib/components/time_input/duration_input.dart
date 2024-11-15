@@ -24,25 +24,27 @@ class DurationInput extends StatelessWidget {
           : value);
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          NumberPicker(
-            value: initialValue ~/ 60,
-            minValue: (min / 60).floor(),
-            maxValue: (max / 60).ceil(),
-            onChanged: (value) =>
-                _onChangeInBounds((value * 60) + (initialValue % 60)),
-            zeroPad: true,
-          ),
-          NumberPicker(
-            value: initialValue % 60,
-            minValue: 0,
-            maxValue: 59,
-            onChanged: (value) =>
-                _onChangeInBounds(((initialValue ~/ 60) * 60) + value),
-            zeroPad: true,
-          ),
-        ],
+  Widget build(BuildContext context) => Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            NumberPicker(
+              value: initialValue ~/ 60,
+              minValue: (min / 60).floor(),
+              maxValue: (max / 60).ceil(),
+              onChanged: (value) =>
+                  _onChangeInBounds((value * 60) + (initialValue % 60)),
+              zeroPad: true,
+            ),
+            NumberPicker(
+              value: initialValue % 60,
+              minValue: 0,
+              maxValue: 59,
+              onChanged: (value) =>
+                  _onChangeInBounds(((initialValue ~/ 60) * 60) + value),
+              zeroPad: true,
+            ),
+          ],
+        ),
       );
 }
