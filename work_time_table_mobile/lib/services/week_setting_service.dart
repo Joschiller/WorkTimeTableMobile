@@ -39,57 +39,22 @@ class WeekSettingService extends StreamableService {
                 .any((day) => day.key != day.value.dayOfWeek)
             ? AppError.service_weekSettings_invalid
             : null,
-        // (start == null) == (end == null) -> technical validation
-        () => settings.weekDaySettings.values.any((day) =>
-                (day.defaultWorkTimeStart == null) !=
-                (day.defaultWorkTimeEnd == null))
-            ? AppError.service_weekSettings_invalid
-            : null,
-        () => settings.weekDaySettings.values.any((day) =>
-                (day.mandatoryWorkTimeStart == null) !=
-                (day.mandatoryWorkTimeEnd == null))
-            ? AppError.service_weekSettings_invalid
-            : null,
         // start <= end -> technical validation
-        () => settings.globalWeekDaySetting.defaultWorkTimeStart >
-                settings.globalWeekDaySetting.defaultWorkTimeEnd
+        () => settings.weekDaySettings.values
+                .any((day) => day.defaultWorkTimeStart > day.defaultWorkTimeEnd)
             ? AppError.service_weekSettings_invalid
             : null,
-        () => settings.globalWeekDaySetting.defaultMandatoryWorkTimeStart >
-                settings.globalWeekDaySetting.defaultMandatoryWorkTimeEnd
-            ? AppError.service_weekSettings_invalid
-            : null,
-        () => settings.weekDaySettings.values.any((day) =>
-                (day.defaultWorkTimeStart ?? 0) > (day.defaultWorkTimeEnd ?? 0))
-            ? AppError.service_weekSettings_invalid
-            : null,
-        () => settings.weekDaySettings.values.any((day) =>
-                (day.mandatoryWorkTimeStart ?? 0) >
-                (day.mandatoryWorkTimeEnd ?? 0))
+        () => settings.weekDaySettings.values.any(
+                (day) => day.mandatoryWorkTimeStart > day.mandatoryWorkTimeEnd)
             ? AppError.service_weekSettings_invalid
             : null,
         // default time respects manatory time -> technical validation
-        () => settings.globalWeekDaySetting.defaultWorkTimeStart >
-                settings.globalWeekDaySetting.defaultMandatoryWorkTimeStart
+        () => settings.weekDaySettings.values.any(
+                (day) => day.defaultWorkTimeStart > day.mandatoryWorkTimeStart)
             ? AppError.service_weekSettings_invalid
             : null,
-        () => settings.globalWeekDaySetting.defaultWorkTimeEnd <
-                settings.globalWeekDaySetting.defaultMandatoryWorkTimeEnd
-            ? AppError.service_weekSettings_invalid
-            : null,
-        () => settings.weekDaySettings.values.any((day) =>
-                (day.defaultWorkTimeStart ??
-                    settings.globalWeekDaySetting.defaultWorkTimeStart) >
-                (day.mandatoryWorkTimeStart ??
-                    settings
-                        .globalWeekDaySetting.defaultMandatoryWorkTimeStart))
-            ? AppError.service_weekSettings_invalid
-            : null,
-        () => settings.weekDaySettings.values.any((day) =>
-                (day.defaultWorkTimeEnd ??
-                    settings.globalWeekDaySetting.defaultWorkTimeEnd) <
-                (day.mandatoryWorkTimeEnd ??
-                    settings.globalWeekDaySetting.defaultMandatoryWorkTimeEnd))
+        () => settings.weekDaySettings.values
+                .any((day) => day.defaultWorkTimeEnd < day.mandatoryWorkTimeEnd)
             ? AppError.service_weekSettings_invalid
             : null,
       ]);

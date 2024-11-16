@@ -99,18 +99,12 @@ class TimeInputService extends StreamableService {
 
               // work time respects manatory time start
               if (day.firstHalfMode == DayMode.workDay &&
-                  (day.workTimeStart >
-                      (settingForDay.mandatoryWorkTimeStart ??
-                          weekSettings.globalWeekDaySetting
-                              .defaultMandatoryWorkTimeStart))) {
+                  (day.workTimeStart > settingForDay.mandatoryWorkTimeStart)) {
                 return true;
               }
               // work time respects manatory time end
               if (day.secondHalfMode == DayMode.workDay &&
-                  (day.workTimeEnd <
-                      (settingForDay.mandatoryWorkTimeEnd ??
-                          weekSettings.globalWeekDaySetting
-                              .defaultMandatoryWorkTimeEnd))) {
+                  (day.workTimeEnd < settingForDay.mandatoryWorkTimeEnd)) {
                 return true;
               }
               return false;
