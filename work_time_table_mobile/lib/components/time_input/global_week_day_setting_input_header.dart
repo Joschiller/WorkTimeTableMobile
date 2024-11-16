@@ -6,10 +6,10 @@ class GlobalWeekDaySettingInputHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         children: [
-          'Default work time',
-          'Default mandatory work time',
-          'Default break duration',
           'Target work time per week',
+          '',
+          '',
+          '',
         ]
             .map((header) => Expanded(
                     child: Center(

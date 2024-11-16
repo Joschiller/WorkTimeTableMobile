@@ -6,10 +6,10 @@ class WeekDaySettingInputHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
         children: [
-          'Usual work time',
-          'Mandatory work time',
-          'Usual break duration',
           'Hour equivalent',
+          'Mandatory work time',
+          'Usual work time',
+          'Usual break duration',
         ]
             .map((header) => Expanded(
                     child: Center(

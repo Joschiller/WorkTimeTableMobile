@@ -18,36 +18,54 @@ class WeekDaySettingInput extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: [
           Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: DurationInput(
+                initialValue: initialValue.timeEquivalent,
+                max: 60 * 24,
+                onChange: (value) => onChange(WeekDaySetting(
+                  dayOfWeek: initialValue.dayOfWeek,
+                  timeEquivalent: value,
+                  mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
+                  mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
+                  defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
+                  defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
+                  defaultBreakDuration: initialValue.defaultBreakDuration,
+                )),
+              ),
+            ),
+          ),
+          Expanded(
             child: TimeSpanInput(
               initialValue: (
-                start: initialValue.defaultWorkTimeStart?.toTimeOfDay(),
-                end: initialValue.defaultWorkTimeEnd?.toTimeOfDay(),
+                start: initialValue.mandatoryWorkTimeStart.toTimeOfDay(),
+                end: initialValue.mandatoryWorkTimeEnd.toTimeOfDay(),
               ),
               onChange: (start, end) => onChange(WeekDaySetting(
                 dayOfWeek: initialValue.dayOfWeek,
-                defaultWorkTimeStart: start.toInt(),
-                defaultWorkTimeEnd: end.toInt(),
-                mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
-                mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
-                defaultBreakDuration: initialValue.defaultBreakDuration,
                 timeEquivalent: initialValue.timeEquivalent,
+                mandatoryWorkTimeStart: start.toInt(),
+                mandatoryWorkTimeEnd: end.toInt(),
+                defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
+                defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
+                defaultBreakDuration: initialValue.defaultBreakDuration,
               )),
             ),
           ),
           Expanded(
             child: TimeSpanInput(
               initialValue: (
-                start: initialValue.mandatoryWorkTimeStart?.toTimeOfDay(),
-                end: initialValue.mandatoryWorkTimeEnd?.toTimeOfDay(),
+                start: initialValue.defaultWorkTimeStart.toTimeOfDay(),
+                end: initialValue.defaultWorkTimeEnd.toTimeOfDay(),
               ),
               onChange: (start, end) => onChange(WeekDaySetting(
                 dayOfWeek: initialValue.dayOfWeek,
-                defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
-                defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
-                mandatoryWorkTimeStart: start.toInt(),
-                mandatoryWorkTimeEnd: end.toInt(),
-                defaultBreakDuration: initialValue.defaultBreakDuration,
                 timeEquivalent: initialValue.timeEquivalent,
+                mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
+                mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
+                defaultWorkTimeStart: start.toInt(),
+                defaultWorkTimeEnd: end.toInt(),
+                defaultBreakDuration: initialValue.defaultBreakDuration,
               )),
             ),
           ),
@@ -59,30 +77,12 @@ class WeekDaySettingInput extends StatelessWidget {
                 max: 60 * 24,
                 onChange: (value) => onChange(WeekDaySetting(
                   dayOfWeek: initialValue.dayOfWeek,
-                  defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
-                  defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
-                  mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
-                  mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
-                  defaultBreakDuration: value,
                   timeEquivalent: initialValue.timeEquivalent,
-                )),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: DurationInput(
-                initialValue: initialValue.timeEquivalent,
-                max: 60 * 24,
-                onChange: (value) => onChange(WeekDaySetting(
-                  dayOfWeek: initialValue.dayOfWeek,
-                  defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
-                  defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
                   mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
                   mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
-                  defaultBreakDuration: initialValue.defaultBreakDuration,
-                  timeEquivalent: value,
+                  defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
+                  defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
+                  defaultBreakDuration: value,
                 )),
               ),
             ),
