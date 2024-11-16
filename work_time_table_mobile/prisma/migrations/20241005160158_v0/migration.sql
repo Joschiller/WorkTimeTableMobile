@@ -3,11 +3,6 @@ CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "currentlySelected" BOOLEAN NOT NULL,
-    "defaultWorkTimeStart" INTEGER NOT NULL,
-    "defaultWorkTimeEnd" INTEGER NOT NULL,
-    "defaultMandatoryWorkTimeStart" INTEGER NOT NULL,
-    "defaultMandatoryWorkTimeEnd" INTEGER NOT NULL,
-    "defaultBreakDuration" INTEGER NOT NULL,
     "targetWorkTimePerWeek" INTEGER NOT NULL
 );
 
@@ -25,12 +20,12 @@ CREATE TABLE "WeekDaySetting" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "userId" INTEGER NOT NULL,
     "day" TEXT NOT NULL,
-    "defaultWorkTimeStart" INTEGER,
-    "defaultWorkTimeEnd" INTEGER,
-    "mandatoryWorkTimeStart" INTEGER,
-    "mandatoryWorkTimeEnd" INTEGER,
-    "defaultBreakDuration" INTEGER,
     "timeEquivalent" INTEGER NOT NULL,
+    "mandatoryWorkTimeStart" INTEGER NOT NULL,
+    "mandatoryWorkTimeEnd" INTEGER NOT NULL,
+    "defaultWorkTimeStart" INTEGER NOT NULL,
+    "defaultWorkTimeEnd" INTEGER NOT NULL,
+    "defaultBreakDuration" INTEGER NOT NULL,
     CONSTRAINT "WeekDaySetting_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
