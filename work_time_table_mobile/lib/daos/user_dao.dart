@@ -22,11 +22,6 @@ class UserDao {
       UserCreateInput(
         name: name,
         currentlySelected: false,
-        defaultWorkTimeStart: 0,
-        defaultWorkTimeEnd: 0,
-        defaultMandatoryWorkTimeStart: 0,
-        defaultMandatoryWorkTimeEnd: 0,
-        defaultBreakDuration: 0,
         targetWorkTimePerWeek: 0,
       ),
     ));
