@@ -82,12 +82,9 @@ class DayValueService {
       date: date,
       firstHalfMode: modeForFirstHalfOfDay,
       secondHalfMode: modeForSecondHalfOfDay,
-      workTimeStart: daySetting.defaultWorkTimeStart ??
-          weekSetting.globalWeekDaySetting.defaultWorkTimeStart,
-      workTimeEnd: daySetting.defaultWorkTimeEnd ??
-          weekSetting.globalWeekDaySetting.defaultWorkTimeEnd,
-      breakDuration: daySetting.defaultBreakDuration ??
-          weekSetting.globalWeekDaySetting.defaultBreakDuration,
+      workTimeStart: daySetting.defaultWorkTimeStart,
+      workTimeEnd: daySetting.defaultWorkTimeEnd,
+      breakDuration: daySetting.defaultBreakDuration,
     );
   }
 }
