@@ -58,6 +58,8 @@ class WeekDaySettingInput extends StatelessWidget {
                 start: initialValue.defaultWorkTimeStart.toTimeOfDay(),
                 end: initialValue.defaultWorkTimeEnd.toTimeOfDay(),
               ),
+              startMax: initialValue.mandatoryWorkTimeStart.toTimeOfDay(),
+              endMin: initialValue.mandatoryWorkTimeEnd.toTimeOfDay(),
               onChange: (start, end) => onChange(WeekDaySetting(
                 dayOfWeek: initialValue.dayOfWeek,
                 timeEquivalent: initialValue.timeEquivalent,
