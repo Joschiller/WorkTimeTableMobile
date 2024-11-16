@@ -33,7 +33,7 @@ class TimeSpanInput extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(
-                width: 100,
+                width: 50,
                 child: Text(
                   'Start:',
                   textAlign: TextAlign.right,
@@ -55,7 +55,7 @@ class TimeSpanInput extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(
-                width: 100,
+                width: 50,
                 child: Text(
                   'End:',
                   textAlign: TextAlign.right,
