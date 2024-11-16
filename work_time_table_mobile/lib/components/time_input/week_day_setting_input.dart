@@ -46,8 +46,14 @@ class WeekDaySettingInput extends StatelessWidget {
                 timeEquivalent: initialValue.timeEquivalent,
                 mandatoryWorkTimeStart: start.toInt(),
                 mandatoryWorkTimeEnd: end.toInt(),
-                defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
-                defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
+                defaultWorkTimeStart:
+                    initialValue.defaultWorkTimeStart > start.toInt()
+                        ? start.toInt()
+                        : initialValue.defaultWorkTimeStart,
+                defaultWorkTimeEnd:
+                    initialValue.defaultWorkTimeEnd < end.toInt()
+                        ? end.toInt()
+                        : initialValue.defaultWorkTimeEnd,
                 defaultBreakDuration: initialValue.defaultBreakDuration,
               )),
             ),
