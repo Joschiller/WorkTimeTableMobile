@@ -39,6 +39,7 @@ class TimeSpanInput extends StatelessWidget {
                   textAlign: TextAlign.right,
                 ),
               ),
+              const SizedBox(width: 8),
               TimeInputButton(
                 initialValue: initialValue.start,
                 min: startMin,
@@ -60,6 +61,7 @@ class TimeSpanInput extends StatelessWidget {
                   textAlign: TextAlign.right,
                 ),
               ),
+              const SizedBox(width: 8),
               TimeInputButton(
                 initialValue: initialValue.end,
                 min: initialValue.start != null
