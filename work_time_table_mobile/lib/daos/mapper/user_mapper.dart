@@ -11,13 +11,14 @@ extension UserMapper on prisma_model.User {
         name: name!,
       );
   WeekSetting toWeekSetting(
-          Iterable<prisma_model.WeekDaySetting> weekDaySettings) =>
+    Iterable<prisma_model.WeekDaySetting> weekDaySettings,
+  ) =>
       WeekSetting(
         targetWorkTimePerWeek: targetWorkTimePerWeek!,
-        weekDaySettings:
-            Map.fromIterable(weekDaySettings.map((setting) => MapEntry(
-                  DayOfWeek.values.firstWhere((d) => d.name == setting.day),
-                  setting.toAppModel(),
-                ))),
+        weekDaySettings: {
+          for (final setting in weekDaySettings)
+            DayOfWeek.values.firstWhere((d) => d.name == setting.day):
+                setting.toAppModel()
+        },
       );
 }
