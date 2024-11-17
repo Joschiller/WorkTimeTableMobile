@@ -30,6 +30,8 @@ class TimeInputButton extends StatelessWidget {
                     : value);
           }
         }),
-        child: Text(initialValue?.format(context) ?? 'Select Time'),
+        child: Text(initialValue != null
+            ? '${initialValue!.format(context)} h'
+            : 'Select Time'),
       );
 }

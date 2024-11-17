@@ -38,6 +38,7 @@ class DurationInput extends StatelessWidget {
               itemWidth: 40,
               itemHeight: 35,
             ),
+            const Text(':'),
             NumberPicker(
               value: initialValue % 60,
               minValue: 0,
@@ -48,6 +49,7 @@ class DurationInput extends StatelessWidget {
               itemWidth: 40,
               itemHeight: 35,
             ),
+            const Text('h'),
           ],
         ),
       );
