@@ -37,8 +37,8 @@ class HeaderRow extends StatelessWidget {
                                   ],
                                 ),
                                 actions: [
-                                  GestureDetector(
-                                    onTap: context.pop,
+                                  ElevatedButton(
+                                    onPressed: context.pop,
                                     child: const Text('Ok'),
                                   )
                                 ],
