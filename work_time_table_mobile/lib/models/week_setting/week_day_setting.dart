@@ -22,4 +22,15 @@ class WeekDaySetting {
     required this.defaultWorkTimeEnd,
     required this.defaultBreakDuration,
   });
+
+  WeekDaySetting.defaultValue(DayOfWeek dayOfWeek)
+      : this(
+          dayOfWeek: dayOfWeek,
+          timeEquivalent: 0,
+          mandatoryWorkTimeStart: 0,
+          mandatoryWorkTimeEnd: 0,
+          defaultWorkTimeStart: 0,
+          defaultWorkTimeEnd: 0,
+          defaultBreakDuration: 0,
+        );
 }

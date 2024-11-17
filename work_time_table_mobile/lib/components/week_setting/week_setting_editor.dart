@@ -34,15 +34,7 @@ WeekSetting _buildValidatableWeekSettingValue(
       weekDaySettings: {
         for (var element in activeWorkDays)
           element: weekSettingValue.weekDaySettings[element] ??
-              WeekDaySetting(
-                dayOfWeek: element,
-                timeEquivalent: 0,
-                mandatoryWorkTimeStart: 0,
-                mandatoryWorkTimeEnd: 0,
-                defaultWorkTimeStart: 0,
-                defaultWorkTimeEnd: 0,
-                defaultBreakDuration: 0,
-              ),
+              WeekDaySetting.defaultValue(element),
       },
     );
 
@@ -144,15 +136,7 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
                         WeekDaySettingInput(
                           value:
                               _currentWeekSettingValue.weekDaySettings[day] ??
-                                  WeekDaySetting(
-                                    dayOfWeek: day,
-                                    timeEquivalent: 0,
-                                    mandatoryWorkTimeStart: 0,
-                                    mandatoryWorkTimeEnd: 0,
-                                    defaultWorkTimeStart: 0,
-                                    defaultWorkTimeEnd: 0,
-                                    defaultBreakDuration: 0,
-                                  ),
+                                  WeekDaySetting.defaultValue(day),
                           onChange: (value) => _updateValue(
                             WeekSetting(
                               targetWorkTimePerWeek: _currentWeekSettingValue
@@ -162,15 +146,7 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
                                   dayOfWeek: dayOfWeek != day
                                       ? _currentWeekSettingValue
                                               .weekDaySettings[dayOfWeek] ??
-                                          WeekDaySetting(
-                                            dayOfWeek: day,
-                                            timeEquivalent: 0,
-                                            mandatoryWorkTimeStart: 0,
-                                            mandatoryWorkTimeEnd: 0,
-                                            defaultWorkTimeStart: 0,
-                                            defaultWorkTimeEnd: 0,
-                                            defaultBreakDuration: 0,
-                                          )
+                                          WeekDaySetting.defaultValue(day)
                                       : value,
                               },
                             ),
