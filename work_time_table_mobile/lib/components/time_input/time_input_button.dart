@@ -4,14 +4,14 @@ import 'package:work_time_table_mobile/utils.dart';
 class TimeInputButton extends StatelessWidget {
   const TimeInputButton({
     super.key,
-    this.initialValue,
+    this.value,
     TimeOfDay? min,
     TimeOfDay? max,
     required this.onChange,
   })  : min = min ?? const TimeOfDay(hour: 0, minute: 0),
         max = max ?? const TimeOfDay(hour: 23, minute: 59);
 
-  final TimeOfDay? initialValue;
+  final TimeOfDay? value;
   final TimeOfDay min;
   final TimeOfDay max;
   final void Function(TimeOfDay value) onChange;
@@ -20,7 +20,7 @@ class TimeInputButton extends StatelessWidget {
   Widget build(BuildContext context) => ElevatedButton(
         onPressed: () => showTimePicker(
           context: context,
-          initialTime: initialValue ?? const TimeOfDay(hour: 12, minute: 0),
+          initialTime: value ?? const TimeOfDay(hour: 12, minute: 0),
         ).then((value) {
           if (value != null) {
             onChange(value.toInt() < min.toInt()
@@ -30,8 +30,7 @@ class TimeInputButton extends StatelessWidget {
                     : value);
           }
         }),
-        child: Text(initialValue != null
-            ? '${initialValue!.format(context)} h'
-            : 'Select Time'),
+        child:
+            Text(value != null ? '${value!.format(context)} h' : 'Select Time'),
       );
 }

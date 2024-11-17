@@ -18,7 +18,7 @@ class GlobalWeekDaySettingInput extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: DurationInput(
-                initialValue: initialTargetWorkTimePerWeek,
+                value: initialTargetWorkTimePerWeek,
                 onChange: onChangeTargetWorkTimePerWeek,
               ),
             ),

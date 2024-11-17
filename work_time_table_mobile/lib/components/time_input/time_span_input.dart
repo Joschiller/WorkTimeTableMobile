@@ -7,7 +7,7 @@ import 'package:work_time_table_mobile/utils.dart';
 class TimeSpanInput extends StatelessWidget {
   const TimeSpanInput({
     super.key,
-    required this.initialValue,
+    required this.value,
     TimeOfDay? startMin,
     TimeOfDay? startMax,
     TimeOfDay? endMin,
@@ -18,7 +18,7 @@ class TimeSpanInput extends StatelessWidget {
         endMin = endMin ?? const TimeOfDay(hour: 0, minute: 0),
         endMax = endMax ?? const TimeOfDay(hour: 23, minute: 59);
 
-  final ({TimeOfDay? start, TimeOfDay? end}) initialValue;
+  final ({TimeOfDay? start, TimeOfDay? end}) value;
   final TimeOfDay startMin;
   final TimeOfDay startMax;
   final TimeOfDay endMin;
@@ -41,13 +41,13 @@ class TimeSpanInput extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               TimeInputButton(
-                initialValue: initialValue.start,
+                value: value.start,
                 min: startMin,
-                max: initialValue.end != null
-                    ? min(startMax.toInt(), initialValue.end!.toInt())
-                        .toTimeOfDay()
+                max: value.end != null
+                    ? min(startMax.toInt(), value.end!.toInt()).toTimeOfDay()
                     : startMax,
-                onChange: (value) => onChange(value, initialValue.end ?? value),
+                onChange: (newValue) =>
+                    onChange(newValue, value.end ?? newValue),
               ),
             ],
           ),
@@ -63,14 +63,13 @@ class TimeSpanInput extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               TimeInputButton(
-                initialValue: initialValue.end,
-                min: initialValue.start != null
-                    ? max(endMin.toInt(), initialValue.start!.toInt())
-                        .toTimeOfDay()
+                value: value.end,
+                min: value.start != null
+                    ? max(endMin.toInt(), value.start!.toInt()).toTimeOfDay()
                     : endMin,
                 max: endMax,
-                onChange: (value) =>
-                    onChange(initialValue.start ?? value, value),
+                onChange: (newValue) =>
+                    onChange(value.start ?? newValue, newValue),
               ),
             ],
           ),

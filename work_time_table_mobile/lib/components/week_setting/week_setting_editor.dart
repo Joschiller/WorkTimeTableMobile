@@ -142,7 +142,7 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
                           },
                         ),
                         WeekDaySettingInput(
-                          initialValue:
+                          value:
                               _currentWeekSettingValue.weekDaySettings[day] ??
                                   WeekDaySetting(
                                     dayOfWeek: day,

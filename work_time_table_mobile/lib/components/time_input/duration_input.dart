@@ -4,11 +4,11 @@ import 'package:numberpicker/numberpicker.dart';
 class DurationInput extends StatelessWidget {
   const DurationInput({
     super.key,
-    int? initialValue,
+    int? value,
     int? min,
     int? max,
     required this.onChange,
-  })  : initialValue = initialValue ?? 0,
+  })  : initialValue = value ?? 0,
         min = min ?? 0,
         max = max ?? 99 * 60;
 

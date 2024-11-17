@@ -7,11 +7,11 @@ import 'package:work_time_table_mobile/utils.dart';
 class WeekDaySettingInput extends StatelessWidget {
   const WeekDaySettingInput({
     super.key,
-    required this.initialValue,
+    required this.value,
     required this.onChange,
   });
 
-  final WeekDaySetting initialValue;
+  final WeekDaySetting value;
   final void Function(WeekDaySetting value) onChange;
 
   @override
@@ -21,59 +21,57 @@ class WeekDaySettingInput extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: DurationInput(
-                initialValue: initialValue.timeEquivalent,
+                value: value.timeEquivalent,
                 max: 60 * 24,
-                onChange: (value) => onChange(WeekDaySetting(
-                  dayOfWeek: initialValue.dayOfWeek,
-                  timeEquivalent: value,
-                  mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
-                  mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
-                  defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
-                  defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
-                  defaultBreakDuration: initialValue.defaultBreakDuration,
+                onChange: (newValue) => onChange(WeekDaySetting(
+                  dayOfWeek: value.dayOfWeek,
+                  timeEquivalent: newValue,
+                  mandatoryWorkTimeStart: value.mandatoryWorkTimeStart,
+                  mandatoryWorkTimeEnd: value.mandatoryWorkTimeEnd,
+                  defaultWorkTimeStart: value.defaultWorkTimeStart,
+                  defaultWorkTimeEnd: value.defaultWorkTimeEnd,
+                  defaultBreakDuration: value.defaultBreakDuration,
                 )),
               ),
             ),
           ),
           Expanded(
             child: TimeSpanInput(
-              initialValue: (
-                start: initialValue.mandatoryWorkTimeStart.toTimeOfDay(),
-                end: initialValue.mandatoryWorkTimeEnd.toTimeOfDay(),
+              value: (
+                start: value.mandatoryWorkTimeStart.toTimeOfDay(),
+                end: value.mandatoryWorkTimeEnd.toTimeOfDay(),
               ),
               onChange: (start, end) => onChange(WeekDaySetting(
-                dayOfWeek: initialValue.dayOfWeek,
-                timeEquivalent: initialValue.timeEquivalent,
+                dayOfWeek: value.dayOfWeek,
+                timeEquivalent: value.timeEquivalent,
                 mandatoryWorkTimeStart: start.toInt(),
                 mandatoryWorkTimeEnd: end.toInt(),
-                defaultWorkTimeStart:
-                    initialValue.defaultWorkTimeStart > start.toInt()
-                        ? start.toInt()
-                        : initialValue.defaultWorkTimeStart,
-                defaultWorkTimeEnd:
-                    initialValue.defaultWorkTimeEnd < end.toInt()
-                        ? end.toInt()
-                        : initialValue.defaultWorkTimeEnd,
-                defaultBreakDuration: initialValue.defaultBreakDuration,
+                defaultWorkTimeStart: value.defaultWorkTimeStart > start.toInt()
+                    ? start.toInt()
+                    : value.defaultWorkTimeStart,
+                defaultWorkTimeEnd: value.defaultWorkTimeEnd < end.toInt()
+                    ? end.toInt()
+                    : value.defaultWorkTimeEnd,
+                defaultBreakDuration: value.defaultBreakDuration,
               )),
             ),
           ),
           Expanded(
             child: TimeSpanInput(
-              initialValue: (
-                start: initialValue.defaultWorkTimeStart.toTimeOfDay(),
-                end: initialValue.defaultWorkTimeEnd.toTimeOfDay(),
+              value: (
+                start: value.defaultWorkTimeStart.toTimeOfDay(),
+                end: value.defaultWorkTimeEnd.toTimeOfDay(),
               ),
-              startMax: initialValue.mandatoryWorkTimeStart.toTimeOfDay(),
-              endMin: initialValue.mandatoryWorkTimeEnd.toTimeOfDay(),
+              startMax: value.mandatoryWorkTimeStart.toTimeOfDay(),
+              endMin: value.mandatoryWorkTimeEnd.toTimeOfDay(),
               onChange: (start, end) => onChange(WeekDaySetting(
-                dayOfWeek: initialValue.dayOfWeek,
-                timeEquivalent: initialValue.timeEquivalent,
-                mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
-                mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
+                dayOfWeek: value.dayOfWeek,
+                timeEquivalent: value.timeEquivalent,
+                mandatoryWorkTimeStart: value.mandatoryWorkTimeStart,
+                mandatoryWorkTimeEnd: value.mandatoryWorkTimeEnd,
                 defaultWorkTimeStart: start.toInt(),
                 defaultWorkTimeEnd: end.toInt(),
-                defaultBreakDuration: initialValue.defaultBreakDuration,
+                defaultBreakDuration: value.defaultBreakDuration,
               )),
             ),
           ),
@@ -81,16 +79,16 @@ class WeekDaySettingInput extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: DurationInput(
-                initialValue: initialValue.defaultBreakDuration,
+                value: value.defaultBreakDuration,
                 max: 60 * 24,
-                onChange: (value) => onChange(WeekDaySetting(
-                  dayOfWeek: initialValue.dayOfWeek,
-                  timeEquivalent: initialValue.timeEquivalent,
-                  mandatoryWorkTimeStart: initialValue.mandatoryWorkTimeStart,
-                  mandatoryWorkTimeEnd: initialValue.mandatoryWorkTimeEnd,
-                  defaultWorkTimeStart: initialValue.defaultWorkTimeStart,
-                  defaultWorkTimeEnd: initialValue.defaultWorkTimeEnd,
-                  defaultBreakDuration: value,
+                onChange: (newValue) => onChange(WeekDaySetting(
+                  dayOfWeek: value.dayOfWeek,
+                  timeEquivalent: value.timeEquivalent,
+                  mandatoryWorkTimeStart: value.mandatoryWorkTimeStart,
+                  mandatoryWorkTimeEnd: value.mandatoryWorkTimeEnd,
+                  defaultWorkTimeStart: value.defaultWorkTimeStart,
+                  defaultWorkTimeEnd: value.defaultWorkTimeEnd,
+                  defaultBreakDuration: newValue,
                 )),
               ),
             ),
