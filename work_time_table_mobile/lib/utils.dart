@@ -16,3 +16,8 @@ extension IntToTimeOfDay on int {
 extension TimeOfDayToInt on TimeOfDay {
   int toInt() => 60 * hour + minute;
 }
+
+extension StringToCapitalized on String {
+  String get capitalized =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+}
