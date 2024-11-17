@@ -33,8 +33,8 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
 
   @override
   void initState() {
-    _loadInitialValues();
     super.initState();
+    _loadInitialValues();
   }
 
   var _currentWeekSettingValue = WeekSetting(
