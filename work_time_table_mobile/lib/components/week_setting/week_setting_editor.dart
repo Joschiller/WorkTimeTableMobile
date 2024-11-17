@@ -19,7 +19,7 @@ class WeekSettingEditor extends StatefulWidget {
   });
 
   final WeekSetting initialValue;
-  final void Function(WeekSetting value) onSubmit;
+  final Future<void> Function(WeekSetting value) onSubmit;
 
   @override
   State<WeekSettingEditor> createState() => _WeekSettingEditorState();
@@ -174,11 +174,19 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: () =>
-                    widget.onSubmit(_buildValidatableWeekSettingValue(
+                onPressed: () => widget
+                    .onSubmit(_buildValidatableWeekSettingValue(
                   _currentWeekSettingValue,
                   _currentActiveWorkDays,
-                )),
+                ))
+                    .then(
+                  (value) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('The settings were saved successfully.'),
+                    ));
+                  },
+                ),
                 child: const Text('Save'),
               ),
             ],
