@@ -15,6 +15,7 @@ class HeaderRow extends StatelessWidget {
                 child: Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         header.key,
@@ -23,27 +24,30 @@ class HeaderRow extends StatelessWidget {
                         ),
                       ),
                       if (header.value.isNotBlank)
-                        GestureDetector(
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(header.key),
-                              content: Wrap(
-                                children: [
-                                  Text(header.value),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: GestureDetector(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(header.key),
+                                content: Wrap(
+                                  children: [
+                                    Text(header.value),
+                                  ],
+                                ),
+                                actions: [
+                                  GestureDetector(
+                                    onTap: context.pop,
+                                    child: const Text('Ok'),
+                                  )
                                 ],
                               ),
-                              actions: [
-                                GestureDetector(
-                                  onTap: context.pop,
-                                  child: const Text('Ok'),
-                                )
-                              ],
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.info,
-                            color: Colors.grey,
+                            child: const Icon(
+                              Icons.info_outline,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                     ],
