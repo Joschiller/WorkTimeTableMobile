@@ -27,6 +27,7 @@ class HeaderRow extends StatelessWidget {
                           onTap: () => showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
+                              title: Text(header.key),
                               content: Wrap(
                                 children: [
                                   Text(header.value),
