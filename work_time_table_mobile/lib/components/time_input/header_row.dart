@@ -17,10 +17,17 @@ class HeaderRow extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        header.key,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Wrap(
+                          children: [
+                            Text(
+                              header.key,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       if (header.value.isNotBlank)
