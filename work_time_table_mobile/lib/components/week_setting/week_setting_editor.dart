@@ -157,13 +157,22 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
                             WeekSetting(
                               targetWorkTimePerWeek: _currentWeekSettingValue
                                   .targetWorkTimePerWeek,
-                              weekDaySettings:
-                                  _currentWeekSettingValue.weekDaySettings
-                                    ..update(
-                                      day,
-                                      (oldValue) => value,
-                                      ifAbsent: () => value,
-                                    ),
+                              weekDaySettings: {
+                                for (final dayOfWeek in DayOfWeek.values)
+                                  dayOfWeek: dayOfWeek != day
+                                      ? _currentWeekSettingValue
+                                              .weekDaySettings[dayOfWeek] ??
+                                          WeekDaySetting(
+                                            dayOfWeek: day,
+                                            timeEquivalent: 0,
+                                            mandatoryWorkTimeStart: 0,
+                                            mandatoryWorkTimeEnd: 0,
+                                            defaultWorkTimeStart: 0,
+                                            defaultWorkTimeEnd: 0,
+                                            defaultBreakDuration: 0,
+                                          )
+                                      : value,
+                              },
                             ),
                             _currentActiveWorkDays,
                           ),
