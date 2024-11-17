@@ -1,0 +1,55 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:work_time_table_mobile/utils.dart';
+
+class HeaderRow extends StatelessWidget {
+  const HeaderRow({super.key, required this.headers});
+
+  final Map<String, String> headers;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: headers.entries
+            .map(
+              (header) => Expanded(
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        header.key,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (header.value.isNotBlank)
+                        GestureDetector(
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              content: Wrap(
+                                children: [
+                                  Text(header.value),
+                                ],
+                              ),
+                              actions: [
+                                GestureDetector(
+                                  onTap: context.pop,
+                                  child: const Text('Ok'),
+                                )
+                              ],
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.info,
+                            color: Colors.grey,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+            .toList(),
+      );
+}
