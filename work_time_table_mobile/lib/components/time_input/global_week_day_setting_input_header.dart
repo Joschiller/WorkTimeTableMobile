@@ -10,7 +10,8 @@ class GlobalWeekDaySettingInputHeader extends StatelessWidget {
           Expanded(
             child: HeaderRow(
               headers: {
-                'Target work time per week': '',
+                'Target work time per week':
+                    'This value represents the weekly number of working hours. This value cannot exceed the sum of all working hours per day.\n\nE.g. each day of work can be worth 8 hours, whilst the overall week is worth 39 hours at max.',
               },
             ),
           ),
