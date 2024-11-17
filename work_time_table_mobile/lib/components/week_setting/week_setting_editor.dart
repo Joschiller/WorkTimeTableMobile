@@ -25,6 +25,27 @@ class WeekSettingEditor extends StatefulWidget {
   State<WeekSettingEditor> createState() => _WeekSettingEditorState();
 }
 
+WeekSetting _buildValidatableWeekSettingValue(
+  WeekSetting weekSettingValue,
+  List<DayOfWeek> activeWorkDays,
+) =>
+    WeekSetting(
+      targetWorkTimePerWeek: weekSettingValue.targetWorkTimePerWeek,
+      weekDaySettings: {
+        for (var element in activeWorkDays)
+          element: weekSettingValue.weekDaySettings[element] ??
+              WeekDaySetting(
+                dayOfWeek: element,
+                timeEquivalent: 0,
+                mandatoryWorkTimeStart: 0,
+                mandatoryWorkTimeEnd: 0,
+                defaultWorkTimeStart: 0,
+                defaultWorkTimeEnd: 0,
+                defaultBreakDuration: 0,
+              ),
+      },
+    );
+
 class _WeekSettingEditorState extends State<WeekSettingEditor> {
   void _loadInitialValues() => _updateValue(
         widget.initialValue,
@@ -44,27 +65,6 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
   var _currentActiveWorkDays = <DayOfWeek>[];
 
   var _currentValidationErrors = <AppError>[];
-
-  WeekSetting _buildValidatableWeekSettingValue(
-    WeekSetting weekSettingValue,
-    List<DayOfWeek> activeWorkDays,
-  ) =>
-      WeekSetting(
-        targetWorkTimePerWeek: weekSettingValue.targetWorkTimePerWeek,
-        weekDaySettings: {
-          for (var element in activeWorkDays)
-            element: weekSettingValue.weekDaySettings[element] ??
-                WeekDaySetting(
-                  dayOfWeek: element,
-                  timeEquivalent: 0,
-                  mandatoryWorkTimeStart: 0,
-                  mandatoryWorkTimeEnd: 0,
-                  defaultWorkTimeStart: 0,
-                  defaultWorkTimeEnd: 0,
-                  defaultBreakDuration: 0,
-                ),
-        },
-      );
 
   void _updateValue(
     WeekSetting weekSettingValue,
