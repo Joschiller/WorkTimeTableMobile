@@ -28,10 +28,10 @@ class WeekSettingScreen extends StatelessWidget {
           child:
               BlocBuilder<WeekSettingCubit, ContextDependentValue<WeekSetting>>(
             builder: (context, state) => switch (state) {
-              NoContextValue<WeekSetting>() => const Center(
+              NoContextValue() => const Center(
                   child: Text('No user selected'),
                 ),
-              ContextValue<WeekSetting>(value: var value) => WeekSettingEditor(
+              ContextValue(value: var value) => WeekSettingEditor(
                   initialValue: value,
                   onSubmit: context.read<WeekSettingCubit>().updateWeekSettings,
                 ),
