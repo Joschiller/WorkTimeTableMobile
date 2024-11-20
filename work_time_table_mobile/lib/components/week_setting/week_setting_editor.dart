@@ -112,7 +112,7 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
                       title: Text(day.name.capitalized),
                       subtitle: Text(
                         _currentActiveWorkDays.contains(day)
-                            ? 'Work day (${(_currentWeekSettingValue.weekDaySettings[day]?.timeEquivalent ?? 0).toTimeOfDay().format(context)} hours)'
+                            ? 'Work day (worth ${(_currentWeekSettingValue.weekDaySettings[day]?.timeEquivalent ?? 0).toTimeOfDay().format(context)} hours - usually working ${(_currentWeekSettingValue.weekDaySettings[day]?.defaultWorkAmount ?? 0).toTimeOfDay().format(context)} hours)'
                             : 'Non-work day',
                         style: const TextStyle(
                           color: Colors.grey,
