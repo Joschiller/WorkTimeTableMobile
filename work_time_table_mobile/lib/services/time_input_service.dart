@@ -37,6 +37,11 @@ class TimeInputService extends StreamableService {
             )));
     prepareListen(_dayValueDao.stream, _dayValueStream);
     prepareListen(_weekValueDao.stream, _weekValueStream);
+    runContextDependentAction(
+      _userService.currentUserStream.state,
+      () => _loadData(null),
+      (user) => _loadData(user.id),
+    );
   }
 
   final UserService _userService;

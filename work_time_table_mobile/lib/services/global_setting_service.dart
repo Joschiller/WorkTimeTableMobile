@@ -18,6 +18,11 @@ class GlobalSettingService extends StreamableService {
               (user) => _loadData(user.id),
             )));
     prepareListen(_globalSettingDao.stream, _stream);
+    runContextDependentAction(
+      _userService.currentUserStream.state,
+      () => _loadData(null),
+      (user) => _loadData(user.id),
+    );
   }
 
   final UserService _userService;
