@@ -50,6 +50,12 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
     _loadInitialValues();
   }
 
+  @override
+  void didUpdateWidget(covariant WeekSettingEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _loadInitialValues();
+  }
+
   var _currentWeekSettingValue = WeekSetting(
     targetWorkTimePerWeek: 0,
     weekDaySettings: {},
