@@ -27,10 +27,10 @@ class WeekDaySetting {
       : this(
           dayOfWeek: dayOfWeek,
           timeEquivalent: 0,
-          mandatoryWorkTimeStart: 0,
-          mandatoryWorkTimeEnd: 0,
-          defaultWorkTimeStart: 0,
-          defaultWorkTimeEnd: 0,
+          mandatoryWorkTimeStart: 12 * 60,
+          mandatoryWorkTimeEnd: 12 * 60,
+          defaultWorkTimeStart: 12 * 60,
+          defaultWorkTimeEnd: 12 * 60,
           defaultBreakDuration: 0,
         );
 }
