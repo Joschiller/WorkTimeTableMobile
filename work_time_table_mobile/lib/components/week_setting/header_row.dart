@@ -38,10 +38,12 @@ class HeaderRow extends StatelessWidget {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: Text(header.key),
-                                content: Wrap(
-                                  children: [
-                                    Text(header.value),
-                                  ],
+                                content: SingleChildScrollView(
+                                  child: Wrap(
+                                    children: [
+                                      Text(header.value),
+                                    ],
+                                  ),
                                 ),
                                 actions: [
                                   ElevatedButton(
