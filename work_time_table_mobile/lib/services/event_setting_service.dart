@@ -21,6 +21,11 @@ class EventSettingService extends StreamableService {
               (user) => _loadData(user.id),
             )));
     prepareListen(_eventSettingDao.stream, _stream);
+    runContextDependentAction(
+      _userService.currentUserStream.state,
+      () => _loadData(null),
+      (user) => _loadData(user.id),
+    );
   }
 
   final UserService _userService;

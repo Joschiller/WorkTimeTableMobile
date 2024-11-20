@@ -37,16 +37,6 @@ class WeekSettingDao {
             UserUpdateInput(
               targetWorkTimePerWeek:
                   PrismaUnion.$1(settings.targetWorkTimePerWeek),
-              defaultWorkTimeStart: PrismaUnion.$1(
-                  settings.globalWeekDaySetting.defaultWorkTimeStart),
-              defaultWorkTimeEnd: PrismaUnion.$1(
-                  settings.globalWeekDaySetting.defaultWorkTimeEnd),
-              defaultMandatoryWorkTimeStart: PrismaUnion.$1(
-                  settings.globalWeekDaySetting.defaultMandatoryWorkTimeStart),
-              defaultMandatoryWorkTimeEnd: PrismaUnion.$1(
-                  settings.globalWeekDaySetting.defaultMandatoryWorkTimeEnd),
-              defaultBreakDuration: PrismaUnion.$1(
-                  settings.globalWeekDaySetting.defaultBreakDuration),
             ),
           ),
           where: UserWhereUniqueInput(id: userId),
@@ -59,23 +49,12 @@ class WeekSettingDao {
                 .map((setting) => WeekDaySettingCreateManyInput(
                       userId: userId,
                       day: setting.dayOfWeek.name,
-                      defaultWorkTimeStart: setting.defaultWorkTimeStart != null
-                          ? PrismaUnion.$1(setting.defaultWorkTimeStart!)
-                          : const PrismaUnion.$2(PrismaNull()),
-                      defaultWorkTimeEnd: setting.defaultWorkTimeEnd != null
-                          ? PrismaUnion.$1(setting.defaultWorkTimeEnd!)
-                          : const PrismaUnion.$2(PrismaNull()),
-                      mandatoryWorkTimeStart:
-                          setting.mandatoryWorkTimeStart != null
-                              ? PrismaUnion.$1(setting.mandatoryWorkTimeStart!)
-                              : const PrismaUnion.$2(PrismaNull()),
-                      mandatoryWorkTimeEnd: setting.mandatoryWorkTimeEnd != null
-                          ? PrismaUnion.$1(setting.mandatoryWorkTimeEnd!)
-                          : const PrismaUnion.$2(PrismaNull()),
-                      defaultBreakDuration: setting.defaultBreakDuration != null
-                          ? PrismaUnion.$1(setting.defaultBreakDuration!)
-                          : const PrismaUnion.$2(PrismaNull()),
                       timeEquivalent: setting.timeEquivalent,
+                      mandatoryWorkTimeStart: setting.mandatoryWorkTimeStart,
+                      mandatoryWorkTimeEnd: setting.mandatoryWorkTimeEnd,
+                      defaultWorkTimeStart: setting.defaultWorkTimeStart,
+                      defaultWorkTimeEnd: setting.defaultWorkTimeEnd,
+                      defaultBreakDuration: setting.defaultBreakDuration,
                     ))));
       },
     );

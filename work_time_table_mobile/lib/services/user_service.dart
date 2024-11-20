@@ -71,7 +71,11 @@ class UserService extends StreamableService {
           name,
           _userDao.stream.state.map((u) => u.name).toList(),
         ),
-        () => _userDao.create(name.trim()),
+        () => _userDao.stream.state.isEmpty
+            ? _userDao.createFirstUser(name.trim()).then(
+                  (value) => _currentUserDao.loadData(),
+                )
+            : _userDao.create(name.trim()),
       );
 
   Future<void> renameUser(int id, String newName) => validateAndRun(

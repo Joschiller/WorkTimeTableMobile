@@ -13,6 +13,7 @@ import 'package:work_time_table_mobile/services/week_value_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
+import 'package:work_time_table_mobile/utils.dart';
 import 'package:work_time_table_mobile/validate_and_run.dart';
 import 'package:work_time_table_mobile/validator.dart';
 
@@ -36,6 +37,11 @@ class TimeInputService extends StreamableService {
             )));
     prepareListen(_dayValueDao.stream, _dayValueStream);
     prepareListen(_weekValueDao.stream, _weekValueStream);
+    runContextDependentAction(
+      _userService.currentUserStream.state,
+      () => _loadData(null),
+      (user) => _loadData(user.id),
+    );
   }
 
   final UserService _userService;
@@ -98,18 +104,12 @@ class TimeInputService extends StreamableService {
 
               // work time respects manatory time start
               if (day.firstHalfMode == DayMode.workDay &&
-                  (day.workTimeStart >
-                      (settingForDay.mandatoryWorkTimeStart ??
-                          weekSettings.globalWeekDaySetting
-                              .defaultMandatoryWorkTimeStart))) {
+                  (day.workTimeStart > settingForDay.mandatoryWorkTimeStart)) {
                 return true;
               }
               // work time respects manatory time end
               if (day.secondHalfMode == DayMode.workDay &&
-                  (day.workTimeEnd <
-                      (settingForDay.mandatoryWorkTimeEnd ??
-                          weekSettings.globalWeekDaySetting
-                              .defaultMandatoryWorkTimeEnd))) {
+                  (day.workTimeEnd < settingForDay.mandatoryWorkTimeEnd)) {
                 return true;
               }
               return false;

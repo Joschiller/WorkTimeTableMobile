@@ -13,10 +13,6 @@ T validateAndRun<T>(
   return action();
 }
 
-extension DateTimeToDay on DateTime {
-  DateTime toDay() => DateTime(year, month, day);
-}
-
 /// Run an action after validating its preconditions.
 /// Use this method, if any of the preconditions contains async calls. - Prefer to use [validateAndRun].
 Future<T> validateAndRunAsync<T>(

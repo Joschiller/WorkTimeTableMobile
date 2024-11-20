@@ -22,10 +22,6 @@ import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/services/global_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 
-// TODO:
-// - transactions do not work properly
-// - deleting users throws error - also due to the transaction problem
-
 void displayAppError(AppError error) =>
     MyApp.scaffoldMessengerKey.currentState?.showSnackBar(
       SnackBar(content: Text(error.displayText)),
@@ -72,20 +68,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => ErrorCubit()),
           BlocProvider(
-              create: (_) => CurrentUserCubit(UserService(
-                    context.read<UserDao>(),
-                    context.read<CurrentUserDao>(),
-                  ))),
+            create: (_) => ErrorCubit(),
+            lazy: false,
+          ),
           BlocProvider(
-              create: (_) => GlobalSettingCubit(GlobalSettingService(
-                    UserService(
-                      context.read<UserDao>(),
-                      context.read<CurrentUserDao>(),
-                    ),
-                    context.read<GlobalSettingDao>(),
-                  ))),
+            create: (_) => CurrentUserCubit(UserService(
+              context.read<UserDao>(),
+              context.read<CurrentUserDao>(),
+            )),
+            lazy: false,
+          ),
+          BlocProvider(
+            create: (_) => GlobalSettingCubit(GlobalSettingService(
+              UserService(
+                context.read<UserDao>(),
+                context.read<CurrentUserDao>(),
+              ),
+              context.read<GlobalSettingDao>(),
+            )),
+            lazy: false,
+          ),
         ],
         child: MaterialApp.router(
           title: appName,

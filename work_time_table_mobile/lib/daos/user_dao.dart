@@ -16,17 +16,24 @@ class UserDao {
     _stream.emitReload(users.map((u) => u.toAppModel()).toList());
   }
 
+  Future<void> createFirstUser(String name) async {
+    final created = await prisma.user.create(
+        data: PrismaUnion.$1(
+      UserCreateInput(
+        name: name,
+        currentlySelected: true,
+        targetWorkTimePerWeek: 0,
+      ),
+    ));
+    _stream.emitInsertion([created.toAppModel()]);
+  }
+
   Future<void> create(String name) async {
     final created = await prisma.user.create(
         data: PrismaUnion.$1(
       UserCreateInput(
         name: name,
         currentlySelected: false,
-        defaultWorkTimeStart: 0,
-        defaultWorkTimeEnd: 0,
-        defaultMandatoryWorkTimeStart: 0,
-        defaultMandatoryWorkTimeEnd: 0,
-        defaultBreakDuration: 0,
         targetWorkTimePerWeek: 0,
       ),
     ));
