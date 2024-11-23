@@ -28,33 +28,34 @@ class UserService extends StreamableService {
   ListStream<User> get userStream => _userStream;
   ContextDependentStream<User> get currentUserStream => _currentUserStream;
 
-  Validator _getUserKnownValidator(int id) => Validator([
-        () => !_userDao.stream.state.any((u) => u.id == id)
-            ? AppError.service_user_unknownUser
-            : null,
-      ]);
-
-  static Validator getUserNameValidator(
-    String name,
-    List<String> occupiedNames,
-  ) =>
+  static final Validator<({int id, UserDao userDao})> _userKnownValidator =
       Validator([
-        () => name.isBlank ? AppError.service_user_invalidBlankName : null,
-        () => occupiedNames.contains(name.trim())
-            ? AppError.service_user_duplicateName
-            : null,
-      ]);
+    (item) => !item.userDao.stream.state.any((u) => u.id == item.id)
+        ? AppError.service_user_unknownUser
+        : null,
+  ]);
 
-  Validator _getUsersDeletableValidator(List<int> idsOfUsersToDelete) =>
-      Validator([
-        () => runContextDependentAction(
-              _currentUserDao.stream.state,
-              () => null,
-              (value) => idsOfUsersToDelete.any((id) => value.id == id)
-                  ? AppError.service_user_forbiddenDeletion
-                  : null,
-            ),
-      ]);
+  static final Validator<({String name, List<String> occupiedNames})>
+      userNameValidator = Validator([
+    (item) => item.name.isBlank ? AppError.service_user_invalidBlankName : null,
+    (item) => item.occupiedNames.contains(item.name.trim())
+        ? AppError.service_user_duplicateName
+        : null,
+  ]);
+
+  static final Validator<
+      ({
+        List<int> idsOfUsersToDelete,
+        CurrentUserDao currentUserDao,
+      })> _usersDeletableValidator = Validator([
+    (item) => runContextDependentAction(
+          item.currentUserDao.stream.state,
+          () => null,
+          (value) => item.idsOfUsersToDelete.any((id) => value.id == id)
+              ? AppError.service_user_forbiddenDeletion
+              : null,
+        ),
+  ]);
 
   Future<void> loadData() async {
     await _userDao.loadData();
@@ -62,12 +63,14 @@ class UserService extends StreamableService {
   }
 
   Future<void> selectUser(int id) => validateAndRun(
-        _getUserKnownValidator(id),
+        _userKnownValidator,
+        (id: id, userDao: _userDao),
         () => _currentUserDao.setSelectedUser(id),
       );
 
   Future<void> addUser(String name) => validateAndRun(
-        getUserNameValidator(
+        userNameValidator,
+        (
           name,
           _userDao.stream.state.map((u) => u.name).toList(),
         ),
@@ -79,23 +82,27 @@ class UserService extends StreamableService {
       );
 
   Future<void> renameUser(int id, String newName) => validateAndRun(
-        _getUserKnownValidator(id) +
-            getUserNameValidator(
-              newName,
-              _userDao.stream.state
-                  .where((u) => u.id != id)
-                  .map((u) => u.name)
-                  .toList(),
-            ),
+        _userKnownValidator.plus(
+          userNameValidator,
+        ),
+        (
+          (id, _userDao),
+          (
+            newName,
+            _userDao.stream.state
+                .where((u) => u.id != id)
+                .map((u) => u.name)
+                .toList(),
+          ),
+        ),
         () => _userDao.renameById(id, newName.trim()),
       );
 
   Future<void> deleteUsers(List<int> ids, bool isConfirmed) => validateAndRun(
-        _getUsersDeletableValidator(ids) +
-            getIsConfirmedValidator(
-              isConfirmed,
-              AppError.service_user_unconfirmedDeletion,
-            ),
+        _usersDeletableValidator.plus(getIsConfirmedValidator(
+          AppError.service_user_unconfirmedDeletion,
+        )),
+        ((ids, _currentUserDao), isConfirmed),
         () => _userDao.deleteByIds(ids),
       );
 }

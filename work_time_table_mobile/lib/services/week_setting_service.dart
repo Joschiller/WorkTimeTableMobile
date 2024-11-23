@@ -29,40 +29,40 @@ class WeekSettingService extends StreamableService {
   final UserService _userService;
   final WeekSettingDao _weekSettingDao;
 
-  static Validator getWeekSettingsValidator(WeekSetting settings) => Validator([
-        // targetWorkTimePerWeek <= SUM(timeEquivalent)
-        () => settings.targetWorkTimePerWeek >
-                (settings.weekDaySettings.values.isEmpty
-                    ? 0
-                    : settings.weekDaySettings.values
-                        .map((s) => s.timeEquivalent)
-                        .reduce((a, b) => a + b))
-            ? AppError.service_weekSettings_invalidTargetWorktime
-            : null,
-        // each day of week is unique -> technical validation
-        () => settings.weekDaySettings.entries
-                .any((day) => day.key != day.value.dayOfWeek)
-            ? AppError.service_weekSettings_invalid
-            : null,
-        // start <= end -> technical validation
-        () => settings.weekDaySettings.values
-                .any((day) => day.defaultWorkTimeStart > day.defaultWorkTimeEnd)
-            ? AppError.service_weekSettings_invalid
-            : null,
-        () => settings.weekDaySettings.values.any(
-                (day) => day.mandatoryWorkTimeStart > day.mandatoryWorkTimeEnd)
-            ? AppError.service_weekSettings_invalid
-            : null,
-        // default time respects manatory time -> technical validation
-        () => settings.weekDaySettings.values.any(
-                (day) => day.defaultWorkTimeStart > day.mandatoryWorkTimeStart)
-            ? AppError.service_weekSettings_invalid
-            : null,
-        () => settings.weekDaySettings.values
-                .any((day) => day.defaultWorkTimeEnd < day.mandatoryWorkTimeEnd)
-            ? AppError.service_weekSettings_invalid
-            : null,
-      ]);
+  static final Validator<WeekSetting> weekSettingsValidator = Validator([
+    // targetWorkTimePerWeek <= SUM(timeEquivalent)
+    (settings) => settings.targetWorkTimePerWeek >
+            (settings.weekDaySettings.values.isEmpty
+                ? 0
+                : settings.weekDaySettings.values
+                    .map((s) => s.timeEquivalent)
+                    .reduce((a, b) => a + b))
+        ? AppError.service_weekSettings_invalidTargetWorktime
+        : null,
+    // each day of week is unique -> technical validation
+    (settings) => settings.weekDaySettings.entries
+            .any((day) => day.key != day.value.dayOfWeek)
+        ? AppError.service_weekSettings_invalid
+        : null,
+    // start <= end -> technical validation
+    (settings) => settings.weekDaySettings.values
+            .any((day) => day.defaultWorkTimeStart > day.defaultWorkTimeEnd)
+        ? AppError.service_weekSettings_invalid
+        : null,
+    (settings) => settings.weekDaySettings.values
+            .any((day) => day.mandatoryWorkTimeStart > day.mandatoryWorkTimeEnd)
+        ? AppError.service_weekSettings_invalid
+        : null,
+    // default time respects manatory time -> technical validation
+    (settings) => settings.weekDaySettings.values
+            .any((day) => day.defaultWorkTimeStart > day.mandatoryWorkTimeStart)
+        ? AppError.service_weekSettings_invalid
+        : null,
+    (settings) => settings.weekDaySettings.values
+            .any((day) => day.defaultWorkTimeEnd < day.mandatoryWorkTimeEnd)
+        ? AppError.service_weekSettings_invalid
+        : null,
+  ]);
 
   ContextDependentStream<WeekSetting> get weekSettingStream => _stream;
 
@@ -74,7 +74,8 @@ class WeekSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          getWeekSettingsValidator(settings),
+          weekSettingsValidator,
+          settings,
           () => _weekSettingDao.updateByUserId(user.id, settings),
         ),
       );

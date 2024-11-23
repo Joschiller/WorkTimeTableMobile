@@ -1,20 +1,27 @@
 import 'package:work_time_table_mobile/app_error.dart';
 
-class Validator {
-  Validator(this.validations);
+class Validator<T> {
+  const Validator(this.validations);
 
-  final List<AppError? Function()> validations;
+  final List<AppError? Function(T item)> validations;
 
-  operator +(Validator other) => Validator([
+  /// Addition for validators of same type.
+  operator +(Validator<T> other) => Validator([
         ...validations,
         ...other.validations,
       ]);
 
-  bool get isValid => validate() == null;
+  /// Addition for validators of differing type.
+  Validator<({T item1, R item2})> plus<R>(Validator<R> other) => Validator([
+        ...validations.map((e) => (item) => e(item.item1)),
+        ...other.validations.map((e) => (item) => e(item.item2)),
+      ]);
 
-  AppError? validate() {
+  bool isValid(T item) => validate(item) == null;
+
+  AppError? validate(T item) {
     for (final v in validations) {
-      final err = v();
+      final err = v(item);
       if (err != null) {
         return err;
       }
@@ -22,25 +29,33 @@ class Validator {
     return null;
   }
 
-  List<AppError> validateAll() =>
-      validations.map((v) => v()).whereType<AppError>().toList();
+  List<AppError> validateAll(T item) =>
+      validations.map((v) => v(item)).whereType<AppError>().toList();
 }
 
-class AsyncValidator {
-  AsyncValidator(this.validations);
+class AsyncValidator<T> {
+  const AsyncValidator(this.validations);
 
-  final List<Future<AppError?> Function()> validations;
+  final List<Future<AppError?> Function(T item)> validations;
 
-  operator +(AsyncValidator other) => AsyncValidator([
+  /// Addition for validators of same type.
+  operator +(AsyncValidator<T> other) => AsyncValidator([
         ...validations,
         ...other.validations,
       ]);
 
-  Future<bool> get isValid async => (await validate()) == null;
+  /// Addition for validators of differing type.
+  AsyncValidator<({T item1, R item2})> plus<R>(AsyncValidator<R> other) =>
+      AsyncValidator([
+        ...validations.map((e) => (item) async => e(item.item1)),
+        ...other.validations.map((e) => (item) async => e(item.item2)),
+      ]);
 
-  Future<AppError?> validate() async {
+  Future<bool> isValid(T item) async => (await validate(item)) == null;
+
+  Future<AppError?> validate(T item) async {
     for (final v in validations) {
-      final err = await v();
+      final err = await v(item);
       if (err != null) {
         return err;
       }
@@ -49,10 +64,10 @@ class AsyncValidator {
     return null;
   }
 
-  Future<List<AppError>> validateAll() async {
+  Future<List<AppError>> validateAll(T item) async {
     final errors = <AppError>[];
     for (final v in validations) {
-      final err = await v();
+      final err = await v(item);
       if (err != null) {
         errors.add(err);
       }
@@ -62,9 +77,8 @@ class AsyncValidator {
 }
 
 Validator getIsConfirmedValidator(
-  bool isConfirmed,
   AppError ifNotConfirmedError,
 ) =>
-    Validator([
-      () => !isConfirmed ? ifNotConfirmedError : null,
+    Validator<bool>([
+      (isConfirmed) => !isConfirmed ? ifNotConfirmedError : null,
     ]);

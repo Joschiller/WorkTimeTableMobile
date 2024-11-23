@@ -68,12 +68,13 @@ class _WeekSettingEditorState extends State<WeekSettingEditor> {
     WeekSetting weekSettingValue,
     List<DayOfWeek> activeWorkDays,
   ) {
-    final validationResult = WeekSettingService.getWeekSettingsValidator(
+    final validationResult =
+        WeekSettingService.weekSettingsValidator.validateAll(
       _buildValidatableWeekSettingValue(
         weekSettingValue,
         activeWorkDays,
       ),
-    ).validateAll();
+    );
     setState(() {
       _currentWeekSettingValue = weekSettingValue;
       _currentActiveWorkDays = activeWorkDays;

@@ -42,10 +42,11 @@ class _UserInputDialogState extends State<UserInputDialog> {
   }
 
   void _validate() {
-    setState(() => _validationErrors = UserService.getUserNameValidator(
-          _textEditingController.text,
-          widget.occupiedNames,
-        ).validateAll());
+    setState(
+        () => _validationErrors = UserService.userNameValidator.validateAll((
+              name: _textEditingController.text,
+              occupiedNames: widget.occupiedNames,
+            )));
   }
 
   void _onConfirm() {

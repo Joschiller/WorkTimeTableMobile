@@ -31,27 +31,27 @@ class EventSettingService extends StreamableService {
   final UserService _userService;
   final EventSettingDao _eventSettingDao;
 
-  Validator _getEventValidator(EventSetting event) => Validator([
-        // start <= end
-        () => event.startDate.isAfter(event.endDate)
-            ? AppError.service_eventSettings_invalid
-            : null,
-        // non-empty event
-        () => event.startDate == event.endDate &&
-                event.startIsHalfDay &&
-                event.endIsHalfDay
-            ? AppError.service_eventSettings_invalid
-            : null,
-        // repetitions valid
-        () => event.dayBasedRepetitionRules
-                .any((rule) => !_isDayBasedRepetitionRuleValid(rule))
-            ? AppError.service_eventSettings_invalid
-            : null,
-        () => event.monthBasedRepetitionRules
-                .any((rule) => !_isMonthBasedRepetitionRuleValid(rule))
-            ? AppError.service_eventSettings_invalid
-            : null,
-      ]);
+  static final Validator<EventSetting> _eventValidator = Validator([
+    // start <= end
+    (event) => event.startDate.isAfter(event.endDate)
+        ? AppError.service_eventSettings_invalid
+        : null,
+    // non-empty event
+    (event) => event.startDate == event.endDate &&
+            event.startIsHalfDay &&
+            event.endIsHalfDay
+        ? AppError.service_eventSettings_invalid
+        : null,
+    // repetitions valid
+    (event) => event.dayBasedRepetitionRules
+            .any((rule) => !_isDayBasedRepetitionRuleValid(rule))
+        ? AppError.service_eventSettings_invalid
+        : null,
+    (event) => event.monthBasedRepetitionRules
+            .any((rule) => !_isMonthBasedRepetitionRuleValid(rule))
+        ? AppError.service_eventSettings_invalid
+        : null,
+  ]);
 
   ContextDependentListStream<EventSetting> get eventSettingStream => _stream;
 
@@ -62,16 +62,17 @@ class EventSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          _getEventValidator(event),
+          _eventValidator,
+          event,
           () => _eventSettingDao.create(user.id, event),
         ),
       );
 
   Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun(
       getIsConfirmedValidator(
-        isConfirmed,
         AppError.service_eventSettings_unconfirmedDeletion,
       ),
+      isConfirmed,
       () => _eventSettingDao.deleteById(id));
 
   @override
