@@ -14,7 +14,8 @@ part 'routes.g.dart';
   TypedGoRoute<SettingsScreenRoute>(path: 'settings'),
   TypedGoRoute<WeekSettingScreenRoute>(path: 'weekSetting'),
   TypedGoRoute<EventSettingScreenRoute>(path: 'eventSetting'),
-  TypedGoRoute<EditEventSettingScreenRoute>(path: 'eventSettingEdit'),
+  TypedGoRoute<AddEventSettingScreenRoute>(path: 'eventSettingEdit'),
+  TypedGoRoute<EditEventSettingScreenRoute>(path: 'eventSettingEdit/:eventId'),
 ])
 @immutable
 class TimeInputScreenRoute extends GoRouteData {
@@ -57,8 +58,18 @@ class EventSettingScreenRoute extends GoRouteData {
 }
 
 @immutable
+class AddEventSettingScreenRoute extends GoRouteData {
+  const AddEventSettingScreenRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const EditEventSettingScreen(eventId: null);
+  }
+}
+
+@immutable
 class EditEventSettingScreenRoute extends GoRouteData {
-  final int? eventId;
+  final int eventId;
 
   const EditEventSettingScreenRoute({
     required this.eventId,
