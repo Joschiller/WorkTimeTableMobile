@@ -60,6 +60,8 @@ Future<void> main() async {
   ));
 }
 
+final router = GoRouter(routes: $appRoutes);
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -98,7 +100,7 @@ class MyApp extends StatelessWidget {
             buttonTheme: buttonTheme,
             cardTheme: cardTheme,
           ),
-          routerConfig: GoRouter(routes: $appRoutes),
+          routerConfig: router,
           scaffoldMessengerKey: scaffoldMessengerKey,
         ),
       );
