@@ -32,11 +32,58 @@ class MonthBasedRepetitionRule {
 
   @override
   bool operator ==(Object other) =>
-      other is MonthBasedRepetitionRule &&
-      repeatAfterMonths == other.repeatAfterMonths &&
-      dayIndex == other.dayIndex &&
-      weekIndex == other.weekIndex &&
-      countFromEnd == other.countFromEnd;
+      (other is MonthBasedRepetitionRuleBase &&
+          dayIndex == other.dayIndex &&
+          weekIndex == other.weekIndex &&
+          countFromEnd == other.countFromEnd) ||
+      (other is MonthBasedRepetitionRule &&
+          repeatAfterMonths == other.repeatAfterMonths &&
+          dayIndex == other.dayIndex &&
+          weekIndex == other.weekIndex &&
+          countFromEnd == other.countFromEnd);
+
+  MonthBasedRepetitionRule withRepeatAfterMonths(int repeatAfterMonths) =>
+      MonthBasedRepetitionRule(
+        repeatAfterMonths: repeatAfterMonths,
+        dayIndex: dayIndex,
+        weekIndex: weekIndex,
+        countFromEnd: countFromEnd,
+      );
+}
+
+class MonthBasedRepetitionRuleBase {
+  final int dayIndex;
+  final int? weekIndex;
+  final bool countFromEnd;
+
+  MonthBasedRepetitionRuleBase({
+    required this.dayIndex,
+    required this.weekIndex,
+    required this.countFromEnd,
+  });
+
+  String toDisplayString() => (weekIndex != null)
+      ? countFromEnd
+          ? '${weekIndex! > 0 ? '$weekIndex. to ' : ''}last ${DayOfWeek.values[dayIndex].name} in month'
+          : '${weekIndex! + 1}. ${DayOfWeek.values[dayIndex].name} in month'
+      : countFromEnd
+          ? '${dayIndex > 0 ? '$dayIndex. to ' : ''}last day of month'
+          : '${dayIndex + 1}. day of month';
+
+  @override
+  int get hashCode =>
+      (dayIndex + 100 * (weekIndex ?? 5)) * (countFromEnd ? -1 : 1);
+
+  @override
+  bool operator ==(Object other) =>
+      (other is MonthBasedRepetitionRuleBase &&
+          dayIndex == other.dayIndex &&
+          weekIndex == other.weekIndex &&
+          countFromEnd == other.countFromEnd) ||
+      (other is MonthBasedRepetitionRule &&
+          dayIndex == other.dayIndex &&
+          weekIndex == other.weekIndex &&
+          countFromEnd == other.countFromEnd);
 
   MonthBasedRepetitionRule withRepeatAfterMonths(int repeatAfterMonths) =>
       MonthBasedRepetitionRule(
