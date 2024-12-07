@@ -135,31 +135,34 @@ class EventService {
       end: DateTime(targetMonth.year, targetMonth.month + 1),
     ).duration.inDays;
 
-    final weekIndex = repetition.weekIndex;
+    final weekIndex = repetition.monthBasedRepetitionRuleBase.weekIndex;
 
     if (weekIndex == null) {
       return DateTime(
         targetMonth.year,
         targetMonth.month,
-        repetition.countFromEnd
-            ? countOfDaysInMonth - repetition.dayIndex
-            : repetition.dayIndex + 1,
+        repetition.monthBasedRepetitionRuleBase.countFromEnd
+            ? countOfDaysInMonth -
+                repetition.monthBasedRepetitionRuleBase.dayIndex
+            : repetition.monthBasedRepetitionRuleBase.dayIndex + 1,
       );
     } else {
       final instancesOfDayOfWeek = <DateTime>[];
       for (var i = 0; i < countOfDaysInMonth; i++) {
         final dayToTest = targetMonth.add(Duration(days: i));
         if (DayOfWeek.fromDateTime(dayToTest) ==
-                DayOfWeek.values[repetition.dayIndex]
+                DayOfWeek
+                    .values[repetition.monthBasedRepetitionRuleBase.dayIndex]
             // check hours for some special cases (e.g. searching for sundays in 10/2024)
             &&
             dayToTest.hour == 0) {
           instancesOfDayOfWeek.add(dayToTest);
         }
       }
-      return instancesOfDayOfWeek[repetition.countFromEnd
-          ? instancesOfDayOfWeek.length - weekIndex - 1
-          : weekIndex];
+      return instancesOfDayOfWeek[
+          repetition.monthBasedRepetitionRuleBase.countFromEnd
+              ? instancesOfDayOfWeek.length - weekIndex - 1
+              : weekIndex];
     }
   }
 

@@ -88,20 +88,22 @@ bool _isMonthBasedRepetitionRuleValid(MonthBasedRepetitionRule rule) {
   if (rule.repeatAfterMonths <= 0) {
     return false;
   }
-  if (rule.dayIndex < 0) {
+  if (rule.monthBasedRepetitionRuleBase.dayIndex < 0) {
     return false;
   }
-  if ((rule.weekIndex ?? 0) < 0) {
+  if ((rule.monthBasedRepetitionRuleBase.weekIndex ?? 0) < 0) {
     return false;
   }
 
-  if ((rule.weekIndex ?? 0) >= 4) {
+  if ((rule.monthBasedRepetitionRuleBase.weekIndex ?? 0) >= 4) {
     return false;
   }
-  if (rule.weekIndex != null && rule.dayIndex >= 7) {
+  if (rule.monthBasedRepetitionRuleBase.weekIndex != null &&
+      rule.monthBasedRepetitionRuleBase.dayIndex >= 7) {
     return false;
   }
-  if (rule.weekIndex == null && rule.dayIndex >= 28) {
+  if (rule.monthBasedRepetitionRuleBase.weekIndex == null &&
+      rule.monthBasedRepetitionRuleBase.dayIndex >= 28) {
     return false;
   }
 

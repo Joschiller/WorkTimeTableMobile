@@ -53,11 +53,18 @@ class EventSettingDao {
                             .map((rule) =>
                                 MonthBasedRepetitionRuleCreateManyEventInput(
                                   repeatAfterMonths: rule.repeatAfterMonths,
-                                  dayIndex: rule.dayIndex,
-                                  weekIndex: rule.weekIndex != null
-                                      ? PrismaUnion.$1(rule.weekIndex!)
+                                  dayIndex: rule
+                                      .monthBasedRepetitionRuleBase.dayIndex,
+                                  weekIndex: rule.monthBasedRepetitionRuleBase
+                                              .weekIndex !=
+                                          null
+                                      ? PrismaUnion.$1(rule
+                                          .monthBasedRepetitionRuleBase
+                                          .weekIndex!)
                                       : const PrismaUnion.$2(PrismaNull()),
-                                  countFromEnd: rule.countFromEnd,
+                                  countFromEnd: rule
+                                      .monthBasedRepetitionRuleBase
+                                      .countFromEnd,
                                 ))))),
         user: UserCreateNestedOneWithoutEventSettingInput(
           connect: UserWhereUniqueInput(id: userId),
