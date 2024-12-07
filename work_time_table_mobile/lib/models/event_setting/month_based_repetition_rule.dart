@@ -1,3 +1,5 @@
+import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
+
 class MonthBasedRepetitionRule {
   final int repeatAfterMonths;
 
@@ -14,4 +16,12 @@ class MonthBasedRepetitionRule {
     required this.weekIndex,
     required this.countFromEnd,
   });
+
+  String toDisplayString() => (weekIndex != null)
+      ? countFromEnd
+          ? '${weekIndex! > 0 ? '$weekIndex. to ' : ''}last ${DayOfWeek.values[dayIndex].name} in month'
+          : '${weekIndex! + 1}. ${DayOfWeek.values[dayIndex].name} in month'
+      : countFromEnd
+          ? '${dayIndex > 0 ? '$dayIndex. to ' : ''}last day of month'
+          : '${dayIndex + 1}. day of month';
 }
