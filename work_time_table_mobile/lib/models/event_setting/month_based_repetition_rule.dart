@@ -37,4 +37,12 @@ class MonthBasedRepetitionRule {
       dayIndex == other.dayIndex &&
       weekIndex == other.weekIndex &&
       countFromEnd == other.countFromEnd;
+
+  MonthBasedRepetitionRule withRepeatAfterMonths(int repeatAfterMonths) =>
+      MonthBasedRepetitionRule(
+        repeatAfterMonths: repeatAfterMonths,
+        dayIndex: dayIndex,
+        weekIndex: weekIndex,
+        countFromEnd: countFromEnd,
+      );
 }
