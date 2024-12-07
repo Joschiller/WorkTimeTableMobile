@@ -170,22 +170,24 @@ class _EventRepetitionInputState extends State<EventRepetitionInput> {
                 Expanded(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: widget.availableMonthBasedRepetitionRules
-                        .map((e) => RadioListTile(
-                              title: Text(e.toDisplayString()),
-                              value: e,
-                              groupValue: monthBasedRepetitionRules.firstOrNull,
-                              onChanged: (newValue) {
-                                if (monthBasedRepetitionRules.first !=
-                                    newValue) {
-                                  onChange([], [
-                                    e.withRepeatAfterMonths(
-                                        int.parse(textEditingController.text))
-                                  ]);
-                                }
-                              },
-                            ))
-                        .toList(),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('on each ...'),
+                      ...widget.availableMonthBasedRepetitionRules.map((e) =>
+                          RadioListTile(
+                            title: Text(e.toDisplayString()),
+                            value: e,
+                            groupValue: monthBasedRepetitionRules.firstOrNull,
+                            onChanged: (newValue) {
+                              if (monthBasedRepetitionRules.first != newValue) {
+                                onChange([], [
+                                  e.withRepeatAfterMonths(
+                                      int.parse(textEditingController.text))
+                                ]);
+                              }
+                            },
+                          )),
+                    ],
                   ),
                 ),
               ],
