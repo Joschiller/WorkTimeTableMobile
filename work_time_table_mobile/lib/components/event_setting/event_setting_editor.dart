@@ -46,11 +46,6 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
     }
   }
 
-  int getCountOfDaysInStartMonth() => DateTimeRange(
-        start: DateTime(_value.startDate.year, _value.startDate.month),
-        end: DateTime(_value.startDate.year, _value.startDate.month + 1),
-      ).duration.inDays;
-
   @override
   Widget build(BuildContext context) => Column(
         children: [
@@ -137,10 +132,12 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                   weekIndex: null,
                   countFromEnd: false,
                 ),
-              if (getCountOfDaysInStartMonth() - _value.startDate.day < 28)
+              if (_value.startDate.countOfDayInMonth - _value.startDate.day <
+                  28)
                 MonthBasedRepetitionRuleBase(
                   // Xth to last day in month
-                  dayIndex: getCountOfDaysInStartMonth() - _value.startDate.day,
+                  dayIndex:
+                      _value.startDate.countOfDayInMonth - _value.startDate.day,
                   weekIndex: null,
                   countFromEnd: true,
                 ),
@@ -151,16 +148,17 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                   weekIndex: (_value.startDate.day / 7).ceil() - 1,
                   countFromEnd: false,
                 ),
-              if (((getCountOfDaysInStartMonth() - _value.startDate.day) / 7)
+              if (((_value.startDate.countOfDayInMonth - _value.startDate.day) /
+                          7)
                       .floor() <
                   4)
                 MonthBasedRepetitionRuleBase(
                   // Xth to last day of week in month
                   dayIndex: DayOfWeek.fromDateTime(_value.startDate).index,
-                  weekIndex:
-                      ((getCountOfDaysInStartMonth() - _value.startDate.day) /
-                              7)
-                          .floor(),
+                  weekIndex: ((_value.startDate.countOfDayInMonth -
+                              _value.startDate.day) /
+                          7)
+                      .floor(),
                   countFromEnd: true,
                 ),
             ],

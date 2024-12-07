@@ -21,3 +21,10 @@ extension StringToCapitalized on String {
   String get capitalized =>
       length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
 }
+
+extension DateTimeCounter on DateTime {
+  int get countOfDayInMonth => DateTimeRange(
+        start: DateTime(year, month),
+        end: DateTime(year, month + 1),
+      ).duration.inDays;
+}

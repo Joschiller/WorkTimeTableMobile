@@ -3,6 +3,7 @@ import 'package:work_time_table_mobile/models/event_setting/day_based_repetition
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 typedef EventRangeCheckResult = ({bool firstHalf, bool secondHalf});
 
@@ -130,10 +131,7 @@ class EventService {
       currentDate.year,
       currentDate.month + repetition.repeatAfterMonths,
     );
-    final countOfDaysInMonth = DateTimeRange(
-      start: targetMonth,
-      end: DateTime(targetMonth.year, targetMonth.month + 1),
-    ).duration.inDays;
+    final countOfDaysInMonth = targetMonth.countOfDayInMonth;
 
     final weekIndex = repetition.monthBasedRepetitionRuleBase.weekIndex;
 
