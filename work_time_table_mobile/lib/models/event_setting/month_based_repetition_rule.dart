@@ -24,4 +24,17 @@ class MonthBasedRepetitionRule {
       : countFromEnd
           ? '${dayIndex > 0 ? '$dayIndex. to ' : ''}last day of month'
           : '${dayIndex + 1}. day of month';
+
+  @override
+  int get hashCode =>
+      (dayIndex + 100 * (weekIndex ?? 5) + 1000 * repeatAfterMonths) *
+      (countFromEnd ? -1 : 1);
+
+  @override
+  bool operator ==(Object other) =>
+      other is MonthBasedRepetitionRule &&
+      repeatAfterMonths == other.repeatAfterMonths &&
+      dayIndex == other.dayIndex &&
+      weekIndex == other.weekIndex &&
+      countFromEnd == other.countFromEnd;
 }
