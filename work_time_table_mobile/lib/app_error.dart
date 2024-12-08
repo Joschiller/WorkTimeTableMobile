@@ -18,6 +18,7 @@ enum AppError {
   service_eventSettings_invalid('The event settings must be valid.'),
   service_eventSettings_unconfirmedDeletion(
       'Deleting the event was not confirmed.'),
+  service_eventSettings_unknown('There exists no event with that given id.'),
 
   service_timeInput_invalid('The inserted values are invalid.'),
   service_timeInput_alreadyClosed('The week is already finished.'),

@@ -53,6 +53,17 @@ class EventSettingService extends StreamableService {
             : null,
       ]);
 
+  Validator _getBelongsToUserValidator(int eventId) => Validator([
+        () => switch (_eventSettingDao.stream.state) {
+              NoContextValue<List<EventSetting>>() =>
+                AppError.service_noUserLoaded,
+              ContextValue<List<EventSetting>>(value: var value) =>
+                !value.any((e) => e.id == eventId)
+                    ? AppError.service_eventSettings_unknown
+                    : null,
+            }
+      ]);
+
   ContextDependentListStream<EventSetting> get eventSettingStream => _stream;
 
   Future<void> _loadData(int? userId) =>
@@ -71,16 +82,17 @@ class EventSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          getEventValidator(event),
+          _getBelongsToUserValidator(event.id) + getEventValidator(event),
           () => _eventSettingDao.update(user.id, event),
         ),
       );
 
   Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun(
-      getIsConfirmedValidator(
-        isConfirmed,
-        AppError.service_eventSettings_unconfirmedDeletion,
-      ),
+      _getBelongsToUserValidator(id) +
+          getIsConfirmedValidator(
+            isConfirmed,
+            AppError.service_eventSettings_unconfirmedDeletion,
+          ),
       () => _eventSettingDao.deleteById(id));
 
   @override
