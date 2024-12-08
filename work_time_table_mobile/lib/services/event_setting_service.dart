@@ -67,6 +67,15 @@ class EventSettingService extends StreamableService {
         ),
       );
 
+  Future<void> updateEvent(EventSetting event) => runContextDependentAction(
+        _userService.currentUserStream.state,
+        () async => Future.error(AppError.service_noUserLoaded),
+        (user) => validateAndRun(
+          getEventValidator(event),
+          () => _eventSettingDao.update(user.id, event),
+        ),
+      );
+
   Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun(
       getIsConfirmedValidator(
         isConfirmed,

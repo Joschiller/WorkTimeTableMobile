@@ -1,4 +1,6 @@
 import 'package:orm/orm.dart';
+import 'package:work_time_table_mobile/_generated_prisma_client/model.dart'
+    as prisma_model;
 import 'package:work_time_table_mobile/_generated_prisma_client/prisma.dart';
 import 'package:work_time_table_mobile/daos/mapper/event_setting_mapper.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
@@ -76,6 +78,67 @@ class EventSettingDao {
       ),
     );
     _stream.emitInsertion([created.toAppModel()]);
+  }
+
+  Future<void> update(int userId, EventSetting event) async {
+    prisma_model.EventSetting? created;
+    await prisma.$transaction((tx) async {
+      await tx.eventSetting.delete(
+        where: EventSettingWhereUniqueInput(id: event.id),
+      );
+      created = await tx.eventSetting.create(
+        data: PrismaUnion.$1(EventSettingCreateInput(
+          type: event.eventType.name,
+          title: event.title != null
+              ? PrismaUnion.$1(event.title!)
+              : const PrismaUnion.$2(PrismaNull()),
+          startDate: event.startDate,
+          endDate: event.endDate,
+          startIsHalfDay: event.startIsHalfDay,
+          endIsHalfDay: event.endIsHalfDay,
+          dayBasedRepetitionRule:
+              DayBasedRepetitionRuleCreateNestedManyWithoutEventInput(
+                  createMany:
+                      DayBasedRepetitionRuleCreateManyEventInputEnvelope(
+                          data: PrismaUnion.$2(event.dayBasedRepetitionRules
+                              .map((rule) =>
+                                  DayBasedRepetitionRuleCreateManyEventInput(
+                                    repeatAfterDays: rule.repeatAfterDays,
+                                  ))))),
+          monthBasedRepetitionRule:
+              MonthBasedRepetitionRuleCreateNestedManyWithoutEventInput(
+                  createMany:
+                      MonthBasedRepetitionRuleCreateManyEventInputEnvelope(
+                          data: PrismaUnion.$2(event.monthBasedRepetitionRules
+                              .map((rule) =>
+                                  MonthBasedRepetitionRuleCreateManyEventInput(
+                                    repeatAfterMonths: rule.repeatAfterMonths,
+                                    dayIndex: rule
+                                        .monthBasedRepetitionRuleBase.dayIndex,
+                                    weekIndex: rule.monthBasedRepetitionRuleBase
+                                                .weekIndex !=
+                                            null
+                                        ? PrismaUnion.$1(rule
+                                            .monthBasedRepetitionRuleBase
+                                            .weekIndex!)
+                                        : const PrismaUnion.$2(PrismaNull()),
+                                    countFromEnd: rule
+                                        .monthBasedRepetitionRuleBase
+                                        .countFromEnd,
+                                  ))))),
+          user: UserCreateNestedOneWithoutEventSettingInput(
+            connect: UserWhereUniqueInput(id: userId),
+          ),
+        )),
+        include: const EventSettingInclude(
+          dayBasedRepetitionRule: PrismaUnion.$1(true),
+          monthBasedRepetitionRule: PrismaUnion.$1(true),
+        ),
+      );
+    });
+    if (created != null) {
+      _stream.emitUpdate([created!.toAppModel()]);
+    }
   }
 
   Future<void> deleteById(int id) async {

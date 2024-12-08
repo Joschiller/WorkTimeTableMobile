@@ -17,6 +17,9 @@ class EventSettingCubit extends ContextDependentCubit<List<EventSetting>> {
   Future<void> addEvent(EventSetting event) =>
       _eventSettingService.addEvent(event);
 
+  Future<void> updateEvent(EventSetting event) =>
+      _eventSettingService.updateEvent(event);
+
   Future<void> deleteEvent(int id, bool isConfirmed) =>
       _eventSettingService.deleteEvent(id, isConfirmed);
 
