@@ -39,26 +39,32 @@ class EventTimeSpanInput extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: DateInputButton(
-                  value: startDate,
-                  max: endDate,
-                  onChange: (value) => onChange(
-                    value,
-                    endDate,
-                    startIsHalfDay,
-                    endIsHalfDay,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: DateInputButton(
+                    value: startDate,
+                    max: endDate,
+                    onChange: (value) => onChange(
+                      value,
+                      endDate,
+                      startIsHalfDay,
+                      endIsHalfDay,
+                    ),
                   ),
                 ),
               ),
               Expanded(
-                child: DateInputButton(
-                  value: endDate,
-                  min: startDate,
-                  onChange: (value) => onChange(
-                    startDate,
-                    value,
-                    startIsHalfDay,
-                    endIsHalfDay,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: DateInputButton(
+                    value: endDate,
+                    min: startDate,
+                    onChange: (value) => onChange(
+                      startDate,
+                      value,
+                      startIsHalfDay,
+                      endIsHalfDay,
+                    ),
                   ),
                 ),
               ),

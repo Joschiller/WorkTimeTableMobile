@@ -81,66 +81,100 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                 children: [
                   Row(
                     children: [
-                      EventTypeSelector(
-                        eventType: _value.eventType,
-                        onChange: (eventType) => _updateValue(EventSetting(
-                          id: _value.id,
-                          eventType: eventType,
-                          title: _value.title,
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  'Event Type:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                EventTypeSelector(
+                                  eventType: _value.eventType,
+                                  onChange: (eventType) =>
+                                      _updateValue(EventSetting(
+                                    id: _value.id,
+                                    eventType: eventType,
+                                    title: _value.title,
+                                    startDate: _value.startDate,
+                                    endDate: _value.endDate,
+                                    startIsHalfDay: _value.startIsHalfDay,
+                                    endIsHalfDay: _value.endIsHalfDay,
+                                    dayBasedRepetitionRules:
+                                        _value.dayBasedRepetitionRules,
+                                    monthBasedRepetitionRules:
+                                        _value.monthBasedRepetitionRules,
+                                  )),
+                                ),
+                              ],
+                            ),
+                            TextField(
+                              decoration: const InputDecoration(
+                                label: Text('Title (optional)'),
+                              ),
+                              keyboardType: TextInputType.text,
+                              maxLines: 1,
+                              controller: textEditingController,
+                              onChanged: (value) => _updateValue(EventSetting(
+                                id: _value.id,
+                                eventType: _value.eventType,
+                                title: value,
+                                startDate: _value.startDate,
+                                endDate: _value.endDate,
+                                startIsHalfDay: _value.startIsHalfDay,
+                                endIsHalfDay: _value.endIsHalfDay,
+                                dayBasedRepetitionRules:
+                                    _value.dayBasedRepetitionRules,
+                                monthBasedRepetitionRules:
+                                    _value.monthBasedRepetitionRules,
+                              )),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: EventTimeSpanInput(
                           startDate: _value.startDate,
                           endDate: _value.endDate,
                           startIsHalfDay: _value.startIsHalfDay,
                           endIsHalfDay: _value.endIsHalfDay,
-                          dayBasedRepetitionRules:
-                              _value.dayBasedRepetitionRules,
-                          monthBasedRepetitionRules:
-                              _value.monthBasedRepetitionRules,
-                        )),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            label: Text('Title (optional)'),
-                          ),
-                          keyboardType: TextInputType.text,
-                          maxLines: 1,
-                          controller: textEditingController,
-                          onChanged: (value) => _updateValue(EventSetting(
+                          onChange: (startDate, endDate, startIsHalfDay,
+                                  endIsHalfDay) =>
+                              _updateValue(EventSetting(
                             id: _value.id,
                             eventType: _value.eventType,
-                            title: value,
-                            startDate: _value.startDate,
-                            endDate: _value.endDate,
-                            startIsHalfDay: _value.startIsHalfDay,
-                            endIsHalfDay: _value.endIsHalfDay,
+                            title: _value.title,
+                            startDate: startDate,
+                            endDate: endDate,
+                            startIsHalfDay: startIsHalfDay,
+                            endIsHalfDay: endIsHalfDay,
                             dayBasedRepetitionRules:
                                 _value.dayBasedRepetitionRules,
                             monthBasedRepetitionRules:
                                 _value.monthBasedRepetitionRules,
                           )),
                         ),
-                      )
+                      ),
                     ],
                   ),
-                  EventTimeSpanInput(
-                    startDate: _value.startDate,
-                    endDate: _value.endDate,
-                    startIsHalfDay: _value.startIsHalfDay,
-                    endIsHalfDay: _value.endIsHalfDay,
-                    onChange:
-                        (startDate, endDate, startIsHalfDay, endIsHalfDay) =>
-                            _updateValue(EventSetting(
-                      id: _value.id,
-                      eventType: _value.eventType,
-                      title: _value.title,
-                      startDate: startDate,
-                      endDate: endDate,
-                      startIsHalfDay: startIsHalfDay,
-                      endIsHalfDay: endIsHalfDay,
-                      dayBasedRepetitionRules: _value.dayBasedRepetitionRules,
-                      monthBasedRepetitionRules:
-                          _value.monthBasedRepetitionRules,
-                    )),
+                  const Divider(),
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Event Repetition:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   EventRepetitionInput(
                     initialDayBasedRepetitionRules:
