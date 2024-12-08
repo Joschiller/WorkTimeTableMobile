@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
+import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
@@ -16,6 +17,28 @@ extension EventRangeCheckResultOr on EventRangeCheckResult {
 
 class EventService {
   const EventService();
+
+  List<EvaluatedEventSetting> getEventsAffectingDate(
+    DateTime targetDate,
+    List<EventSetting> events,
+  ) =>
+      events
+          .map((event) {
+            final res = doesEventAffectDate(targetDate, event);
+            return EvaluatedEventSetting(
+              eventSetting: event,
+              firstHalf: res.firstHalf,
+              secondHalf: res.secondHalf,
+            );
+          })
+          .where((event) => event.firstHalf || event.secondHalf)
+          .toList();
+
+  EventSetting? getHighestPriorityEventFromList(
+    List<EventSetting> events,
+  ) =>
+      (events..sort((a, b) => a.eventType.priority - b.eventType.priority))
+          .firstOrNull;
 
   EventRangeCheckResult doesEventAffectDate(
     DateTime targetDate,
