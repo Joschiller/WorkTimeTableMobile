@@ -6,7 +6,7 @@ extension IsBlank on String {
 }
 
 extension DateTimeToDay on DateTime {
-  DateTime toDay() => DateTime(year, month, day);
+  DateTime toDay() => DateTime.utc(year, month, day);
 }
 
 extension IntToTimeOfDay on int {
