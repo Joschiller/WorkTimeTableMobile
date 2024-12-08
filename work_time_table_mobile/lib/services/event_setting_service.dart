@@ -31,7 +31,7 @@ class EventSettingService extends StreamableService {
   final UserService _userService;
   final EventSettingDao _eventSettingDao;
 
-  Validator _getEventValidator(EventSetting event) => Validator([
+  static Validator getEventValidator(EventSetting event) => Validator([
         // start <= end
         () => event.startDate.isAfter(event.endDate)
             ? AppError.service_eventSettings_invalid
@@ -62,7 +62,7 @@ class EventSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          _getEventValidator(event),
+          getEventValidator(event),
           () => _eventSettingDao.create(user.id, event),
         ),
       );
