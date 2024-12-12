@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/components/event_setting/circle_decoration.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_type_marker.dart';
+import 'package:work_time_table_mobile/components/event_setting/event_list.dart';
 import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';
@@ -135,28 +135,7 @@ class _EventCalendarState extends State<EventCalendar> {
           Expanded(
             child: ValueListenableBuilder(
               valueListenable: _selectedEvents,
-              builder: (context, value, child) => ListView.builder(
-                itemCount: value.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(value[index].eventSetting.title ?? ''),
-                      const SizedBox(width: 8),
-                      if (!value[index].firstHalf)
-                        const Text('(only afternoon)'),
-                      if (!value[index].secondHalf)
-                        const Text('(only forenoon)'),
-                      const Spacer(),
-                      EventTypeMarker(
-                          eventType: value[index].eventSetting.eventType),
-                    ],
-                  ),
-                ),
-              ),
+              builder: (context, value, child) => EventList(events: value),
             ),
           ),
         ],
