@@ -8,12 +8,14 @@ class CircleDecoration extends Decoration {
     required this.colorRight,
     required this.radius,
     required this.rotation,
+    this.backdropColor,
   });
 
   final Color colorLeft;
   final Color colorRight;
   final double radius;
   final double rotation;
+  final Color? backdropColor;
 
   @override
   BoxPainter createBoxPainter([VoidCallback? onChanged]) =>
@@ -22,6 +24,7 @@ class CircleDecoration extends Decoration {
         colorRight: colorRight,
         radius: radius,
         rotation: rotation,
+        backdropColor: backdropColor,
       );
 }
 
@@ -35,16 +38,38 @@ class _CircleDecorationPainter extends BoxPainter {
     required this.colorRight,
     required this.radius,
     required this.rotation,
+    required this.backdropColor,
   });
 
   final Color colorLeft;
   final Color colorRight;
   final double radius;
   final double rotation;
+  final Color? backdropColor;
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
     final bounds = offset & (configuration.size ?? Size.zero);
+    if (backdropColor != null) {
+      canvas.drawPath(
+        _drawSide(
+          side: CircleSide.left,
+          radius: radius * 1.25,
+          rotation: 0,
+          bounds: bounds,
+        ),
+        Paint()..color = backdropColor!,
+      );
+      canvas.drawPath(
+        _drawSide(
+          side: CircleSide.right,
+          radius: radius * 1.25,
+          rotation: 0,
+          bounds: bounds,
+        ),
+        Paint()..color = backdropColor!,
+      );
+    }
     canvas.drawPath(
       _drawSide(
         side: CircleSide.left,
