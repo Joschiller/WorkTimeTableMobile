@@ -157,6 +157,24 @@ class _EventRepetitionInputState extends State<EventRepetitionInput> {
                       FilteringTextInputFormatter.digitsOnly,
                     ],
                     controller: textEditingController,
+                    onChanged: (value) {
+                      final parsed = int.tryParse(value);
+                      if (parsed == null) return;
+                      onChange(
+                        dayBasedRepetitionRules
+                            .map((e) => DayBasedRepetitionRule(
+                                  repeatAfterDays: parsed,
+                                ))
+                            .toList(),
+                        monthBasedRepetitionRules
+                            .map((e) => MonthBasedRepetitionRule(
+                                  repeatAfterMonths: parsed,
+                                  monthBasedRepetitionRuleBase:
+                                      e.monthBasedRepetitionRuleBase,
+                                ))
+                            .toList(),
+                      );
+                    },
                   ),
                 ),
               ],
