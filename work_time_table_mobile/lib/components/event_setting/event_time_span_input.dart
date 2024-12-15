@@ -10,12 +10,15 @@ class EventTimeSpanInput extends StatelessWidget {
     required this.startIsHalfDay,
     required this.endIsHalfDay,
     required this.onChange,
-  });
+    bool? makeInternallyBounded,
+  }) : makeInternallyBounded = makeInternallyBounded ?? true;
 
   final DateTime startDate;
   final DateTime endDate;
   final bool startIsHalfDay;
   final bool endIsHalfDay;
+
+  final bool makeInternallyBounded;
 
   final void Function(
     DateTime startDate,
@@ -43,10 +46,10 @@ class EventTimeSpanInput extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: DateInputButton(
                     value: startDate,
-                    max: endDate,
+                    max: makeInternallyBounded ? endDate : null,
                     onChange: (value) => onChange(
                       value,
-                      endDate,
+                      endDate.isBefore(value) ? value : endDate,
                       startIsHalfDay,
                       endIsHalfDay,
                     ),
@@ -58,9 +61,9 @@ class EventTimeSpanInput extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: DateInputButton(
                     value: endDate,
-                    min: startDate,
+                    min: makeInternallyBounded ? startDate : null,
                     onChange: (value) => onChange(
-                      startDate,
+                      startDate.isAfter(value) ? value : startDate,
                       value,
                       startIsHalfDay,
                       endIsHalfDay,
