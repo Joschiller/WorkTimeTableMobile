@@ -28,10 +28,10 @@ class DateInputButton extends StatelessWidget {
         ).then((value) {
           if (value != null) {
             onChange(min != null && value.isBefore(min!)
-                ? min!
+                ? DateTime.utc(min!.year, min!.month, min!.day)
                 : max != null && value.isAfter(max!)
-                    ? max!
-                    : value);
+                    ? DateTime.utc(max!.year, max!.month, max!.day)
+                    : DateTime.utc(value.year, value.month, value.day));
           }
         }),
         child: Text(value != null ? dateFormat.format(value!) : 'Select Date'),
