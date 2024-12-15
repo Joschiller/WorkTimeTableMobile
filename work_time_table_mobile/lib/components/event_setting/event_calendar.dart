@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/components/event_setting/circle_decoration.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_list.dart';
+import 'package:work_time_table_mobile/components/event_setting/event_display.dart';
 import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';
@@ -135,7 +135,12 @@ class _EventCalendarState extends State<EventCalendar> {
           Expanded(
             child: ValueListenableBuilder(
               valueListenable: _selectedEvents,
-              builder: (context, value, child) => EventList(events: value),
+              builder: (context, value, child) => ListView.builder(
+                itemCount: value.length,
+                itemBuilder: (context, index) => EventDisplay(
+                  event: value[index],
+                ),
+              ),
             ),
           ),
         ],
