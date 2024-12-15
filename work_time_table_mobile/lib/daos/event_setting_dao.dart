@@ -8,8 +8,14 @@ import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/stream_helpers/dao_deletion_helper.dart';
 
 final _stream = ContextDependentListStream<EventSetting>();
+
+const _include = EventSettingInclude(
+  dayBasedRepetitionRule: PrismaUnion.$1(true),
+  monthBasedRepetitionRule: PrismaUnion.$1(true),
+);
 
 class EventSettingDao {
   const EventSettingDao();
@@ -21,10 +27,7 @@ class EventSettingDao {
     }
     final settings = await prisma.eventSetting.findMany(
       where: EventSettingWhereInput(userId: PrismaUnion.$2(userId)),
-      include: const EventSettingInclude(
-        dayBasedRepetitionRule: PrismaUnion.$1(true),
-        monthBasedRepetitionRule: PrismaUnion.$1(true),
-      ),
+      include: _include,
     );
     _stream
         .emitReload(ContextValue(settings.map((s) => s.toAppModel()).toList()));
@@ -79,10 +82,7 @@ class EventSettingDao {
             connect: UserWhereUniqueInput(id: userId),
           ),
         )),
-        include: const EventSettingInclude(
-          dayBasedRepetitionRule: PrismaUnion.$1(true),
-          monthBasedRepetitionRule: PrismaUnion.$1(true),
-        ),
+        include: _include,
       );
 
   Future<void> create(int userId, EventSetting event) async {
@@ -103,18 +103,15 @@ class EventSettingDao {
     }
   }
 
-  Future<void> deleteById(int id) async {
-    final deleted = await prisma.eventSetting.delete(
-      where: EventSettingWhereUniqueInput(id: id),
-      include: const EventSettingInclude(
-        dayBasedRepetitionRule: PrismaUnion.$1(true),
-        monthBasedRepetitionRule: PrismaUnion.$1(true),
-      ),
-    );
-    if (deleted != null) {
-      _stream.emitDeletion([deleted.toAppModel()]);
-    }
-  }
+  Future<void> deleteByIds(List<int> ids) async =>
+      _stream.emitDeletion((await deleteManyAndReturn(
+              ids,
+              (tx, id) => tx.eventSetting.delete(
+                    where: EventSettingWhereUniqueInput(id: id),
+                    include: _include,
+                  )))
+          .map((d) => d.toAppModel())
+          .toList());
 
   ContextDependentListStream<EventSetting> get stream => _stream;
 }

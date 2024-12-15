@@ -64,6 +64,10 @@ class EventSettingService extends StreamableService {
             }
       ]);
 
+  Validator _getAllBelongsToUserValidator(List<int> eventIds) => eventIds
+      .map((e) => _getBelongsToUserValidator(e))
+      .reduce((a, b) => a + b);
+
   ContextDependentListStream<EventSetting> get eventSettingStream => _stream;
 
   Future<void> _loadData(int? userId) =>
@@ -87,13 +91,13 @@ class EventSettingService extends StreamableService {
         ),
       );
 
-  Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun(
-      _getBelongsToUserValidator(id) +
+  Future<void> deleteEvents(List<int> ids, bool isConfirmed) => validateAndRun(
+      _getAllBelongsToUserValidator(ids) +
           getIsConfirmedValidator(
             isConfirmed,
             AppError.service_eventSettings_unconfirmedDeletion,
           ),
-      () => _eventSettingDao.deleteById(id));
+      () => _eventSettingDao.deleteByIds(ids));
 
   @override
   close() {
