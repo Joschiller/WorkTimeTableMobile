@@ -64,7 +64,7 @@ class _EventCalendarState extends State<EventCalendar> {
   Widget build(BuildContext context) => Column(
         children: [
           TableCalendar(
-            firstDay: DateTime.utc(2000, 1, 1),
+            firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(DateTime.now().year + 5, 12, 31),
             focusedDay: _focusedDay,
             selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
