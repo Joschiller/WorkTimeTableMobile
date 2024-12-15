@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:work_time_table_mobile/components/event_setting/event_type_marker.dart';
 import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
-
-final dateFormat = DateFormat('dd.MM.yyyy');
+import 'package:work_time_table_mobile/services/event_service.dart';
 
 class EventDisplay extends StatelessWidget {
   const EventDisplay({
@@ -12,6 +10,7 @@ class EventDisplay extends StatelessWidget {
   });
 
   final EvaluatedEventSetting event;
+  final eventService = const EventService();
 
   @override
   Widget build(BuildContext context) => Row(
@@ -37,7 +36,8 @@ class EventDisplay extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        '${dateFormat.format(event.eventSetting.startDate)}${event.eventSetting.startIsHalfDay ? ' (afternoon)' : ''} - ${dateFormat.format(event.eventSetting.endDate)}${event.eventSetting.endIsHalfDay ? ' (forenoon)' : ''}',
+                        eventService
+                            .eventDurationToDisplayString(event.eventSetting),
                         style: const TextStyle(
                           color: Colors.grey,
                         ),
