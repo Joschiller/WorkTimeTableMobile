@@ -50,6 +50,7 @@ class EventDisplay extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // TODO: also show repetitions
                 ],
               ),
             ),
