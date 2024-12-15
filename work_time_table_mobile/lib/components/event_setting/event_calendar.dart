@@ -45,7 +45,7 @@ class _EventCalendarState extends State<EventCalendar> {
     super.didUpdateWidget(oldWidget);
     _eventCache.clear();
     if (_selectedDay != null) {
-      _selectedEvents.value = _getEventsForDay(_selectedDay!);
+      _selectDay(_selectedDay!);
     }
   }
 
@@ -60,6 +60,12 @@ class _EventCalendarState extends State<EventCalendar> {
     return _eventCache[day]!;
   }
 
+  void _selectDay(DateTime day) => setState(() {
+        _selectedDay = day;
+        _focusedDay = day;
+        _selectedEvents.value = _getEventsForDay(day);
+      });
+
   @override
   Widget build(BuildContext context) => Column(
         children: [
@@ -70,15 +76,10 @@ class _EventCalendarState extends State<EventCalendar> {
             selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
             onDaySelected: (selectedDay, focusedDay) {
               if (!isSameDay(selectedDay, _selectedDay)) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                  _selectedEvents.value = _getEventsForDay(selectedDay);
-                });
+                _selectDay(selectedDay);
               }
             },
-            onPageChanged: (focusedDay) =>
-                setState(() => _focusedDay = focusedDay),
+            onPageChanged: _selectDay,
             availableCalendarFormats: const {
               CalendarFormat.month: 'Month',
             },
