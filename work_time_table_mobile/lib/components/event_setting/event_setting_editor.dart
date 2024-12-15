@@ -144,6 +144,7 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                           endDate: _value.endDate,
                           startIsHalfDay: _value.startIsHalfDay,
                           endIsHalfDay: _value.endIsHalfDay,
+                          makeInternallyBounded: false,
                           onChange: (startDate, endDate, startIsHalfDay,
                                   endIsHalfDay) =>
                               _updateValue(EventSetting(
