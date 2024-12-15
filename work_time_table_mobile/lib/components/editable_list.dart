@@ -13,6 +13,7 @@ class EditableList<T extends Identifiable> extends StatefulWidget {
     required this.onAdd,
     required this.onRemove,
     this.onTapItem,
+    this.detailInformation,
   });
 
   final String title;
@@ -26,6 +27,8 @@ class EditableList<T extends Identifiable> extends StatefulWidget {
   final Future<void> Function(List<T> items) onRemove;
 
   final void Function(int index)? onTapItem;
+
+  final Widget? detailInformation;
 
   @override
   State<EditableList<T>> createState() => _EditableListState<T>();
@@ -47,16 +50,27 @@ class _EditableListState<T extends Identifiable>
   @override
   Widget build(BuildContext context) => PageTemplate(
         title: widget.title,
-        content: ManagableList(
-          items: widget.items,
-          templateItem: widget.templateItem,
-          buildItem: (item) => widget.buildItem(
-            item,
-            _selectedItems.contains(item.identity),
-          ),
-          onTapItem:
-              _selectedItems.isEmpty ? widget.onTapItem : _toggleSelection,
-          onLongPressItem: _toggleSelection,
+        content: Row(
+          children: [
+            Expanded(
+              child: ManagableList(
+                items: widget.items,
+                templateItem: widget.templateItem,
+                buildItem: (item) => widget.buildItem(
+                  item,
+                  _selectedItems.contains(item.identity),
+                ),
+                onTapItem: _selectedItems.isEmpty
+                    ? widget.onTapItem
+                    : _toggleSelection,
+                onLongPressItem: _toggleSelection,
+              ),
+            ),
+            if (widget.detailInformation != null)
+              Expanded(
+                child: widget.detailInformation!,
+              ),
+          ],
         ),
         floatingButton: _selectedItems.isEmpty
             ? (
