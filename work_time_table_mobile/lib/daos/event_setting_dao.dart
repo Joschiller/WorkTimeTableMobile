@@ -91,16 +91,14 @@ class EventSettingDao {
   }
 
   Future<void> update(int userId, EventSetting event) async {
-    prisma_model.EventSetting? created;
     await prisma.$transaction((tx) async {
       await tx.eventSetting.delete(
         where: EventSettingWhereUniqueInput(id: event.id),
+        include: _include,
       );
-      created = await _create(tx, userId, event);
+      await _create(tx, userId, event);
     });
-    if (created != null) {
-      _stream.emitUpdate([created!.toAppModel()]);
-    }
+    await loadUserSettings(userId);
   }
 
   Future<void> deleteByIds(List<int> ids) async =>
