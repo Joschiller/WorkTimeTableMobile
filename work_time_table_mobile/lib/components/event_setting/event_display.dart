@@ -32,7 +32,9 @@ class EventDisplay extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      if (event.eventSetting.title != null &&
+                          event.eventSetting.title!.isNotEmpty)
+                        const SizedBox(width: 4),
                       if (!event.firstHalf) const Text('(only afternoon)'),
                       if (!event.secondHalf) const Text('(only forenoon)'),
                     ],
