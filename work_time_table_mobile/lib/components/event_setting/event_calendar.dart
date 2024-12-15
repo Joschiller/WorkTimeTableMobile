@@ -139,6 +139,7 @@ class _EventCalendarState extends State<EventCalendar> {
                 itemCount: value.length,
                 itemBuilder: (context, index) => EventDisplay(
                   event: value[index],
+                  selected: false,
                 ),
               ),
             ),
