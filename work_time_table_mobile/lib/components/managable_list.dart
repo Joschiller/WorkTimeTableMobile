@@ -24,6 +24,7 @@ class ManagableList<T extends Identifiable> extends StatelessWidget {
         itemCount: items.length,
         prototypeItem: buildItem(templateItem),
         itemBuilder: (context, index) => GestureDetector(
+          behavior: HitTestBehavior.opaque,
           key: Key('${items[index].identity}'),
           onTap: onTapItem != null ? () => onTapItem!(index) : null,
           onLongPress:

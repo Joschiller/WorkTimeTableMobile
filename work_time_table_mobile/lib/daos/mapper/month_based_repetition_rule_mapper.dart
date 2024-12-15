@@ -6,8 +6,10 @@ extension MonthBasedRepetitionRuleMapper
     on prisma_model.MonthBasedRepetitionRule {
   MonthBasedRepetitionRule toAppModel() => MonthBasedRepetitionRule(
         repeatAfterMonths: repeatAfterMonths!,
-        dayIndex: dayIndex!,
-        weekIndex: weekIndex,
-        countFromEnd: countFromEnd!,
+        monthBasedRepetitionRuleBase: MonthBasedRepetitionRuleBase(
+          dayIndex: dayIndex!,
+          weekIndex: weekIndex,
+          countFromEnd: countFromEnd!,
+        ),
       );
 }

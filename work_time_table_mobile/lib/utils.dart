@@ -6,7 +6,7 @@ extension IsBlank on String {
 }
 
 extension DateTimeToDay on DateTime {
-  DateTime toDay() => DateTime(year, month, day);
+  DateTime toDay() => DateTime.utc(year, month, day);
 }
 
 extension IntToTimeOfDay on int {
@@ -20,4 +20,11 @@ extension TimeOfDayToInt on TimeOfDay {
 extension StringToCapitalized on String {
   String get capitalized =>
       length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+}
+
+extension DateTimeCounter on DateTime {
+  int get countOfDayInMonth => DateTimeRange(
+        start: DateTime.utc(year, month),
+        end: DateTime.utc(year, month + 1),
+      ).duration.inDays;
 }

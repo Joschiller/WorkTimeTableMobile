@@ -31,7 +31,7 @@ class EventSettingService extends StreamableService {
   final UserService _userService;
   final EventSettingDao _eventSettingDao;
 
-  Validator _getEventValidator(EventSetting event) => Validator([
+  static Validator getEventValidator(EventSetting event) => Validator([
         // start <= end
         () => event.startDate.isAfter(event.endDate)
             ? AppError.service_eventSettings_invalid
@@ -53,6 +53,21 @@ class EventSettingService extends StreamableService {
             : null,
       ]);
 
+  Validator _getBelongsToUserValidator(int eventId) => Validator([
+        () => switch (_eventSettingDao.stream.state) {
+              NoContextValue<List<EventSetting>>() =>
+                AppError.service_noUserLoaded,
+              ContextValue<List<EventSetting>>(value: var value) =>
+                !value.any((e) => e.id == eventId)
+                    ? AppError.service_eventSettings_unknown
+                    : null,
+            }
+      ]);
+
+  Validator _getAllBelongsToUserValidator(List<int> eventIds) => eventIds
+      .map((e) => _getBelongsToUserValidator(e))
+      .reduce((a, b) => a + b);
+
   ContextDependentListStream<EventSetting> get eventSettingStream => _stream;
 
   Future<void> _loadData(int? userId) =>
@@ -62,17 +77,27 @@ class EventSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          _getEventValidator(event),
+          getEventValidator(event),
           () => _eventSettingDao.create(user.id, event),
         ),
       );
 
-  Future<void> deleteEvent(int id, bool isConfirmed) => validateAndRun(
-      getIsConfirmedValidator(
-        isConfirmed,
-        AppError.service_eventSettings_unconfirmedDeletion,
-      ),
-      () => _eventSettingDao.deleteById(id));
+  Future<void> updateEvent(EventSetting event) => runContextDependentAction(
+        _userService.currentUserStream.state,
+        () async => Future.error(AppError.service_noUserLoaded),
+        (user) => validateAndRun(
+          _getBelongsToUserValidator(event.id) + getEventValidator(event),
+          () => _eventSettingDao.update(user.id, event),
+        ),
+      );
+
+  Future<void> deleteEvents(List<int> ids, bool isConfirmed) => validateAndRun(
+      _getAllBelongsToUserValidator(ids) +
+          getIsConfirmedValidator(
+            isConfirmed,
+            AppError.service_eventSettings_unconfirmedDeletion,
+          ),
+      () => _eventSettingDao.deleteByIds(ids));
 
   @override
   close() {
@@ -88,20 +113,22 @@ bool _isMonthBasedRepetitionRuleValid(MonthBasedRepetitionRule rule) {
   if (rule.repeatAfterMonths <= 0) {
     return false;
   }
-  if (rule.dayIndex < 0) {
+  if (rule.monthBasedRepetitionRuleBase.dayIndex < 0) {
     return false;
   }
-  if ((rule.weekIndex ?? 0) < 0) {
+  if ((rule.monthBasedRepetitionRuleBase.weekIndex ?? 0) < 0) {
     return false;
   }
 
-  if ((rule.weekIndex ?? 0) >= 4) {
+  if ((rule.monthBasedRepetitionRuleBase.weekIndex ?? 0) >= 4) {
     return false;
   }
-  if (rule.weekIndex != null && rule.dayIndex >= 7) {
+  if (rule.monthBasedRepetitionRuleBase.weekIndex != null &&
+      rule.monthBasedRepetitionRuleBase.dayIndex >= 7) {
     return false;
   }
-  if (rule.weekIndex == null && rule.dayIndex >= 28) {
+  if (rule.monthBasedRepetitionRuleBase.weekIndex == null &&
+      rule.monthBasedRepetitionRuleBase.dayIndex >= 28) {
     return false;
   }
 

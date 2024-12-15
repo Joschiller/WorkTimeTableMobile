@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
+import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 typedef EventRangeCheckResult = ({bool firstHalf, bool secondHalf});
 
@@ -13,8 +17,45 @@ extension EventRangeCheckResultOr on EventRangeCheckResult {
       );
 }
 
+final dateFormat = DateFormat('dd.MM.yyyy');
+
 class EventService {
   const EventService();
+
+  List<EvaluatedEventSetting> getEventsAffectingDate(
+    DateTime targetDate,
+    List<EventSetting> events,
+  ) =>
+      events
+          .map((event) {
+            final res = doesEventAffectDate(targetDate, event);
+            return EvaluatedEventSetting(
+              eventSetting: event,
+              firstHalf: res.firstHalf,
+              secondHalf: res.secondHalf,
+            );
+          })
+          .where((event) => event.firstHalf || event.secondHalf)
+          .toList();
+
+  EventSetting? getHighestPriorityEventFromList(
+    List<EventSetting> events,
+  ) =>
+      (events..sort((a, b) => a.eventType.priority - b.eventType.priority))
+          .firstOrNull;
+
+  String eventDurationToDisplayString(EventSetting event) {
+    if (isSameDay(event.startDate, event.endDate)) {
+      if (event.startIsHalfDay) {
+        return '${dateFormat.format(event.startDate)} (afternoon)';
+      }
+      if (event.endIsHalfDay) {
+        return '${dateFormat.format(event.startDate)} (forenoon)';
+      }
+      return dateFormat.format(event.startDate);
+    }
+    return '${dateFormat.format(event.startDate)}${event.startIsHalfDay ? ' (afternoon)' : ''} - ${dateFormat.format(event.endDate)}${event.endIsHalfDay ? ' (forenoon)' : ''}';
+  }
 
   EventRangeCheckResult doesEventAffectDate(
     DateTime targetDate,
@@ -126,40 +167,40 @@ class EventService {
     DateTime currentDate,
     MonthBasedRepetitionRule repetition,
   ) {
-    final targetMonth = DateTime(
+    final targetMonth = DateTime.utc(
       currentDate.year,
       currentDate.month + repetition.repeatAfterMonths,
     );
-    final countOfDaysInMonth = DateTimeRange(
-      start: targetMonth,
-      end: DateTime(targetMonth.year, targetMonth.month + 1),
-    ).duration.inDays;
+    final countOfDaysInMonth = targetMonth.countOfDayInMonth;
 
-    final weekIndex = repetition.weekIndex;
+    final weekIndex = repetition.monthBasedRepetitionRuleBase.weekIndex;
 
     if (weekIndex == null) {
-      return DateTime(
+      return DateTime.utc(
         targetMonth.year,
         targetMonth.month,
-        repetition.countFromEnd
-            ? countOfDaysInMonth - repetition.dayIndex
-            : repetition.dayIndex + 1,
+        repetition.monthBasedRepetitionRuleBase.countFromEnd
+            ? countOfDaysInMonth -
+                repetition.monthBasedRepetitionRuleBase.dayIndex
+            : repetition.monthBasedRepetitionRuleBase.dayIndex + 1,
       );
     } else {
       final instancesOfDayOfWeek = <DateTime>[];
       for (var i = 0; i < countOfDaysInMonth; i++) {
         final dayToTest = targetMonth.add(Duration(days: i));
         if (DayOfWeek.fromDateTime(dayToTest) ==
-                DayOfWeek.values[repetition.dayIndex]
+                DayOfWeek
+                    .values[repetition.monthBasedRepetitionRuleBase.dayIndex]
             // check hours for some special cases (e.g. searching for sundays in 10/2024)
             &&
             dayToTest.hour == 0) {
           instancesOfDayOfWeek.add(dayToTest);
         }
       }
-      return instancesOfDayOfWeek[repetition.countFromEnd
-          ? instancesOfDayOfWeek.length - weekIndex - 1
-          : weekIndex];
+      return instancesOfDayOfWeek[
+          repetition.monthBasedRepetitionRuleBase.countFromEnd
+              ? instancesOfDayOfWeek.length - weekIndex - 1
+              : weekIndex];
     }
   }
 
