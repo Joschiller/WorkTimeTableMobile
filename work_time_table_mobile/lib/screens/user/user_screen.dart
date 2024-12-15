@@ -38,7 +38,7 @@ class UserScreen extends StatelessWidget {
       await showDialog(
         context: context,
         builder: (context) => ConfirmableAlertDialog(
-          title: 'Delete User',
+          title: 'Delete Users',
           content: const Text(
               'Do you really want to delete the selected users permanently?'),
           actionText: 'Delete',
