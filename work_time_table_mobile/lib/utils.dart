@@ -24,7 +24,7 @@ extension StringToCapitalized on String {
 
 extension DateTimeCounter on DateTime {
   int get countOfDayInMonth => DateTimeRange(
-        start: DateTime(year, month),
-        end: DateTime(year, month + 1),
+        start: DateTime.utc(year, month),
+        end: DateTime.utc(year, month + 1),
       ).duration.inDays;
 }

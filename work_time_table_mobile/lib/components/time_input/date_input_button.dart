@@ -22,8 +22,8 @@ class DateInputButton extends StatelessWidget {
   Widget build(BuildContext context) => ElevatedButton(
         onPressed: () => showDatePicker(
           context: context,
-          firstDate: min ?? DateTime(2020, 1, 1),
-          lastDate: max ?? DateTime(DateTime.now().year + 5, 12, 31),
+          firstDate: min ?? DateTime.utc(2020, 1, 1),
+          lastDate: max ?? DateTime.utc(DateTime.now().year + 5, 12, 31),
           initialDate: value ?? DateTime.now().toDay(),
         ).then((value) {
           if (value != null) {

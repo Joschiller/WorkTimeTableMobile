@@ -15,6 +15,7 @@ import 'package:work_time_table_mobile/models/event_setting/event_type.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 class EventSettingScreen extends StatelessWidget {
   const EventSettingScreen({super.key});
@@ -97,8 +98,8 @@ class EventSettingScreen extends StatelessWidget {
                     id: -1,
                     eventType: EventType.dayOff,
                     title: 'Evemt',
-                    startDate: DateTime.now(),
-                    endDate: DateTime.now(),
+                    startDate: DateTime.now().toDay(),
+                    endDate: DateTime.now().toDay(),
                     startIsHalfDay: false,
                     endIsHalfDay: false,
                     dayBasedRepetitionRules: [],

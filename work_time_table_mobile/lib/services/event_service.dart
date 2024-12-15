@@ -167,7 +167,7 @@ class EventService {
     DateTime currentDate,
     MonthBasedRepetitionRule repetition,
   ) {
-    final targetMonth = DateTime(
+    final targetMonth = DateTime.utc(
       currentDate.year,
       currentDate.month + repetition.repeatAfterMonths,
     );
@@ -176,7 +176,7 @@ class EventService {
     final weekIndex = repetition.monthBasedRepetitionRuleBase.weekIndex;
 
     if (weekIndex == null) {
-      return DateTime(
+      return DateTime.utc(
         targetMonth.year,
         targetMonth.month,
         repetition.monthBasedRepetitionRuleBase.countFromEnd

@@ -6,6 +6,7 @@ import 'package:work_time_table_mobile/components/event_setting/event_display.da
 import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 class EventCalendar extends StatefulWidget {
   const EventCalendar({super.key, required this.events});
@@ -19,7 +20,7 @@ class EventCalendar extends StatefulWidget {
 }
 
 class _EventCalendarState extends State<EventCalendar> {
-  var _focusedDay = DateTime.now();
+  var _focusedDay = DateTime.now().toDay();
   DateTime? _selectedDay;
   late final ValueNotifier<List<EvaluatedEventSetting>> _selectedEvents;
 
