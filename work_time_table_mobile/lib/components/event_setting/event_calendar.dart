@@ -43,6 +43,9 @@ class _EventCalendarState extends State<EventCalendar> {
   void didUpdateWidget(covariant EventCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
     _eventCache.clear();
+    if (_selectedDay != null) {
+      _selectedEvents.value = _getEventsForDay(_selectedDay!);
+    }
   }
 
   List<EvaluatedEventSetting> _getEventsForDay(DateTime day) {
