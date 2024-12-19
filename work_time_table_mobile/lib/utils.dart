@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+final displayDateFormat = DateFormat('dd.MM.yyyy');
 
 extension IsBlank on String {
   bool get isBlank => trim().isEmpty;
