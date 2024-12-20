@@ -215,7 +215,9 @@ class TimeInputService extends StreamableService {
     List<WeekValue> weekValues,
     DateTime weekStartDate,
   ) =>
-      weekValues.any((week) => week.weekStartDate == weekStartDate);
+      weekValues.any((week) =>
+          week.weekStartDate == weekStartDate ||
+          week.weekStartDate.isAfter(weekStartDate));
 
   Future<void> updateDaysOfWeek(List<DayValue> values) =>
       runContextDependentAction(

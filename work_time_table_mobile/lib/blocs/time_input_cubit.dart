@@ -49,12 +49,6 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   final EventSettingService _eventSettingService;
   final TimeInputService _timeInputService;
 
-  static bool isWeekClosed(
-    List<WeekValue> weekValues,
-    DateTime weekStartDate,
-  ) =>
-      TimeInputService.isWeekClosed(weekValues, weekStartDate);
-
   Future<void> updateDaysOfWeek(List<DayValue> values) =>
       _timeInputService.updateDaysOfWeek(values);
 
