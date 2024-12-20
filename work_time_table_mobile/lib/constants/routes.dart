@@ -21,7 +21,7 @@ part 'routes.g.dart';
 class TimeInputScreenRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return TimeInputScreen();
+    return const TimeInputScreen();
   }
 }
 

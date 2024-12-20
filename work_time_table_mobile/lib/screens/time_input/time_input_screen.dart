@@ -11,8 +11,6 @@ import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
-import 'package:work_time_table_mobile/models/value/day_mode.dart';
-import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_day_setting.dart';
 import 'package:work_time_table_mobile/services/day_value_service.dart';
@@ -22,44 +20,13 @@ import 'package:work_time_table_mobile/services/time_input_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/services/week_value_service.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
-class TimeInputScreen extends StatefulWidget {
-  TimeInputScreen({super.key});
-
-  final todayKey = GlobalKey();
-
-  @override
-  State<TimeInputScreen> createState() => _TimeInputScreenState();
-}
-
-class _TimeInputScreenState extends State<TimeInputScreen> {
-  late DateTime selectedDay;
+class TimeInputScreen extends StatelessWidget {
+  const TimeInputScreen({super.key});
 
   DateTime get _weekOfToday => DateTime.now().toDay().firstDayOfWeek;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollToToday();
-  }
-
-  void _scrollToToday() {
-    setState(() {
-      selectedDay = _weekOfToday;
-    });
-    // small delay, to ensure, that the target date has been drawn
-    Future.delayed(const Duration(milliseconds: 100)).then(
-      (value) {
-        if (widget.todayKey.currentContext != null) {
-          Scrollable.ensureVisible(
-            widget.todayKey.currentContext!,
-            duration: const Duration(seconds: 2),
-          );
-        }
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) => MultiRepositoryProvider(
@@ -104,115 +71,159 @@ class _TimeInputScreenState extends State<TimeInputScreen> {
               ),
             ),
           ],
-          child: PageTemplate(
-            title:
-                '${displayDateFormat.format(selectedDay)} - ${displayDateFormat.format(
-              selectedDay.add(const Duration(days: 6)),
-            )}',
-            menuButtons: [
-              (
-                onPressed: () => showDatePicker(
-                      context: context,
-                      initialDate: selectedDay,
-                      firstDate: DateTime.utc(2020, 1, 1),
-                      lastDate: DateTime.utc(DateTime.now().year + 5, 12, 31),
-                    ).then(
-                      (value) {
-                        if (value != null) {
-                          setState(() => selectedDay = value.firstDayOfWeek);
-                        }
-                      },
-                    ),
-                icon: const Icon(Icons.calendar_month),
-              ),
-              (
-                onPressed: () => SettingsScreenRoute().push(context),
-                icon: const Icon(Icons.settings),
-              ),
-            ],
-            content: Column(
-              children: [
-                // TODO: show result of predecessor week
-                Expanded(
-                  child: Container(
-                    color: Colors.grey.shade600,
-                    child: WeekDisplay(
-                      todayKey: widget.todayKey,
-                      // TODO: load values
-                      weekInformation: WeekInformation(
-                        weekStartDate: selectedDay,
-                        resultOfPredecessorWeek: 0,
-                        days: {
-                          for (final d in DayOfWeek.values)
-                            d: DayValue(
-                              date: selectedDay.add(Duration(days: d.index)),
-                              firstHalfMode: DayMode.workDay,
-                              secondHalfMode: DayMode.workDay,
-                              workTimeStart: 0,
-                              workTimeEnd: 0,
-                              breakDuration: 0,
-                            ),
-                        },
-                        weekResult: 0,
-                        weekClosed: false,
+          child: BlocBuilder<TimeInputCubit,
+                  ContextDependentValue<WeekInformation>>(
+              builder: (context, state) => switch (state) {
+                    NoContextValue<WeekInformation>() => PageTemplate(
+                        title: 'No user selected',
+                        menuButtons: [
+                          (
+                            onPressed: () =>
+                                SettingsScreenRoute().push(context),
+                            icon: const Icon(Icons.settings),
+                          ),
+                        ],
+                        content: const Center(
+                          child: Text('No user selected'),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                // TODO: show result of this week
-                Container(
-                  color: Colors.grey.shade300,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => setState(() => selectedDay =
-                              selectedDay.subtract(const Duration(days: 7))),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.arrow_left),
-                              Text('Previous Week'),
-                              SizedBox(width: 16),
-                            ],
+                    ContextValue<WeekInformation>(
+                      value: final weekInformation
+                    ) =>
+                      PageTemplate(
+                        title:
+                            '${displayDateFormat.format(weekInformation.weekStartDate)} - ${displayDateFormat.format(
+                          weekInformation.weekStartDate
+                              .add(const Duration(days: 6)),
+                        )}',
+                        menuButtons: [
+                          (
+                            onPressed: () => showDatePicker(
+                                  context: context,
+                                  initialDate: weekInformation.weekStartDate,
+                                  firstDate: DateTime.utc(2020, 1, 1),
+                                  lastDate: DateTime.utc(
+                                      DateTime.now().year + 5, 12, 31),
+                                ).then(
+                                  (value) {
+                                    if (value != null && context.mounted) {
+                                      context
+                                          .read<TimeInputCubit>()
+                                          .loadWeekContainingDay(value);
+                                    }
+                                  },
+                                ),
+                            icon: const Icon(Icons.calendar_month),
                           ),
-                        ),
-                        ElevatedButton(
-                          onPressed: _scrollToToday,
-                          child: const Text('Today'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () => setState(() => selectedDay =
-                              selectedDay.add(const Duration(days: 7))),
-                          child: const Row(
-                            children: [
-                              SizedBox(width: 16),
-                              Text('Next Week'),
-                              Icon(Icons.arrow_right),
-                            ],
+                          (
+                            onPressed: () =>
+                                SettingsScreenRoute().push(context),
+                            icon: const Icon(Icons.settings),
                           ),
+                        ],
+                        content: Column(
+                          children: [
+                            // TODO: show result of predecessor week
+                            Expanded(
+                              child: Container(
+                                color: Colors.grey.shade600,
+                                child: WeekDisplay(
+                                  weekInformation: weekInformation,
+                                ),
+                              ),
+                            ),
+                            // TODO: show result of this week
+                            Container(
+                              color: Colors.grey.shade300,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: context
+                                          .read<TimeInputCubit>()
+                                          .weekBackwards,
+                                      child: const Row(
+                                        children: [
+                                          Icon(Icons.arrow_left),
+                                          Text('Previous Week'),
+                                          SizedBox(width: 16),
+                                        ],
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () => context
+                                          .read<TimeInputCubit>()
+                                          .loadWeekContainingDay(
+                                              DateTime.now()),
+                                      child: const Text('Today'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: context
+                                          .read<TimeInputCubit>()
+                                          .weekForwards,
+                                      child: const Row(
+                                        children: [
+                                          SizedBox(width: 16),
+                                          Text('Next Week'),
+                                          Icon(Icons.arrow_right),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
+                      ),
+                  }),
         ),
       );
 }
 
-class WeekDisplay extends StatelessWidget {
-  const WeekDisplay({
+class WeekDisplay extends StatefulWidget {
+  WeekDisplay({
     super.key,
-    required this.todayKey,
     required this.weekInformation,
   });
 
-  final GlobalKey todayKey;
   final WeekInformation weekInformation;
+
+  final todayKey = GlobalKey();
+
+  @override
+  State<WeekDisplay> createState() => _WeekDisplayState();
+}
+
+class _WeekDisplayState extends State<WeekDisplay> {
+  @override
+  void initState() {
+    super.initState();
+    _scrollToToday();
+  }
+
+  @override
+  void didUpdateWidget(covariant WeekDisplay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _scrollToToday();
+  }
+
+  void _scrollToToday() {
+    // small delay, to ensure, that the target date has been drawn
+    Future.delayed(const Duration(milliseconds: 100)).then(
+      (value) {
+        if (widget.todayKey.currentContext != null) {
+          Scrollable.ensureVisible(
+            widget.todayKey.currentContext!,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,10 +234,10 @@ class WeekDisplay extends StatelessWidget {
           // TODO: disable inputs, if the week cannot be edited anymore
           ...DayOfWeek.values.map((dayOfWeek) => DayInputCard(
                 key: isSameDay(
-                        weekInformation.weekStartDate
+                        widget.weekInformation.weekStartDate
                             .add(Duration(days: dayOfWeek.index)),
                         DateTime.now())
-                    ? todayKey
+                    ? widget.todayKey
                     : null,
                 // TODO: load settings
                 settings: WeekDaySetting(
@@ -238,7 +249,7 @@ class WeekDisplay extends StatelessWidget {
                   defaultWorkTimeEnd: 0,
                   defaultBreakDuration: 0,
                 ),
-                dayValue: weekInformation.days[dayOfWeek]!,
+                dayValue: widget.weekInformation.days[dayOfWeek]!,
                 onChange: (dayValue) {
                   // TODO: instantly persist changes whenever a value is altered
                 },
