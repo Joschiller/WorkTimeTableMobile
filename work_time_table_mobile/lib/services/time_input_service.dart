@@ -143,6 +143,13 @@ class TimeInputService extends StreamableService {
             : null,
       ]);
 
+  Validator getIsWeekClosableValidator(DateTime weekStartDate) =>
+      _getWeekStartIsMondayValidator(weekStartDate) +
+      _getWeekNotAlreadyClosedValidator(weekStartDate) +
+      _getHasOneDayOfWeekPassedValidator(weekStartDate)
+      // TODO: it must be the first week ever OR all prior weeks must be closed too
+      ;
+
   // NOTE: The initial values are not cached here as they will only be calculated, if the week has no stored values yet.
   // Re-calculating will only happen, if:
   // - a different week is selected which has no values yet OR the values of the current week are reset
@@ -243,9 +250,7 @@ class TimeInputService extends StreamableService {
           await updateDaysOfWeek(dayValues);
           // close the week
           await validateAndRun(
-            _getWeekStartIsMondayValidator(value.weekStartDate) +
-                _getWeekNotAlreadyClosedValidator(value.weekStartDate) +
-                _getHasOneDayOfWeekPassedValidator(value.weekStartDate) +
+            getIsWeekClosableValidator(value.weekStartDate) +
                 getIsConfirmedValidator(
                   isConfirmed,
                   AppError.service_timeInput_unconfirmedClose,
