@@ -136,44 +136,25 @@ class _TimeInputScreenState extends State<TimeInputScreen> {
                 Expanded(
                   child: Container(
                     color: Colors.grey.shade600,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          // TODO: disable inputs, if the week cannot be edited anymore
-                          ...DayOfWeek.values.map((dayOfWeek) => DayInputCard(
-                                key: isSameDay(
-                                        selectedDay.add(
-                                            Duration(days: dayOfWeek.index)),
-                                        DateTime.now())
-                                    ? widget.todayKey
-                                    : null,
-                                // TODO: load settings
-                                settings: WeekDaySetting(
-                                  dayOfWeek: dayOfWeek,
-                                  timeEquivalent: 0,
-                                  mandatoryWorkTimeStart: 0,
-                                  mandatoryWorkTimeEnd: 0,
-                                  defaultWorkTimeStart: 0,
-                                  defaultWorkTimeEnd: 0,
-                                  defaultBreakDuration: 0,
-                                ),
-                                // TODO: load values
-                                dayValue: DayValue(
-                                  date: selectedDay
-                                      .add(Duration(days: dayOfWeek.index)),
-                                  breakDuration: 0,
-                                  firstHalfMode: DayMode.workDay,
-                                  secondHalfMode: DayMode.workDay,
-                                  workTimeEnd: 0,
-                                  workTimeStart: 0,
-                                ),
-                                onChange: (dayValue) {
-                                  // TODO: instantly persist changes whenever a value is altered
-                                },
-                              ))
-                          // TODO: if the week can be closed, show an additional card at the end for closing the week
-                        ],
+                    child: WeekDisplay(
+                      todayKey: widget.todayKey,
+                      // TODO: load values
+                      weekInformation: WeekInformation(
+                        weekStartDate: selectedDay,
+                        resultOfPredecessorWeek: 0,
+                        days: {
+                          for (final d in DayOfWeek.values)
+                            d: DayValue(
+                              date: selectedDay.add(Duration(days: d.index)),
+                              firstHalfMode: DayMode.workDay,
+                              secondHalfMode: DayMode.workDay,
+                              workTimeStart: 0,
+                              workTimeEnd: 0,
+                              breakDuration: 0,
+                            ),
+                        },
+                        weekResult: 0,
+                        weekClosed: false,
                       ),
                     ),
                   ),
@@ -221,4 +202,50 @@ class _TimeInputScreenState extends State<TimeInputScreen> {
           ),
         ),
       );
+}
+
+class WeekDisplay extends StatelessWidget {
+  const WeekDisplay({
+    super.key,
+    required this.todayKey,
+    required this.weekInformation,
+  });
+
+  final GlobalKey todayKey;
+  final WeekInformation weekInformation;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // TODO: disable inputs, if the week cannot be edited anymore
+          ...DayOfWeek.values.map((dayOfWeek) => DayInputCard(
+                key: isSameDay(
+                        weekInformation.weekStartDate
+                            .add(Duration(days: dayOfWeek.index)),
+                        DateTime.now())
+                    ? todayKey
+                    : null,
+                // TODO: load settings
+                settings: WeekDaySetting(
+                  dayOfWeek: dayOfWeek,
+                  timeEquivalent: 0,
+                  mandatoryWorkTimeStart: 0,
+                  mandatoryWorkTimeEnd: 0,
+                  defaultWorkTimeStart: 0,
+                  defaultWorkTimeEnd: 0,
+                  defaultBreakDuration: 0,
+                ),
+                dayValue: weekInformation.days[dayOfWeek]!,
+                onChange: (dayValue) {
+                  // TODO: instantly persist changes whenever a value is altered
+                },
+              ))
+          // TODO: if the week can be closed, show an additional card at the end for closing the week
+        ],
+      ),
+    );
+  }
 }
