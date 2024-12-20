@@ -35,7 +35,7 @@ class DayValueService {
     var modeForFirstHalfOfDay = DayMode.workDay;
     var modeForSecondHalfOfDay = DayMode.workDay;
 
-    for (final eventType in EventType.values
+    for (final eventType in [...EventType.values]
       ..sort((a, b) => a.priority - b.priority)) {
       for (final event
           in eventSettings.where((event) => event.eventType == eventType)) {
