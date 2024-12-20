@@ -48,13 +48,34 @@ Future<void> main() async {
 
   runApp(MultiRepositoryProvider(
     providers: [
-      RepositoryProvider(create: (_) => const UserDao()),
-      RepositoryProvider(create: (_) => const CurrentUserDao()),
-      RepositoryProvider(create: (_) => const GlobalSettingDao()),
-      RepositoryProvider(create: (_) => const WeekSettingDao()),
-      RepositoryProvider(create: (_) => const EventSettingDao()),
-      RepositoryProvider(create: (_) => const DayValueDao()),
-      RepositoryProvider(create: (_) => const WeekValueDao()),
+      RepositoryProvider(
+        lazy: false,
+        create: (_) => const UserDao(),
+      ),
+      RepositoryProvider(
+        lazy: false,
+        create: (_) => const CurrentUserDao(),
+      ),
+      RepositoryProvider(
+        lazy: false,
+        create: (_) => const GlobalSettingDao(),
+      ),
+      RepositoryProvider(
+        lazy: false,
+        create: (_) => const WeekSettingDao(),
+      ),
+      RepositoryProvider(
+        lazy: false,
+        create: (_) => const EventSettingDao(),
+      ),
+      RepositoryProvider(
+        lazy: false,
+        create: (_) => const DayValueDao(),
+      ),
+      RepositoryProvider(
+        lazy: false,
+        create: (_) => const WeekValueDao(),
+      ),
     ],
     child: const MyApp(),
   ));
