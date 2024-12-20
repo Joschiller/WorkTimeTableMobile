@@ -23,7 +23,7 @@ class TimeSpanInput extends StatelessWidget {
   final TimeOfDay startMax;
   final TimeOfDay endMin;
   final TimeOfDay endMax;
-  final void Function(TimeOfDay start, TimeOfDay end) onChange;
+  final void Function(TimeOfDay start, TimeOfDay end)? onChange;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -46,8 +46,10 @@ class TimeSpanInput extends StatelessWidget {
                 max: value.end != null
                     ? min(startMax.toInt(), value.end!.toInt()).toTimeOfDay()
                     : startMax,
-                onChange: (newValue) =>
-                    onChange(newValue, value.end ?? newValue),
+                onChange: onChange != null
+                    ? (newValue) =>
+                        onChange?.call(newValue, value.end ?? newValue)
+                    : null,
               ),
             ],
           ),
@@ -68,8 +70,10 @@ class TimeSpanInput extends StatelessWidget {
                     ? max(endMin.toInt(), value.start!.toInt()).toTimeOfDay()
                     : endMin,
                 max: endMax,
-                onChange: (newValue) =>
-                    onChange(value.start ?? newValue, newValue),
+                onChange: onChange != null
+                    ? (newValue) =>
+                        onChange?.call(value.start ?? newValue, newValue)
+                    : null,
               ),
             ],
           ),

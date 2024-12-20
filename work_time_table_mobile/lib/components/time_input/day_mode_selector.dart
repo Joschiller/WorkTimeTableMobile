@@ -10,13 +10,15 @@ class DayModeSelector extends StatelessWidget {
 
   final DayMode dayMode;
 
-  final void Function(DayMode dayMode) onChange;
+  final void Function(DayMode dayMode)? onChange;
 
   @override
   Widget build(BuildContext context) => DropdownButton<String>(
         value: dayMode.name,
-        onChanged: (String? value) => onChange(
-            DayMode.values.firstWhere((element) => element.name == value)),
+        onChanged: onChange != null
+            ? (String? value) => onChange?.call(
+                DayMode.values.firstWhere((element) => element.name == value))
+            : null,
         items: DayMode.values
             .map<DropdownMenuItem<String>>((value) => DropdownMenuItem<String>(
                   value: value.name,

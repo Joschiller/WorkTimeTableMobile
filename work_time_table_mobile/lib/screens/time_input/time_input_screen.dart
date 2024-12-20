@@ -229,7 +229,6 @@ class _WeekDisplayState extends State<WeekDisplay> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          // TODO: disable inputs, if the week cannot be edited anymore
           ...DayOfWeek.values.map((dayOfWeek) => DayInputCard(
                 key: isSameDay(
                         widget.weekInformation.weekStartDate
@@ -248,9 +247,11 @@ class _WeekDisplayState extends State<WeekDisplay> {
                   defaultBreakDuration: 0,
                 ),
                 dayValue: widget.weekInformation.days[dayOfWeek]!,
-                onChange: (dayValue) {
-                  // TODO: instantly persist changes whenever a value is altered
-                },
+                onChange: !widget.weekInformation.weekClosed
+                    ? (dayValue) {
+                        // TODO: instantly persist changes whenever a value is altered
+                      }
+                    : null,
               ))
           // TODO: if the week can be closed, show an additional card at the end for closing the week
         ],
