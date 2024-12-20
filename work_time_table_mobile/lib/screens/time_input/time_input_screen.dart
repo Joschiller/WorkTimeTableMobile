@@ -132,6 +132,7 @@ class _TimeInputScreenState extends State<TimeInputScreen> {
             ],
             content: Column(
               children: [
+                // TODO: show result of predecessor week
                 Expanded(
                   child: Container(
                     color: Colors.grey.shade600,
@@ -177,6 +178,7 @@ class _TimeInputScreenState extends State<TimeInputScreen> {
                     ),
                   ),
                 ),
+                // TODO: show result of this week
                 Container(
                   color: Colors.grey.shade300,
                   child: Padding(
