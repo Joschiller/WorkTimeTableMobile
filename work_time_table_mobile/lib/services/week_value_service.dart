@@ -62,15 +62,18 @@ class WeekValueService {
                 values.eventSettings,
               );
     }
-    final resultOfPredecessorWeek = values.dayValues
-            .where((day) => day.date.isBefore(weekStartDate))
-            .map((day) =>
-                day.workTimeEnd - day.workTimeStart - day.breakDuration)
-            .reduce((a, b) => a + b) -
-        values.weekValues
-            .where((week) => week.weekStartDate.isBefore(weekStartDate))
-            .map((week) => week.targetTime)
-            .reduce((a, b) => a + b);
+    final predecessorWeeks =
+        values.dayValues.where((day) => day.date.isBefore(weekStartDate));
+    final resultOfPredecessorWeek = predecessorWeeks.isEmpty
+        ? 0
+        : predecessorWeeks
+                .map((day) =>
+                    day.workTimeEnd - day.workTimeStart - day.breakDuration)
+                .reduce((a, b) => a + b) -
+            values.weekValues
+                .where((week) => week.weekStartDate.isBefore(weekStartDate))
+                .map((week) => week.targetTime)
+                .reduce((a, b) => a + b);
     // TODO: theoretically needs to also substract all target values for the unsaved week sbefore the current week, but this may be a theoretical scenario
     return WeekInformation(
       weekStartDate: weekStartDate,
