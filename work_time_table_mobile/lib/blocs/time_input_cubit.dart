@@ -49,8 +49,8 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   final EventSettingService _eventSettingService;
   final TimeInputService _timeInputService;
 
-  Future<void> updateDaysOfWeek(List<DayValue> values) =>
-      _timeInputService.updateDaysOfWeek(values);
+  Future<void> updateDayOfWeek(DayValue value) =>
+      _timeInputService.updateDayOfWeek(value);
 
   Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
       _timeInputService.resetDaysOfWeek(weekStartDate, isConfirmed);
