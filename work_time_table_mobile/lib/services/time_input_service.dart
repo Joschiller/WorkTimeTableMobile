@@ -55,7 +55,7 @@ class TimeInputService extends StreamableService {
   ContextDependentListStream<DayValue> get dayValueStream => _dayValueStream;
   ContextDependentListStream<WeekValue> get weekValueStream => _weekValueStream;
 
-  Validator _getDayUpdateValidator(List<DayValue> values) => Validator([
+  Validator _getDaysUpdateValidator(List<DayValue> values) => Validator([
         // 7 consecutive days, starting with monday
         () => values.length != 7 ? AppError.service_timeInput_invalid : null,
         () => values
@@ -64,19 +64,28 @@ class TimeInputService extends StreamableService {
                 .any((element) => element.key + 1 != element.value.date.weekday)
             ? AppError.service_timeInput_invalid
             : null,
+        // validate each day
+        () => values
+            .map(_getDayUpdateValidator)
+            .map((v) => v.validate())
+            .where((v) => v != null)
+            .firstOrNull,
+      ]);
+
+  Validator _getDayUpdateValidator(DayValue day) => Validator([
         // week not already closed
-        () => _getWeekNotAlreadyClosedValidator(values.first.date).validate(),
+        () => _getWeekNotAlreadyClosedValidator(day.date.firstDayOfWeek)
+            .validate(),
         // empty values if completely not workDay
-        () => values.any((day) =>
-                day.firstHalfMode != DayMode.workDay &&
+        () => day.firstHalfMode != DayMode.workDay &&
                 day.secondHalfMode != DayMode.workDay &&
                 (day.workTimeStart != 0 ||
                     day.workTimeEnd != 0 ||
-                    day.breakDuration != 0))
+                    day.breakDuration != 0)
             ? AppError.service_timeInput_invalid
             : null,
         // start <= end
-        () => values.any((day) => day.workTimeStart > day.workTimeEnd)
+        () => day.workTimeStart > day.workTimeEnd
             ? AppError.service_timeInput_invalid
             : null,
         // settings dependent validations
@@ -84,39 +93,39 @@ class TimeInputService extends StreamableService {
               _weekSettingService.weekSettingStream.state,
               () => AppError.service_noUserLoaded,
               (weekSettings) =>
-                  _getDayValueAgainstSettingsValidator(values, weekSettings)
+                  _getDayValueAgainstSettingsValidator(day, weekSettings)
                       .validate(),
             ),
       ]);
 
   Validator _getDayValueAgainstSettingsValidator(
-    List<DayValue> values,
+    DayValue day,
     WeekSetting weekSettings,
   ) =>
       Validator([
-        () => values.any((day) {
-              final settingForDay = weekSettings
-                  .weekDaySettings[DayOfWeek.fromDateTime(day.date)];
-              if (settingForDay == null) {
-                // configured nonWorkDays are stored as nonWorkDays
-                return day.firstHalfMode != DayMode.nonWorkDay ||
-                    day.secondHalfMode != DayMode.nonWorkDay;
-              }
-
-              // work time respects manatory time start
-              if (day.firstHalfMode == DayMode.workDay &&
-                  (day.workTimeStart > settingForDay.mandatoryWorkTimeStart)) {
-                return true;
-              }
-              // work time respects manatory time end
-              if (day.secondHalfMode == DayMode.workDay &&
-                  (day.workTimeEnd < settingForDay.mandatoryWorkTimeEnd)) {
-                return true;
-              }
-              return false;
-            })
+        () {
+          final settingForDay =
+              weekSettings.weekDaySettings[DayOfWeek.fromDateTime(day.date)];
+          if (settingForDay == null) {
+            // configured nonWorkDays are stored as nonWorkDays
+            return day.firstHalfMode != DayMode.nonWorkDay ||
+                    day.secondHalfMode != DayMode.nonWorkDay
                 ? AppError.service_timeInput_invalid
-                : null,
+                : null;
+          }
+
+          // work time respects manatory time start
+          if (day.firstHalfMode == DayMode.workDay &&
+              (day.workTimeStart > settingForDay.mandatoryWorkTimeStart)) {
+            return AppError.service_timeInput_invalid;
+          }
+          // work time respects manatory time end
+          if (day.secondHalfMode == DayMode.workDay &&
+              (day.workTimeEnd < settingForDay.mandatoryWorkTimeEnd)) {
+            return AppError.service_timeInput_invalid;
+          }
+          return null;
+        },
       ]);
 
   Validator _getWeekStartIsMondayValidator(DateTime weekStartDate) =>
@@ -224,12 +233,21 @@ class TimeInputService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          _getDayUpdateValidator(values),
+          _getDaysUpdateValidator(values),
           () async {
             for (final day in values) {
               await _dayValueDao.upsert(user.id, day);
             }
           },
+        ),
+      );
+
+  Future<void> updateDayOfWeek(DayValue value) => runContextDependentAction(
+        _userService.currentUserStream.state,
+        () async => Future.error(AppError.service_noUserLoaded),
+        (user) => validateAndRun(
+          _getDayUpdateValidator(value),
+          () async => _dayValueDao.upsert(user.id, value),
         ),
       );
 
