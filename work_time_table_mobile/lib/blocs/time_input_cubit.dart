@@ -37,6 +37,11 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
       ],
       () => _loadValueForWeek(0),
     ));
+    runContextDependentAction(
+      _userService.currentUserStream.state,
+      () => emit(NoContextValue()),
+      (user) => _intializeValues(),
+    );
   }
 
   final UserService _userService;
@@ -63,9 +68,16 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   ) =>
       _timeInputService.closeWeek(value, dayValues, isConfirmed);
 
-  void _intializeValues() => emit(_timeInputService.getValuesForWeek(
-        TimeInputService.getStartDateOfWeek(DateTime.now().toDay()),
-      ));
+  void _intializeValues() => _timeInputService
+      .loadData(switch (_userService.currentUserStream.state) {
+        NoContextValue() => null,
+        ContextValue(value: final user) => user.id,
+      })
+      .then(
+        (value) => emit(_timeInputService.getValuesForWeek(
+          TimeInputService.getStartDateOfWeek(DateTime.now().toDay()),
+        )),
+      );
 
   void _loadValueForWeek(int relativeWeeks) => emit(switch (state) {
         NoContextValue() => NoContextValue(),

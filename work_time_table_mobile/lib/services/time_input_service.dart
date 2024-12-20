@@ -33,15 +33,15 @@ class TimeInputService extends StreamableService {
     registerSubscription(_userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
-              () => _loadData(null),
-              (user) => _loadData(user.id),
+              () => loadData(null),
+              (user) => loadData(user.id),
             )));
     prepareListen(_dayValueDao.stream, _dayValueStream);
     prepareListen(_weekValueDao.stream, _weekValueStream);
     runContextDependentAction(
       _userService.currentUserStream.state,
-      () => _loadData(null),
-      (user) => _loadData(user.id),
+      () => loadData(null),
+      (user) => loadData(user.id),
     );
   }
 
@@ -206,7 +206,7 @@ class TimeInputService extends StreamableService {
   static DateTime getStartDateOfWeek(DateTime date) =>
       date.subtract(Duration(days: date.weekday - 1));
 
-  Future<void> _loadData(int? userId) async {
+  Future<void> loadData(int? userId) async {
     await _dayValueDao.loadUserValues(userId);
     await _weekValueDao.loadUserValues(userId);
   }
