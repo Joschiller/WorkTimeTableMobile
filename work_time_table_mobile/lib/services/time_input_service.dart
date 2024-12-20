@@ -1,3 +1,4 @@
+import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
@@ -146,9 +147,20 @@ class TimeInputService extends StreamableService {
   Validator getIsWeekClosableValidator(DateTime weekStartDate) =>
       _getWeekStartIsMondayValidator(weekStartDate) +
       _getWeekNotAlreadyClosedValidator(weekStartDate) +
-      _getHasOneDayOfWeekPassedValidator(weekStartDate)
-      // TODO: it must be the first week ever OR all prior weeks must be closed too
-      ;
+      _getHasOneDayOfWeekPassedValidator(weekStartDate) +
+      // it must be the first week ever OR all prior weeks must be closed too
+      Validator([
+        () => switch (weekValueStream.state) {
+              NoContextValue<List<WeekValue>>() =>
+                AppError.service_noUserLoaded,
+              ContextValue<List<WeekValue>>(value: final weekValues) =>
+                weekValues.isNotEmpty &&
+                        !weekValues.any((week) => isSameDay(week.weekStartDate,
+                            weekStartDate.subtract(const Duration(days: 7))))
+                    ? AppError.service_timeInput_missingPredecessorClose
+                    : null,
+            },
+      ]);
 
   // NOTE: The initial values are not cached here as they will only be calculated, if the week has no stored values yet.
   // Re-calculating will only happen, if:

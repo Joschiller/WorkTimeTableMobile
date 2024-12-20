@@ -23,6 +23,8 @@ enum AppError {
   service_timeInput_invalid('The inserted values are invalid.'),
   service_timeInput_alreadyClosed('The week is already finished.'),
   service_timeInput_unconfirmedReset('Resetting the week was not confirmed.'),
+  service_timeInput_missingPredecessorClose(
+      'The preceeding week must be closed first.'),
   service_timeInput_earlyClose('The week cannot be closed yet.'),
   service_timeInput_unconfirmedClose('Finishing the week was not confirmed.'),
   ;
