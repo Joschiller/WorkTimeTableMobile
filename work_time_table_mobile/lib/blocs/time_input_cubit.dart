@@ -76,6 +76,12 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
           ),
       });
 
+  void loadWeekContainingDay(DateTime day) => emit(switch (state) {
+        NoContextValue() => NoContextValue(),
+        ContextValue() =>
+          _timeInputService.getValuesForWeek(day.firstDayOfWeek),
+      });
+
   void weekForwards() => _loadValueForWeek(1);
 
   void weekBackwards() => _loadValueForWeek(-1);
