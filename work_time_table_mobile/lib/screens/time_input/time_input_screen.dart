@@ -26,8 +26,6 @@ import 'package:work_time_table_mobile/utils.dart';
 class TimeInputScreen extends StatelessWidget {
   const TimeInputScreen({super.key});
 
-  DateTime get _weekOfToday => DateTime.now().toDay().firstDayOfWeek;
-
   @override
   Widget build(BuildContext context) => MultiRepositoryProvider(
         providers: [
