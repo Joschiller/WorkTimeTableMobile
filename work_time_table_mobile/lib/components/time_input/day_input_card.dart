@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/components/time_input/day_mode_selector.dart';
 import 'package:work_time_table_mobile/components/time_input/time_input_button.dart';
 import 'package:work_time_table_mobile/components/time_input/time_span_input.dart';
+import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_day_setting.dart';
@@ -18,6 +19,10 @@ class DayInputCard extends StatelessWidget {
 
   final WeekDaySetting settings;
   final DayValue dayValue;
+
+  bool get _isPartiallyWorkday =>
+      dayValue.firstHalfMode == DayMode.workDay ||
+      dayValue.secondHalfMode == DayMode.workDay;
 
   final void Function(DayValue dayValue)? onChange;
 
@@ -73,7 +78,7 @@ class DayInputCard extends StatelessWidget {
                           startMax:
                               settings.mandatoryWorkTimeStart.toTimeOfDay(),
                           endMin: settings.mandatoryWorkTimeEnd.toTimeOfDay(),
-                          onChange: onChange != null
+                          onChange: onChange != null && _isPartiallyWorkday
                               ? (start, end) => onChange?.call(DayValue(
                                     date: dayValue.date,
                                     firstHalfMode: dayValue.firstHalfMode,
@@ -99,7 +104,7 @@ class DayInputCard extends StatelessWidget {
                         ),
                         TimeInputButton(
                           value: dayValue.breakDuration.toTimeOfDay(),
-                          onChange: onChange != null
+                          onChange: onChange != null && _isPartiallyWorkday
                               ? (value) => onChange?.call(DayValue(
                                     date: dayValue.date,
                                     firstHalfMode: dayValue.firstHalfMode,

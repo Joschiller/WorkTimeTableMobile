@@ -12,6 +12,7 @@ import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
+import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
@@ -283,8 +284,6 @@ class _WeekDisplayState extends State<WeekDisplay> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          // TODO: disable input for non-work-days
-          // TODO: disable inptus if both halfs of day are not "work-day"
           ...DayOfWeek.values.map((dayOfWeek) => DayInputCard(
                 key: isSameDay(
                         widget.weekInformation.weekStartDate
@@ -295,8 +294,14 @@ class _WeekDisplayState extends State<WeekDisplay> {
                 settings: widget.weekSetting.weekDaySettings[dayOfWeek] ??
                     WeekDaySetting.defaultValue(dayOfWeek),
                 dayValue: widget.weekInformation.days[dayOfWeek]!,
-                onChange:
-                    !widget.weekInformation.weekClosed ? widget.onChange : null,
+                onChange: !widget.weekInformation.weekClosed &&
+                        widget.weekInformation.days[dayOfWeek]?.firstHalfMode !=
+                            DayMode.nonWorkDay &&
+                        widget.weekInformation.days[dayOfWeek]
+                                ?.secondHalfMode !=
+                            DayMode.nonWorkDay
+                    ? widget.onChange
+                    : null,
               )),
           if (context
               .read<TimeInputService>()
