@@ -200,7 +200,15 @@ class TimeInputScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            // TODO: show result of this week
+                            TimeInputSummary(
+                              label: 'Result of week',
+                              duration: weekInformation.weekResult,
+                            ),
+                            const Divider(
+                              height: 2,
+                              indent: 0,
+                              color: Colors.black,
+                            ),
                             Container(
                               color: Colors.grey.shade300,
                               child: Padding(
