@@ -255,7 +255,12 @@ class _WeekDisplayState extends State<WeekDisplay> {
   @override
   void didUpdateWidget(covariant WeekDisplay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _scrollToToday();
+    if (!isSameDay(
+      oldWidget.weekInformation.weekStartDate,
+      widget.weekInformation.weekStartDate,
+    )) {
+      _scrollToToday();
+    }
   }
 
   void _scrollToToday() {
