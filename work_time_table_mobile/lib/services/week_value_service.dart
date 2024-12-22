@@ -98,7 +98,7 @@ class WeekValueService {
           (week?.targetTime ?? values.weekSetting.targetWorkTimePerWeek),
       weekClosed: week != null ||
           values.weekValues
-              .any((week) => week.weekStartDate.isBefore(weekStartDate)),
+              .any((week) => week.weekStartDate.isAfter(weekStartDate)),
     );
   }
 }
