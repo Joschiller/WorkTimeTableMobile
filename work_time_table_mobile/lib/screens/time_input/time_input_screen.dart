@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/blocs/time_input_cubit.dart';
 import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
+import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
 import 'package:work_time_table_mobile/components/time_input/day_input_card.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
@@ -30,6 +31,26 @@ import 'package:work_time_table_mobile/utils.dart';
 
 class TimeInputScreen extends StatelessWidget {
   const TimeInputScreen({super.key});
+
+  Future<void> _showClosingConfirmation(
+    BuildContext context,
+    Future<void> Function() doClose,
+  ) async =>
+      await showDialog(
+        context: context,
+        builder: (context) => ConfirmableAlertDialog(
+          title: 'Close Week',
+          content: const Text(
+              'Do you really want to close the selected week permanently? You won\'t be able to edit any values of this week anymore afterwards.'),
+          actionText: 'Close week',
+          onCancel: Navigator.of(context).pop,
+          onConfirm: () async {
+            await doClose();
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          },
+        ),
+      );
 
   @override
   Widget build(BuildContext context) => MultiRepositoryProvider(
@@ -157,8 +178,11 @@ class TimeInputScreen extends StatelessWidget {
                                   onChange: context
                                       .read<TimeInputCubit>()
                                       .updateDayOfWeek,
-                                  onClose: () =>
-                                      context.read<TimeInputCubit>().closeWeek(
+                                  onClose: () => _showClosingConfirmation(
+                                    context,
+                                    () => context
+                                        .read<TimeInputCubit>()
+                                        .closeWeek(
                                           WeekValue(
                                             weekStartDate:
                                                 weekInformation.weekStartDate,
@@ -166,8 +190,9 @@ class TimeInputScreen extends StatelessWidget {
                                                 .targetWorkTimePerWeek,
                                           ),
                                           weekInformation.days.values.toList(),
-                                          false // TODO request confirmation
-                                          ),
+                                          true,
+                                        ),
+                                  ),
                                 ),
                               ),
                             ),
