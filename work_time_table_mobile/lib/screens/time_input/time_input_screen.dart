@@ -297,8 +297,33 @@ class _WeekDisplayState extends State<WeekDisplay> {
                 dayValue: widget.weekInformation.days[dayOfWeek]!,
                 onChange:
                     !widget.weekInformation.weekClosed ? widget.onChange : null,
-              ))
-          // TODO: if the week can be closed, show an additional card at the end for closing the week
+              )),
+          if (context
+              .read<TimeInputService>()
+              .getIsWeekClosableValidator(widget.weekInformation.weekStartDate)
+              .isValid)
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: GestureDetector(
+                onTap: widget.onClose,
+                behavior: HitTestBehavior.opaque,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
+                    side: BorderSide(color: Colors.yellow.shade400),
+                  ),
+                  color: Colors.yellow.shade300,
+                  elevation: 8,
+                  child: const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Icon(
+                      Icons.event_available,
+                      size: 64,
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
