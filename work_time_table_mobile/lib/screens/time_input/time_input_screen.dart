@@ -6,6 +6,7 @@ import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
 import 'package:work_time_table_mobile/components/time_input/day_input_card.dart';
+import 'package:work_time_table_mobile/components/time_input/time_input_summary.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
@@ -168,7 +169,10 @@ class TimeInputScreen extends StatelessWidget {
                         ],
                         content: Column(
                           children: [
-                            // TODO: show result of predecessor week
+                            TimeInputSummary(
+                              label: 'Result of predecessor week',
+                              duration: weekInformation.resultOfPredecessorWeek,
+                            ),
                             Expanded(
                               child: Container(
                                 color: Colors.grey.shade600,
