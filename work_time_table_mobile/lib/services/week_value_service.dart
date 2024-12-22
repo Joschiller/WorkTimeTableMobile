@@ -82,10 +82,12 @@ class WeekValueService {
       resultOfPredecessorWeek: resultOfPredecessorWeek,
       days: days,
       weekResult: resultOfPredecessorWeek +
-          days.values
-              .map((day) =>
-                  day.workTimeEnd - day.workTimeStart - day.breakDuration)
-              .reduce((a, b) => a + b) -
+          (days.values.isEmpty
+              ? 0
+              : days.values
+                  .map((day) =>
+                      day.workTimeEnd - day.workTimeStart - day.breakDuration)
+                  .reduce((a, b) => a + b)) -
           (week?.targetTime ?? values.weekSetting.targetWorkTimePerWeek),
       weekClosed: week != null ||
           values.weekValues

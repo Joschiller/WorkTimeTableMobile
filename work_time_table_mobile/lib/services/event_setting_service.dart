@@ -64,9 +64,12 @@ class EventSettingService extends StreamableService {
             }
       ]);
 
-  Validator _getAllBelongsToUserValidator(List<int> eventIds) => eventIds
-      .map((e) => _getBelongsToUserValidator(e))
-      .reduce((a, b) => a + b);
+  Validator _getAllBelongsToUserValidator(List<int> eventIds) =>
+      eventIds.isEmpty
+          ? Validator([])
+          : eventIds
+              .map((e) => _getBelongsToUserValidator(e))
+              .reduce((a, b) => a + b);
 
   ContextDependentListStream<EventSetting> get eventSettingStream => _stream;
 
