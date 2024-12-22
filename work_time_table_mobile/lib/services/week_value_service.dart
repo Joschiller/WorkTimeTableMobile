@@ -62,11 +62,17 @@ class WeekValueService {
                 values.eventSettings,
               );
     }
-    final predecessorWeeks =
-        values.dayValues.where((day) => day.date.isBefore(weekStartDate));
-    final resultOfPredecessorWeek = predecessorWeeks.isEmpty
+
+    // resultOfPredecessorWeek
+    final firstClosedWeek = values.weekValues.firstOrNull?.weekStartDate;
+    final predecessorDays = values.dayValues.where((day) =>
+        day.date.isBefore(weekStartDate) &&
+        // ignore days that are before the first closed week and therefore will never be closed
+        (firstClosedWeek == null || !day.date.isBefore(firstClosedWeek)));
+    final resultOfPredecessorWeek = predecessorDays.isEmpty
         ? 0
-        : predecessorWeeks
+        // TODO: theoretically needs to also sum up all default values for the unsaved days sbefore the current week, but this may be a theoretical scenario
+        : predecessorDays
                 .map((day) =>
                     day.workTimeEnd - day.workTimeStart - day.breakDuration)
                 .reduce((a, b) => a + b) -
@@ -76,7 +82,8 @@ class WeekValueService {
                     .where((week) => week.weekStartDate.isBefore(weekStartDate))
                     .map((week) => week.targetTime)
                     .reduce((a, b) => a + b));
-    // TODO: theoretically needs to also substract all target values for the unsaved week sbefore the current week, but this may be a theoretical scenario
+    // TODO: theoretically needs to also substract all target values for the unsaved weeks sbefore the current week, but this may be a theoretical scenario
+
     return WeekInformation(
       weekStartDate: weekStartDate,
       resultOfPredecessorWeek: resultOfPredecessorWeek,
