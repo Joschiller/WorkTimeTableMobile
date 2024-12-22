@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/blocs/time_input_cubit.dart';
+import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
 import 'package:work_time_table_mobile/components/time_input/day_input_card.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
@@ -11,8 +12,11 @@ import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
+import 'package:work_time_table_mobile/models/value/day_value.dart';
+import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_day_setting.dart';
+import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/services/day_value_service.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
@@ -60,6 +64,11 @@ class TimeInputScreen extends StatelessWidget {
         ],
         child: MultiBlocProvider(
           providers: [
+            BlocProvider<WeekSettingCubit>(
+              create: (context) => WeekSettingCubit(
+                context.read<WeekSettingService>(),
+              ),
+            ),
             BlocProvider<TimeInputCubit>(
               create: (context) => TimeInputCubit(
                 context.read<UserService>(),
@@ -69,9 +78,25 @@ class TimeInputScreen extends StatelessWidget {
               ),
             ),
           ],
-          child: BlocBuilder<TimeInputCubit,
-                  ContextDependentValue<WeekInformation>>(
-              builder: (context, state) => switch (state) {
+          child:
+              BlocBuilder<WeekSettingCubit, ContextDependentValue<WeekSetting>>(
+            builder: (context, weekSettingState) => BlocBuilder<TimeInputCubit,
+                ContextDependentValue<WeekInformation>>(
+              builder: (context, weekState) => switch (weekSettingState) {
+                NoContextValue<WeekSetting>() => PageTemplate(
+                    title: 'No user selected',
+                    menuButtons: [
+                      (
+                        onPressed: () => SettingsScreenRoute().push(context),
+                        icon: const Icon(Icons.settings),
+                      ),
+                    ],
+                    content: const Center(
+                      child: Text('No user selected'),
+                    ),
+                  ),
+                ContextValue<WeekSetting>(value: final weekSetting) => switch (
+                      weekState) {
                     NoContextValue<WeekInformation>() => PageTemplate(
                         title: 'No user selected',
                         menuButtons: [
@@ -126,7 +151,22 @@ class TimeInputScreen extends StatelessWidget {
                               child: Container(
                                 color: Colors.grey.shade600,
                                 child: WeekDisplay(
+                                  weekSetting: weekSetting,
                                   weekInformation: weekInformation,
+                                  onChange: context
+                                      .read<TimeInputCubit>()
+                                      .updateDayOfWeek,
+                                  onClose: () =>
+                                      context.read<TimeInputCubit>().closeWeek(
+                                          WeekValue(
+                                            weekStartDate:
+                                                weekInformation.weekStartDate,
+                                            targetTime: weekSetting
+                                                .targetWorkTimePerWeek,
+                                          ),
+                                          weekInformation.days.values.toList(),
+                                          false // TODO request confirmation
+                                          ),
                                 ),
                               ),
                             ),
@@ -177,7 +217,10 @@ class TimeInputScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                  }),
+                  },
+              },
+            ),
+          ),
         ),
       );
 }
@@ -185,10 +228,16 @@ class TimeInputScreen extends StatelessWidget {
 class WeekDisplay extends StatefulWidget {
   WeekDisplay({
     super.key,
+    required this.weekSetting,
     required this.weekInformation,
+    required this.onChange,
+    required this.onClose,
   });
 
+  final WeekSetting weekSetting;
   final WeekInformation weekInformation;
+  final void Function(DayValue dayValue) onChange;
+  final void Function() onClose;
 
   final todayKey = GlobalKey();
 
@@ -229,6 +278,8 @@ class _WeekDisplayState extends State<WeekDisplay> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
+          // TODO: disable input for non-work-days
+          // TODO: disable inptus if both halfs of day are not "work-day"
           ...DayOfWeek.values.map((dayOfWeek) => DayInputCard(
                 key: isSameDay(
                         widget.weekInformation.weekStartDate
@@ -236,22 +287,11 @@ class _WeekDisplayState extends State<WeekDisplay> {
                         DateTime.now())
                     ? widget.todayKey
                     : null,
-                // TODO: load settings
-                settings: WeekDaySetting(
-                  dayOfWeek: dayOfWeek,
-                  timeEquivalent: 0,
-                  mandatoryWorkTimeStart: 0,
-                  mandatoryWorkTimeEnd: 0,
-                  defaultWorkTimeStart: 0,
-                  defaultWorkTimeEnd: 0,
-                  defaultBreakDuration: 0,
-                ),
+                settings: widget.weekSetting.weekDaySettings[dayOfWeek] ??
+                    WeekDaySetting.defaultValue(dayOfWeek),
                 dayValue: widget.weekInformation.days[dayOfWeek]!,
-                onChange: !widget.weekInformation.weekClosed
-                    ? (dayValue) {
-                        // TODO: instantly persist changes whenever a value is altered
-                      }
-                    : null,
+                onChange:
+                    !widget.weekInformation.weekClosed ? widget.onChange : null,
               ))
           // TODO: if the week can be closed, show an additional card at the end for closing the week
         ],
