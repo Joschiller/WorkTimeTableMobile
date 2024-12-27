@@ -101,33 +101,10 @@ class TimeInputScreen extends StatelessWidget {
             builder: (context, weekSettingState) => BlocBuilder<TimeInputCubit,
                 ContextDependentValue<WeekInformation>>(
               builder: (context, weekState) => switch (weekSettingState) {
-                NoContextValue<WeekSetting>() => PageTemplate(
-                    title: 'No user selected',
-                    menuButtons: [
-                      (
-                        onPressed: () => SettingsScreenRoute().push(context),
-                        icon: const Icon(Icons.settings),
-                      ),
-                    ],
-                    content: const Center(
-                      child: Text('No user selected'),
-                    ),
-                  ),
+                NoContextValue<WeekSetting>() => const NoUserPage(),
                 ContextValue<WeekSetting>(value: final weekSetting) => switch (
                       weekState) {
-                    NoContextValue<WeekInformation>() => PageTemplate(
-                        title: 'No user selected',
-                        menuButtons: [
-                          (
-                            onPressed: () =>
-                                SettingsScreenRoute().push(context),
-                            icon: const Icon(Icons.settings),
-                          ),
-                        ],
-                        content: const Center(
-                          child: Text('No user selected'),
-                        ),
-                      ),
+                    NoContextValue<WeekInformation>() => const NoUserPage(),
                     ContextValue<WeekInformation>(
                       value: final weekInformation
                     ) =>
@@ -266,6 +243,32 @@ class TimeInputScreen extends StatelessWidget {
                   },
               },
             ),
+          ),
+        ),
+      );
+}
+
+class NoUserPage extends StatelessWidget {
+  const NoUserPage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) => PageTemplate(
+        title: 'No user selected',
+        menuButtons: [
+          (
+            onPressed: () => SettingsScreenRoute().push(context),
+            icon: const Icon(Icons.settings),
+          ),
+        ],
+        content: const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('No user selected'),
+              Text('Go to the settings to configure a user'),
+            ],
           ),
         ),
       );
