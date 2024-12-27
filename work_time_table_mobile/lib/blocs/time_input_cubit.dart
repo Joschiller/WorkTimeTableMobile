@@ -21,7 +21,6 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
     this._weekSettingService,
     this._eventSettingService,
     this._timeInputService,
-    // TODO: this NoContextValue may become a future source of errors when leaving and re-entering the time input screen -> probably must evaluate current state of _userService.currentUserStream.state to load the initial values (compare to other cubits for more details)
   ) : super(NoContextValue()) {
     _subscriptions.add(_userService.currentUserStream.stream
         .listen((user) => runContextDependentAction(

@@ -392,6 +392,7 @@ class TimeInputService extends StreamableService {
     List<DayValue> dayValues,
     bool isConfirmed,
   ) =>
+      // TODO: move all past events to next occurrence
       runContextDependentAction(
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
