@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 class TimeInputSummary extends StatelessWidget {
   const TimeInputSummary({
@@ -23,12 +24,9 @@ class TimeInputSummary extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  Text(
-                      '${duration < 0 ? '-' : ''}${(duration.abs() ~/ 60).toString().padLeft(2, '0')}:${(duration.abs() % 60).toString().padLeft(2, '0')} h'),
+                  Text(duration.timeString),
                 ],
               ),
             ],

@@ -34,7 +34,6 @@ class WeekDaySetting {
           defaultBreakDuration: 0,
         );
 
-  // TODO: maybe move this to business logic?
   int get defaultWorkAmount =>
       defaultWorkTimeEnd - defaultWorkTimeStart - defaultBreakDuration;
 }

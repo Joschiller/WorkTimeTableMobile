@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/components/event_setting/event_repetition_input.dart';
+import 'package:work_time_table_mobile/components/event_setting/event_setting_editor_section.dart';
 import 'package:work_time_table_mobile/components/event_setting/event_time_span_input.dart';
 import 'package:work_time_table_mobile/components/event_setting/event_type_selector.dart';
 import 'package:work_time_table_mobile/components/validation_result_display.dart';
@@ -80,163 +81,164 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
               child: Column(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  'Event Type:',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                        child: EventSettingEditorSection(
+                          header: '1. Select the type of event to create',
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Event Type:',
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
                                   ),
-                                ),
-                                const SizedBox(width: 16),
-                                EventTypeSelector(
-                                  eventType: _value.eventType,
-                                  onChange: (eventType) =>
-                                      _updateValue(EventSetting(
-                                    id: _value.id,
-                                    eventType: eventType,
-                                    title: _value.title,
-                                    startDate: _value.startDate,
-                                    endDate: _value.endDate,
-                                    startIsHalfDay: _value.startIsHalfDay,
-                                    endIsHalfDay: _value.endIsHalfDay,
-                                    dayBasedRepetitionRules:
-                                        _value.dayBasedRepetitionRules,
-                                    monthBasedRepetitionRules:
-                                        _value.monthBasedRepetitionRules,
-                                  )),
-                                ),
-                              ],
-                            ),
-                            TextField(
-                              decoration: const InputDecoration(
-                                label: Text('Title (optional)'),
+                                  const SizedBox(width: 16),
+                                  EventTypeSelector(
+                                    eventType: _value.eventType,
+                                    onChange: (eventType) =>
+                                        _updateValue(EventSetting(
+                                      id: _value.id,
+                                      eventType: eventType,
+                                      title: _value.title,
+                                      startDate: _value.startDate,
+                                      endDate: _value.endDate,
+                                      startIsHalfDay: _value.startIsHalfDay,
+                                      endIsHalfDay: _value.endIsHalfDay,
+                                      dayBasedRepetitionRules:
+                                          _value.dayBasedRepetitionRules,
+                                      monthBasedRepetitionRules:
+                                          _value.monthBasedRepetitionRules,
+                                    )),
+                                  ),
+                                ],
                               ),
-                              keyboardType: TextInputType.text,
-                              maxLines: 1,
-                              controller: textEditingController,
-                              onChanged: (value) => _updateValue(EventSetting(
-                                id: _value.id,
-                                eventType: _value.eventType,
-                                title: value,
-                                startDate: _value.startDate,
-                                endDate: _value.endDate,
-                                startIsHalfDay: _value.startIsHalfDay,
-                                endIsHalfDay: _value.endIsHalfDay,
-                                dayBasedRepetitionRules:
-                                    _value.dayBasedRepetitionRules,
-                                monthBasedRepetitionRules:
-                                    _value.monthBasedRepetitionRules,
-                              )),
-                            ),
-                          ],
+                              TextField(
+                                decoration: const InputDecoration(
+                                  label: Text('Title (optional)'),
+                                ),
+                                keyboardType: TextInputType.text,
+                                maxLines: 1,
+                                controller: textEditingController,
+                                onChanged: (value) => _updateValue(EventSetting(
+                                  id: _value.id,
+                                  eventType: _value.eventType,
+                                  title: value,
+                                  startDate: _value.startDate,
+                                  endDate: _value.endDate,
+                                  startIsHalfDay: _value.startIsHalfDay,
+                                  endIsHalfDay: _value.endIsHalfDay,
+                                  dayBasedRepetitionRules:
+                                      _value.dayBasedRepetitionRules,
+                                  monthBasedRepetitionRules:
+                                      _value.monthBasedRepetitionRules,
+                                )),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 16),
                       Expanded(
-                        child: EventTimeSpanInput(
-                          startDate: _value.startDate,
-                          endDate: _value.endDate,
-                          startIsHalfDay: _value.startIsHalfDay,
-                          endIsHalfDay: _value.endIsHalfDay,
-                          makeInternallyBounded: false,
-                          onChange: (startDate, endDate, startIsHalfDay,
-                                  endIsHalfDay) =>
-                              _updateValue(EventSetting(
-                            id: _value.id,
-                            eventType: _value.eventType,
-                            title: _value.title,
-                            startDate: startDate,
-                            endDate: endDate,
-                            startIsHalfDay: startIsHalfDay,
-                            endIsHalfDay: endIsHalfDay,
-                            dayBasedRepetitionRules:
-                                _value.dayBasedRepetitionRules,
-                            monthBasedRepetitionRules:
-                                _value.monthBasedRepetitionRules,
-                          )),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(),
-                  const Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Event Repetition:',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                        child: EventSettingEditorSection(
+                          header: '2. Configure the event duration',
+                          child: EventTimeSpanInput(
+                            startDate: _value.startDate,
+                            endDate: _value.endDate,
+                            startIsHalfDay: _value.startIsHalfDay,
+                            endIsHalfDay: _value.endIsHalfDay,
+                            makeInternallyBounded: false,
+                            onChange: (startDate, endDate, startIsHalfDay,
+                                    endIsHalfDay) =>
+                                _updateValue(EventSetting(
+                              id: _value.id,
+                              eventType: _value.eventType,
+                              title: _value.title,
+                              startDate: startDate,
+                              endDate: endDate,
+                              startIsHalfDay: startIsHalfDay,
+                              endIsHalfDay: endIsHalfDay,
+                              dayBasedRepetitionRules:
+                                  _value.dayBasedRepetitionRules,
+                              monthBasedRepetitionRules:
+                                  _value.monthBasedRepetitionRules,
+                            )),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  EventRepetitionInput(
-                    initialDayBasedRepetitionRules:
-                        _value.dayBasedRepetitionRules,
-                    initialMonthBasedRepetitionRules:
-                        _value.monthBasedRepetitionRules,
-                    onChange:
-                        (dayBasedRepetitionRules, monthBasedRepetitionRules) =>
-                            _updateValue(EventSetting(
-                      id: _value.id,
-                      eventType: _value.eventType,
-                      title: _value.title,
-                      startDate: _value.startDate,
-                      endDate: _value.endDate,
-                      startIsHalfDay: _value.startIsHalfDay,
-                      endIsHalfDay: _value.endIsHalfDay,
-                      dayBasedRepetitionRules: dayBasedRepetitionRules,
-                      monthBasedRepetitionRules: monthBasedRepetitionRules,
-                    )),
-                    availableMonthBasedRepetitionRules: [
-                      if (_value.startDate.day - 1 < 28)
-                        MonthBasedRepetitionRuleBase(
-                          // Xth day of month
-                          dayIndex: _value.startDate.day - 1,
-                          weekIndex: null,
-                          countFromEnd: false,
-                        ),
-                      if (_value.startDate.countOfDayInMonth -
-                              _value.startDate.day <
-                          28)
-                        MonthBasedRepetitionRuleBase(
-                          // Xth to last day in month
-                          dayIndex: _value.startDate.countOfDayInMonth -
-                              _value.startDate.day,
-                          weekIndex: null,
-                          countFromEnd: true,
-                        ),
-                      if ((_value.startDate.day / 7).ceil() - 1 < 4)
-                        MonthBasedRepetitionRuleBase(
-                          // Xth day of week in month
-                          dayIndex:
-                              DayOfWeek.fromDateTime(_value.startDate).index,
-                          weekIndex: (_value.startDate.day / 7).ceil() - 1,
-                          countFromEnd: false,
-                        ),
-                      if (((_value.startDate.countOfDayInMonth -
-                                      _value.startDate.day) /
-                                  7)
-                              .floor() <
-                          4)
-                        MonthBasedRepetitionRuleBase(
-                          // Xth to last day of week in month
-                          dayIndex:
-                              DayOfWeek.fromDateTime(_value.startDate).index,
-                          weekIndex: ((_value.startDate.countOfDayInMonth -
-                                      _value.startDate.day) /
-                                  7)
-                              .floor(),
-                          countFromEnd: true,
-                        ),
-                    ],
+                  const Divider(
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+                  EventSettingEditorSection(
+                    header: '3. Configure event repetitions',
+                    child: EventRepetitionInput(
+                      initialDayBasedRepetitionRules:
+                          _value.dayBasedRepetitionRules,
+                      initialMonthBasedRepetitionRules:
+                          _value.monthBasedRepetitionRules,
+                      onChange: (
+                        dayBasedRepetitionRules,
+                        monthBasedRepetitionRules,
+                      ) =>
+                          _updateValue(EventSetting(
+                        id: _value.id,
+                        eventType: _value.eventType,
+                        title: _value.title,
+                        startDate: _value.startDate,
+                        endDate: _value.endDate,
+                        startIsHalfDay: _value.startIsHalfDay,
+                        endIsHalfDay: _value.endIsHalfDay,
+                        dayBasedRepetitionRules: dayBasedRepetitionRules,
+                        monthBasedRepetitionRules: monthBasedRepetitionRules,
+                      )),
+                      availableMonthBasedRepetitionRules: [
+                        if (_value.startDate.day - 1 < 28)
+                          MonthBasedRepetitionRuleBase(
+                            // Xth day of month
+                            dayIndex: _value.startDate.day - 1,
+                            weekIndex: null,
+                            countFromEnd: false,
+                          ),
+                        if (_value.startDate.countOfDayInMonth -
+                                _value.startDate.day <
+                            28)
+                          MonthBasedRepetitionRuleBase(
+                            // Xth to last day in month
+                            dayIndex: _value.startDate.countOfDayInMonth -
+                                _value.startDate.day,
+                            weekIndex: null,
+                            countFromEnd: true,
+                          ),
+                        if ((_value.startDate.day / 7).ceil() - 1 < 4)
+                          MonthBasedRepetitionRuleBase(
+                            // Xth day of week in month
+                            dayIndex:
+                                DayOfWeek.fromDateTime(_value.startDate).index,
+                            weekIndex: (_value.startDate.day / 7).ceil() - 1,
+                            countFromEnd: false,
+                          ),
+                        if (((_value.startDate.countOfDayInMonth -
+                                        _value.startDate.day) /
+                                    7)
+                                .floor() <
+                            4)
+                          MonthBasedRepetitionRuleBase(
+                            // Xth to last day of week in month
+                            dayIndex:
+                                DayOfWeek.fromDateTime(_value.startDate).index,
+                            weekIndex: ((_value.startDate.countOfDayInMonth -
+                                        _value.startDate.day) /
+                                    7)
+                                .floor(),
+                            countFromEnd: true,
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),

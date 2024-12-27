@@ -48,11 +48,11 @@ class MonthBasedRepetitionRuleBase {
 
   String toDisplayString() => (weekIndex != null)
       ? countFromEnd
-          ? '${weekIndex! > 0 ? '${weekIndex! + 1}. to ' : ''}last ${DayOfWeek.values[dayIndex].name} in month'
-          : '${weekIndex! + 1}. ${DayOfWeek.values[dayIndex].name} in month'
+          ? '${weekIndex! > 0 ? '${weekIndex! + 1}. to ' : ''}last ${DayOfWeek.values[dayIndex].name} of the month'
+          : '${weekIndex! + 1}. ${DayOfWeek.values[dayIndex].name} of the month'
       : countFromEnd
-          ? '${dayIndex > 0 ? '${dayIndex + 1}. to ' : ''}last day of month'
-          : '${dayIndex + 1}. day of month';
+          ? '${dayIndex > 0 ? '${dayIndex + 1}. to ' : ''}last day of the month'
+          : '${dayIndex + 1}. day of the month';
 
   @override
   int get hashCode =>
