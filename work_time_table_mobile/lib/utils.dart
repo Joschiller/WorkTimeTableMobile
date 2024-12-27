@@ -38,3 +38,8 @@ extension StartDayOfWeek on DateTime {
         Duration(days: DayOfWeek.fromDateTime(this).index),
       ).toDay();
 }
+
+extension IntToTimeString on int {
+  String get timeString =>
+      '${this < 0 ? '-' : ''}${(abs() ~/ 60).toString().padLeft(2, '0')}:${(abs() % 60).toString().padLeft(2, '0')} h';
+}
