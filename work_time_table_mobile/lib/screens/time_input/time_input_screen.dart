@@ -179,9 +179,22 @@ class TimeInputScreen extends StatelessWidget {
                                 child: WeekDisplay(
                                   weekSetting: weekSetting,
                                   weekInformation: weekInformation,
-                                  onChange: context
-                                      .read<TimeInputCubit>()
-                                      .updateDayOfWeek,
+                                  onChangeDay: WeekDisplayOnChangeDay(
+                                    onReset:
+                                        context.read<TimeInputCubit>().onReset,
+                                    onChangeWorkTime: context
+                                        .read<TimeInputCubit>()
+                                        .updateWorkTime,
+                                    onChangeBreakDuration: context
+                                        .read<TimeInputCubit>()
+                                        .updateBreakDuration,
+                                    onChangeFirstHalfMode: context
+                                        .read<TimeInputCubit>()
+                                        .updateFirstHalfMode,
+                                    onChangeSecondHalfMode: context
+                                        .read<TimeInputCubit>()
+                                        .updateSecondHalfMode,
+                                  ),
                                   onClose: () => _showClosingConfirmation(
                                     context,
                                     () => context
@@ -263,18 +276,61 @@ class TimeInputScreen extends StatelessWidget {
       );
 }
 
+class WeekDisplayOnChangeDay {
+  final void Function(DayValue oldDayValue) onReset;
+  final void Function(
+    DayValue oldDayValue,
+    ({
+      int workTimeStart,
+      int workTimeEnd,
+    }) workTime,
+  ) onChangeWorkTime;
+  final void Function(
+    DayValue oldDayValue,
+    int breakDuration,
+  ) onChangeBreakDuration;
+  final void Function(
+    DayValue oldDayValue,
+    DayMode firstHalfMode,
+  ) onChangeFirstHalfMode;
+  final void Function(
+    DayValue oldDayValue,
+    DayMode secondHalfMode,
+  ) onChangeSecondHalfMode;
+
+  WeekDisplayOnChangeDay({
+    required this.onReset,
+    required this.onChangeWorkTime,
+    required this.onChangeBreakDuration,
+    required this.onChangeFirstHalfMode,
+    required this.onChangeSecondHalfMode,
+  });
+
+  DayInputCardOnChange toDayInputCardOnChange(DayValue oldDayValue) =>
+      DayInputCardOnChange(
+        onReset: () => onReset(oldDayValue),
+        onChangeWorkTime: (workTime) => onChangeWorkTime(oldDayValue, workTime),
+        onChangeBreakDuration: (breakDuration) =>
+            onChangeBreakDuration(oldDayValue, breakDuration),
+        onChangeFirstHalfMode: (firstHalfMode) =>
+            onChangeFirstHalfMode(oldDayValue, firstHalfMode),
+        onChangeSecondHalfMode: (secondHalfMode) =>
+            onChangeSecondHalfMode(oldDayValue, secondHalfMode),
+      );
+}
+
 class WeekDisplay extends StatefulWidget {
   WeekDisplay({
     super.key,
     required this.weekSetting,
     required this.weekInformation,
-    required this.onChange,
+    required this.onChangeDay,
     required this.onClose,
   });
 
   final WeekSetting weekSetting;
   final WeekInformation weekInformation;
-  final void Function(DayValue dayValue) onChange;
+  final WeekDisplayOnChangeDay onChangeDay;
   final void Function() onClose;
 
   final todayKey = GlobalKey();
@@ -337,7 +393,8 @@ class _WeekDisplayState extends State<WeekDisplay> {
                         widget.weekInformation.days[dayOfWeek]
                                 ?.secondHalfMode !=
                             DayMode.nonWorkDay
-                    ? widget.onChange
+                    ? widget.onChangeDay.toDayInputCardOnChange(
+                        widget.weekInformation.days[dayOfWeek]!)
                     : null,
               )),
           if (context

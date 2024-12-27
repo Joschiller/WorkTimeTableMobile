@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
@@ -49,8 +50,35 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   final EventSettingService _eventSettingService;
   final TimeInputService _timeInputService;
 
-  Future<void> updateDayOfWeek(DayValue value) =>
-      _timeInputService.updateDayOfWeek(value);
+  Future<void> onReset(DayValue oldDayValue) =>
+      _timeInputService.onReset(oldDayValue);
+
+  Future<void> updateWorkTime(
+    DayValue oldDayValue,
+    ({
+      int workTimeStart,
+      int workTimeEnd,
+    }) workTime,
+  ) =>
+      _timeInputService.updateWorkTime(oldDayValue, workTime);
+
+  Future<void> updateBreakDuration(
+    DayValue oldDayValue,
+    int breakDuration,
+  ) =>
+      _timeInputService.updateBreakDuration(oldDayValue, breakDuration);
+
+  Future<void> updateFirstHalfMode(
+    DayValue oldDayValue,
+    DayMode firstHalfMode,
+  ) =>
+      _timeInputService.updateFirstHalfMode(oldDayValue, firstHalfMode);
+
+  Future<void> updateSecondHalfMode(
+    DayValue oldDayValue,
+    DayMode secondHalfMode,
+  ) =>
+      _timeInputService.updateSecondHalfMode(oldDayValue, secondHalfMode);
 
   Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
       _timeInputService.resetDaysOfWeek(weekStartDate, isConfirmed);

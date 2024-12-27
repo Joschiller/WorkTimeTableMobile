@@ -9,6 +9,27 @@ import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_day_setting.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
+class DayInputCardOnChange {
+  final void Function() onReset;
+  final void Function(
+    ({
+      int workTimeStart,
+      int workTimeEnd,
+    }) workTime,
+  ) onChangeWorkTime;
+  final void Function(int breakDuration) onChangeBreakDuration;
+  final void Function(DayMode firstHalfMode) onChangeFirstHalfMode;
+  final void Function(DayMode secondHalfMode) onChangeSecondHalfMode;
+
+  DayInputCardOnChange({
+    required this.onReset,
+    required this.onChangeWorkTime,
+    required this.onChangeBreakDuration,
+    required this.onChangeFirstHalfMode,
+    required this.onChangeSecondHalfMode,
+  });
+}
+
 class DayInputCard extends StatelessWidget {
   const DayInputCard({
     super.key,
@@ -24,7 +45,7 @@ class DayInputCard extends StatelessWidget {
       dayValue.firstHalfMode == DayMode.workDay ||
       dayValue.secondHalfMode == DayMode.workDay;
 
-  final void Function(DayValue dayValue)? onChange;
+  final DayInputCardOnChange? onChange;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -44,9 +65,24 @@ class DayInputCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                displayDateFormat.format(dayValue.date),
-                style: Theme.of(context).textTheme.titleLarge,
+              Row(
+                children: [
+                  const SizedBox(width: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      displayDateFormat.format(dayValue.date),
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: onChange?.onReset,
+                    child: Icon(
+                      Icons.undo,
+                      color: onChange != null ? Colors.black : Colors.black26,
+                    ),
+                  ),
+                ],
               ),
               Text(
                 DayOfWeek.fromDateTime(dayValue.date).name,
@@ -79,13 +115,9 @@ class DayInputCard extends StatelessWidget {
                               settings.mandatoryWorkTimeStart.toTimeOfDay(),
                           endMin: settings.mandatoryWorkTimeEnd.toTimeOfDay(),
                           onChange: onChange != null && _isPartiallyWorkday
-                              ? (start, end) => onChange?.call(DayValue(
-                                    date: dayValue.date,
-                                    firstHalfMode: dayValue.firstHalfMode,
-                                    secondHalfMode: dayValue.secondHalfMode,
+                              ? (start, end) => onChange?.onChangeWorkTime((
                                     workTimeStart: start.toInt(),
                                     workTimeEnd: end.toInt(),
-                                    breakDuration: dayValue.breakDuration,
                                   ))
                               : null,
                         ),
@@ -105,14 +137,8 @@ class DayInputCard extends StatelessWidget {
                         TimeInputButton(
                           value: dayValue.breakDuration.toTimeOfDay(),
                           onChange: onChange != null && _isPartiallyWorkday
-                              ? (value) => onChange?.call(DayValue(
-                                    date: dayValue.date,
-                                    firstHalfMode: dayValue.firstHalfMode,
-                                    secondHalfMode: dayValue.secondHalfMode,
-                                    workTimeStart: dayValue.workTimeStart,
-                                    workTimeEnd: dayValue.workTimeEnd,
-                                    breakDuration: value.toInt(),
-                                  ))
+                              ? (value) =>
+                                  onChange?.onChangeBreakDuration(value.toInt())
                               : null,
                         ),
                       ],
@@ -136,14 +162,8 @@ class DayInputCard extends StatelessWidget {
                         DayModeSelector(
                           dayMode: dayValue.firstHalfMode,
                           onChange: onChange != null
-                              ? (dayMode) => onChange?.call(DayValue(
-                                    date: dayValue.date,
-                                    firstHalfMode: dayMode,
-                                    secondHalfMode: dayValue.secondHalfMode,
-                                    workTimeStart: dayValue.workTimeStart,
-                                    workTimeEnd: dayValue.workTimeEnd,
-                                    breakDuration: dayValue.breakDuration,
-                                  ))
+                              ? (dayMode) =>
+                                  onChange?.onChangeFirstHalfMode(dayMode)
                               : null,
                         ),
                       ],
@@ -162,14 +182,8 @@ class DayInputCard extends StatelessWidget {
                         DayModeSelector(
                           dayMode: dayValue.secondHalfMode,
                           onChange: onChange != null
-                              ? (dayMode) => onChange?.call(DayValue(
-                                    date: dayValue.date,
-                                    firstHalfMode: dayValue.firstHalfMode,
-                                    secondHalfMode: dayMode,
-                                    workTimeStart: dayValue.workTimeStart,
-                                    workTimeEnd: dayValue.workTimeEnd,
-                                    breakDuration: dayValue.breakDuration,
-                                  ))
+                              ? (dayMode) =>
+                                  onChange?.onChangeSecondHalfMode(dayMode)
                               : null,
                         ),
                       ],

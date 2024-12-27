@@ -7,6 +7,8 @@ import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
+import 'package:work_time_table_mobile/services/day_value_service.dart';
+import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
@@ -242,7 +244,123 @@ class TimeInputService extends StreamableService {
         ),
       );
 
-  Future<void> updateDayOfWeek(DayValue value) => runContextDependentAction(
+  Future<void> onReset(DayValue oldDayValue) => runContextDependentAction(
+        _getValuesFromDaos(),
+        () async => Future.error(AppError.service_noUserLoaded),
+        (configuration) => _updateDayOfWeek(
+            const DayValueService(EventService()).getInitialValueForDay(
+          oldDayValue.date,
+          configuration.weekSetting,
+          configuration.eventSettings,
+        )),
+      );
+
+  Future<void> updateWorkTime(
+    DayValue oldDayValue,
+    ({
+      int workTimeStart,
+      int workTimeEnd,
+    }) workTime,
+  ) =>
+      _updateDayOfWeek(DayValue(
+        date: oldDayValue.date,
+        workTimeStart: workTime.workTimeStart,
+        workTimeEnd: workTime.workTimeEnd,
+        breakDuration: oldDayValue.breakDuration,
+        firstHalfMode: oldDayValue.firstHalfMode,
+        secondHalfMode: oldDayValue.secondHalfMode,
+      ));
+
+  Future<void> updateBreakDuration(
+    DayValue oldDayValue,
+    int breakDuration,
+  ) =>
+      _updateDayOfWeek(DayValue(
+        date: oldDayValue.date,
+        workTimeStart: oldDayValue.workTimeStart,
+        workTimeEnd: oldDayValue.workTimeEnd,
+        breakDuration: breakDuration,
+        firstHalfMode: oldDayValue.firstHalfMode,
+        secondHalfMode: oldDayValue.secondHalfMode,
+      ));
+
+  Future<void> updateFirstHalfMode(
+    DayValue oldDayValue,
+    DayMode firstHalfMode,
+  ) =>
+      runContextDependentAction(
+        _weekSettingService.weekSettingStream.state,
+        () async => Future.error(AppError.service_noUserLoaded),
+        (weekSettings) {
+          final isNotAWorkDay = oldDayValue.secondHalfMode != DayMode.workDay &&
+              firstHalfMode != DayMode.workDay;
+          final becameWorkDay = oldDayValue.firstHalfMode != DayMode.workDay &&
+              oldDayValue.secondHalfMode != DayMode.workDay &&
+              firstHalfMode == DayMode.workDay;
+          final defaultValues = weekSettings
+              .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)]!;
+          return _updateDayOfWeek(DayValue(
+            date: oldDayValue.date,
+            workTimeStart: isNotAWorkDay
+                ? 0
+                : becameWorkDay
+                    ? defaultValues.defaultWorkTimeStart
+                    : oldDayValue.workTimeStart,
+            workTimeEnd: isNotAWorkDay
+                ? 0
+                : becameWorkDay
+                    ? defaultValues.defaultWorkTimeEnd
+                    : oldDayValue.workTimeEnd,
+            breakDuration: isNotAWorkDay
+                ? 0
+                : becameWorkDay
+                    ? defaultValues.defaultBreakDuration
+                    : oldDayValue.breakDuration,
+            firstHalfMode: firstHalfMode,
+            secondHalfMode: oldDayValue.secondHalfMode,
+          ));
+        },
+      );
+
+  Future<void> updateSecondHalfMode(
+    DayValue oldDayValue,
+    DayMode secondHalfMode,
+  ) =>
+      runContextDependentAction(
+        _weekSettingService.weekSettingStream.state,
+        () async => Future.error(AppError.service_noUserLoaded),
+        (weekSettings) {
+          final isNotAWorkDay = oldDayValue.firstHalfMode != DayMode.workDay &&
+              secondHalfMode != DayMode.workDay;
+          final becameWorkDay = oldDayValue.firstHalfMode != DayMode.workDay &&
+              oldDayValue.secondHalfMode != DayMode.workDay &&
+              secondHalfMode == DayMode.workDay;
+          final defaultValues = weekSettings
+              .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)]!;
+          return _updateDayOfWeek(DayValue(
+            date: oldDayValue.date,
+            workTimeStart: isNotAWorkDay
+                ? 0
+                : becameWorkDay
+                    ? defaultValues.defaultWorkTimeStart
+                    : oldDayValue.workTimeStart,
+            workTimeEnd: isNotAWorkDay
+                ? 0
+                : becameWorkDay
+                    ? defaultValues.defaultWorkTimeEnd
+                    : oldDayValue.workTimeEnd,
+            breakDuration: isNotAWorkDay
+                ? 0
+                : becameWorkDay
+                    ? defaultValues.defaultBreakDuration
+                    : oldDayValue.breakDuration,
+            firstHalfMode: oldDayValue.firstHalfMode,
+            secondHalfMode: secondHalfMode,
+          ));
+        },
+      );
+
+  Future<void> _updateDayOfWeek(DayValue value) => runContextDependentAction(
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
