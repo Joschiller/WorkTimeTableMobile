@@ -141,7 +141,6 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
                       Expanded(
                         child: EventSettingEditorSection(
                           header: '2. Configure the event duration',
@@ -171,7 +170,10 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                       ),
                     ],
                   ),
-                  const Divider(),
+                  const Divider(
+                    indent: 16,
+                    endIndent: 16,
+                  ),
                   EventSettingEditorSection(
                     header: '3. Configure event repetitions',
                     child: EventRepetitionInput(

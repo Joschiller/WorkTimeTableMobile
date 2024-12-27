@@ -11,20 +11,23 @@ class EventSettingEditorSection extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => Card(
-        color: Colors.grey.shade300,
-        elevation: 8,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                header,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              child,
-            ],
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(8),
+        child: Card(
+          color: Colors.grey.shade300,
+          elevation: 8,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  header,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                child,
+              ],
+            ),
           ),
         ),
       );
