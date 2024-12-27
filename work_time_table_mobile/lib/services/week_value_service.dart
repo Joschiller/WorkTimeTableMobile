@@ -62,27 +62,43 @@ class WeekValueService {
                 values.eventSettings,
               );
     }
-    final resultOfPredecessorWeek = values.dayValues
-            .where((day) => day.date.isBefore(weekStartDate))
-            .map((day) =>
-                day.workTimeEnd - day.workTimeStart - day.breakDuration)
-            .reduce((a, b) => a + b) -
-        values.weekValues
-            .where((week) => week.weekStartDate.isBefore(weekStartDate))
-            .map((week) => week.targetTime)
-            .reduce((a, b) => a + b);
-    // TODO: theoretically needs to also substract all target values for the unsaved week sbefore the current week, but this may be a theoretical scenario
+
+    // resultOfPredecessorWeek
+    final firstClosedWeek = values.weekValues.firstOrNull?.weekStartDate;
+    final predecessorDays = values.dayValues.where((day) =>
+        day.date.isBefore(weekStartDate) &&
+        // ignore days that are before the first closed week and therefore will never be closed
+        (firstClosedWeek == null || !day.date.isBefore(firstClosedWeek)));
+    final resultOfPredecessorWeek = predecessorDays.isEmpty
+        ? 0
+        // TODO: theoretically also needs to sum up all default values for the unsaved days before the current week, but this may be a theoretical scenario
+        : predecessorDays
+                .map((day) =>
+                    day.workTimeEnd - day.workTimeStart - day.breakDuration)
+                .reduce((a, b) => a + b) -
+            (values.weekValues.isEmpty
+                ? 0
+                : values.weekValues
+                    .where((week) => week.weekStartDate.isBefore(weekStartDate))
+                    .map((week) => week.targetTime)
+                    .reduce((a, b) => a + b));
+    // TODO: theoretically also needs to substract all target values for the unsaved weeks sbefore the current week, but this may be a theoretical scenario
+
     return WeekInformation(
       weekStartDate: weekStartDate,
       resultOfPredecessorWeek: resultOfPredecessorWeek,
       days: days,
       weekResult: resultOfPredecessorWeek +
-          days.values
-              .map((day) =>
-                  day.workTimeEnd - day.workTimeStart - day.breakDuration)
-              .reduce((a, b) => a + b) -
+          (days.values.isEmpty
+              ? 0
+              : days.values
+                  .map((day) =>
+                      day.workTimeEnd - day.workTimeStart - day.breakDuration)
+                  .reduce((a, b) => a + b)) -
           (week?.targetTime ?? values.weekSetting.targetWorkTimePerWeek),
-      weekClosed: week != null,
+      weekClosed: week != null ||
+          values.weekValues
+              .any((week) => week.weekStartDate.isAfter(weekStartDate)),
     );
   }
 }

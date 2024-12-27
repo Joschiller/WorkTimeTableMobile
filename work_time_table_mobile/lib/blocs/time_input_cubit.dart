@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
@@ -37,6 +38,11 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
       ],
       () => _loadValueForWeek(0),
     ));
+    runContextDependentAction(
+      _userService.currentUserStream.state,
+      () => emit(NoContextValue()),
+      (user) => _intializeValues(),
+    );
   }
 
   final UserService _userService;
@@ -44,14 +50,35 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   final EventSettingService _eventSettingService;
   final TimeInputService _timeInputService;
 
-  static bool isWeekClosed(
-    List<WeekValue> weekValues,
-    DateTime weekStartDate,
-  ) =>
-      TimeInputService.isWeekClosed(weekValues, weekStartDate);
+  Future<void> onReset(DayValue oldDayValue) =>
+      _timeInputService.onReset(oldDayValue);
 
-  Future<void> updateDaysOfWeek(List<DayValue> values) =>
-      _timeInputService.updateDaysOfWeek(values);
+  Future<void> updateWorkTime(
+    DayValue oldDayValue,
+    ({
+      int workTimeStart,
+      int workTimeEnd,
+    }) workTime,
+  ) =>
+      _timeInputService.updateWorkTime(oldDayValue, workTime);
+
+  Future<void> updateBreakDuration(
+    DayValue oldDayValue,
+    int breakDuration,
+  ) =>
+      _timeInputService.updateBreakDuration(oldDayValue, breakDuration);
+
+  Future<void> updateFirstHalfMode(
+    DayValue oldDayValue,
+    DayMode firstHalfMode,
+  ) =>
+      _timeInputService.updateFirstHalfMode(oldDayValue, firstHalfMode);
+
+  Future<void> updateSecondHalfMode(
+    DayValue oldDayValue,
+    DayMode secondHalfMode,
+  ) =>
+      _timeInputService.updateSecondHalfMode(oldDayValue, secondHalfMode);
 
   Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
       _timeInputService.resetDaysOfWeek(weekStartDate, isConfirmed);
@@ -63,17 +90,31 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   ) =>
       _timeInputService.closeWeek(value, dayValues, isConfirmed);
 
-  void _intializeValues() => emit(_timeInputService.getValuesForWeek(
-        TimeInputService.getStartDateOfWeek(DateTime.now().toDay()),
-      ));
+  void _intializeValues() => _timeInputService
+      .loadData(switch (_userService.currentUserStream.state) {
+        NoContextValue() => null,
+        ContextValue(value: final user) => user.id,
+      })
+      .then(
+        (value) => emit(_timeInputService.getValuesForWeek(
+          TimeInputService.getStartDateOfWeek(DateTime.now().toDay()),
+        )),
+      );
 
   void _loadValueForWeek(int relativeWeeks) => emit(switch (state) {
         NoContextValue() => NoContextValue(),
         ContextValue(value: var weekInformation) =>
           _timeInputService.getValuesForWeek(
             weekInformation.weekStartDate
-                .add(Duration(days: 7 * relativeWeeks)),
+                .add(Duration(days: 7 * relativeWeeks))
+                .toDay(),
           ),
+      });
+
+  void loadWeekContainingDay(DateTime day) => emit(switch (state) {
+        NoContextValue() => NoContextValue(),
+        ContextValue() =>
+          _timeInputService.getValuesForWeek(day.firstDayOfWeek),
       });
 
   void weekForwards() => _loadValueForWeek(1);

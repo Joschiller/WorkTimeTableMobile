@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:work_time_table_mobile/utils.dart';
-
-final dateFormat = DateFormat('dd.MM.yyyy');
 
 class DateInputButton extends StatelessWidget {
   const DateInputButton({
@@ -34,6 +31,8 @@ class DateInputButton extends StatelessWidget {
                     : DateTime.utc(value.year, value.month, value.day));
           }
         }),
-        child: Text(value != null ? dateFormat.format(value!) : 'Select Date'),
+        child: Text(
+          value != null ? displayDateFormat.format(value!) : 'Select Date',
+        ),
       );
 }

@@ -14,22 +14,24 @@ class TimeInputButton extends StatelessWidget {
   final TimeOfDay? value;
   final TimeOfDay min;
   final TimeOfDay max;
-  final void Function(TimeOfDay value) onChange;
+  final void Function(TimeOfDay value)? onChange;
 
   @override
   Widget build(BuildContext context) => ElevatedButton(
-        onPressed: () => showTimePicker(
-          context: context,
-          initialTime: value ?? const TimeOfDay(hour: 12, minute: 0),
-        ).then((value) {
-          if (value != null) {
-            onChange(value.toInt() < min.toInt()
-                ? min
-                : value.toInt() > max.toInt()
-                    ? max
-                    : value);
-          }
-        }),
+        onPressed: onChange != null
+            ? () => showTimePicker(
+                  context: context,
+                  initialTime: value ?? const TimeOfDay(hour: 12, minute: 0),
+                ).then((value) {
+                  if (value != null) {
+                    onChange?.call(value.toInt() < min.toInt()
+                        ? min
+                        : value.toInt() > max.toInt()
+                            ? max
+                            : value);
+                  }
+                })
+            : null,
         child:
             Text(value != null ? '${value!.format(context)} h' : 'Select Time'),
       );

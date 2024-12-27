@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
@@ -16,8 +15,6 @@ extension EventRangeCheckResultOr on EventRangeCheckResult {
         secondHalf: this.secondHalf || other.secondHalf,
       );
 }
-
-final dateFormat = DateFormat('dd.MM.yyyy');
 
 class EventService {
   const EventService();
@@ -47,14 +44,14 @@ class EventService {
   String eventDurationToDisplayString(EventSetting event) {
     if (isSameDay(event.startDate, event.endDate)) {
       if (event.startIsHalfDay) {
-        return '${dateFormat.format(event.startDate)} (afternoon)';
+        return '${displayDateFormat.format(event.startDate)} (afternoon)';
       }
       if (event.endIsHalfDay) {
-        return '${dateFormat.format(event.startDate)} (forenoon)';
+        return '${displayDateFormat.format(event.startDate)} (forenoon)';
       }
-      return dateFormat.format(event.startDate);
+      return displayDateFormat.format(event.startDate);
     }
-    return '${dateFormat.format(event.startDate)}${event.startIsHalfDay ? ' (afternoon)' : ''} - ${dateFormat.format(event.endDate)}${event.endIsHalfDay ? ' (forenoon)' : ''}';
+    return '${displayDateFormat.format(event.startDate)}${event.startIsHalfDay ? ' (afternoon)' : ''} - ${displayDateFormat.format(event.endDate)}${event.endIsHalfDay ? ' (forenoon)' : ''}';
   }
 
   EventRangeCheckResult doesEventAffectDate(

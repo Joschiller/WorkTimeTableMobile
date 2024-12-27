@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
+
+final displayDateFormat = DateFormat('dd.MM.yyyy');
 
 extension IsBlank on String {
   bool get isBlank => trim().isEmpty;
@@ -27,4 +31,10 @@ extension DateTimeCounter on DateTime {
         start: DateTime.utc(year, month),
         end: DateTime.utc(year, month + 1),
       ).duration.inDays;
+}
+
+extension StartDayOfWeek on DateTime {
+  DateTime get firstDayOfWeek => subtract(
+        Duration(days: DayOfWeek.fromDateTime(this).index),
+      ).toDay();
 }
