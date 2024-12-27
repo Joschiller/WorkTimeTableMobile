@@ -28,7 +28,7 @@ class TimeInputSummary extends StatelessWidget {
                     ),
                   ),
                   Text(
-                      '${duration ~/ 60}:${(duration.abs() % 60).toString().padLeft(2, '0')} h'),
+                      '${duration < 0 ? '-' : ''}${(duration.abs() ~/ 60).toString().padLeft(2, '0')}:${(duration.abs() % 60).toString().padLeft(2, '0')} h'),
                 ],
               ),
             ],
