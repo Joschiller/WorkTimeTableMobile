@@ -160,10 +160,7 @@ class DayInputCard extends StatelessWidget {
                         ),
                         DayModeSelector(
                           dayMode: dayValue.firstHalfMode,
-                          onChange: onChange != null
-                              ? (dayMode) =>
-                                  onChange?.onChangeFirstHalfMode(dayMode)
-                              : null,
+                          onChange: onChange?.onChangeFirstHalfMode,
                         ),
                       ],
                     ),
@@ -180,10 +177,7 @@ class DayInputCard extends StatelessWidget {
                         ),
                         DayModeSelector(
                           dayMode: dayValue.secondHalfMode,
-                          onChange: onChange != null
-                              ? (dayMode) =>
-                                  onChange?.onChangeSecondHalfMode(dayMode)
-                              : null,
+                          onChange: onChange?.onChangeSecondHalfMode,
                         ),
                       ],
                     ),
