@@ -23,9 +23,7 @@ class TimeInputSummary extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                   Text(
                       '${duration < 0 ? '-' : ''}${(duration.abs() ~/ 60).toString().padLeft(2, '0')}:${(duration.abs() % 60).toString().padLeft(2, '0')} h'),

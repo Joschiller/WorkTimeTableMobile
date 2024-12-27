@@ -87,11 +87,9 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                           children: [
                             Row(
                               children: [
-                                const Text(
+                                Text(
                                   'Event Type:',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall,
                                 ),
                                 const SizedBox(width: 16),
                                 EventTypeSelector(
@@ -165,14 +163,12 @@ class _EventSettingEditorState extends State<EventSettingEditor> {
                     ],
                   ),
                   const Divider(),
-                  const Row(
+                  Row(
                     children: [
                       Expanded(
                         child: Text(
                           'Event Repetition:',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ),
                     ],

@@ -28,9 +28,7 @@ class EventDisplay extends StatelessWidget {
                     children: [
                       Text(
                         event.eventSetting.title ?? '',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                       if (event.eventSetting.title != null &&
                           event.eventSetting.title!.isNotEmpty)
