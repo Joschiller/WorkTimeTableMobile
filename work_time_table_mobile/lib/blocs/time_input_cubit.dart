@@ -78,7 +78,8 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
         ContextValue(value: var weekInformation) =>
           _timeInputService.getValuesForWeek(
             weekInformation.weekStartDate
-                .add(Duration(days: 7 * relativeWeeks)),
+                .add(Duration(days: 7 * relativeWeeks))
+                .toDay(),
           ),
       });
 

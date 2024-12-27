@@ -36,5 +36,5 @@ extension DateTimeCounter on DateTime {
 extension StartDayOfWeek on DateTime {
   DateTime get firstDayOfWeek => subtract(
         Duration(days: DayOfWeek.fromDateTime(this).index),
-      );
+      ).toDay();
 }
