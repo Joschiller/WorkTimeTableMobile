@@ -27,7 +27,8 @@ class TimeInputSummary extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text('${duration ~/ 60}:${duration.abs() % 60} h'),
+                  Text(
+                      '${duration ~/ 60}:${(duration.abs() % 60).toString().padLeft(2, '0')} h'),
                 ],
               ),
             ],
