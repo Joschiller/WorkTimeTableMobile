@@ -298,23 +298,23 @@ class TimeInputService extends StreamableService {
               oldDayValue.secondHalfMode != DayMode.workDay &&
               firstHalfMode == DayMode.workDay;
           final defaultValues = weekSettings
-              .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)]!;
+              .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)];
           return _updateDayOfWeek(DayValue(
             date: oldDayValue.date,
             workTimeStart: isNotAWorkDay
                 ? 0
                 : becameWorkDay
-                    ? defaultValues.defaultWorkTimeStart
+                    ? defaultValues?.defaultWorkTimeStart ?? 0
                     : oldDayValue.workTimeStart,
             workTimeEnd: isNotAWorkDay
                 ? 0
                 : becameWorkDay
-                    ? defaultValues.defaultWorkTimeEnd
+                    ? defaultValues?.defaultWorkTimeEnd ?? 0
                     : oldDayValue.workTimeEnd,
             breakDuration: isNotAWorkDay
                 ? 0
                 : becameWorkDay
-                    ? defaultValues.defaultBreakDuration
+                    ? defaultValues?.defaultBreakDuration ?? 0
                     : oldDayValue.breakDuration,
             firstHalfMode: firstHalfMode,
             secondHalfMode: oldDayValue.secondHalfMode,
@@ -336,23 +336,23 @@ class TimeInputService extends StreamableService {
               oldDayValue.secondHalfMode != DayMode.workDay &&
               secondHalfMode == DayMode.workDay;
           final defaultValues = weekSettings
-              .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)]!;
+              .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)];
           return _updateDayOfWeek(DayValue(
             date: oldDayValue.date,
             workTimeStart: isNotAWorkDay
                 ? 0
                 : becameWorkDay
-                    ? defaultValues.defaultWorkTimeStart
+                    ? defaultValues?.defaultWorkTimeStart ?? 0
                     : oldDayValue.workTimeStart,
             workTimeEnd: isNotAWorkDay
                 ? 0
                 : becameWorkDay
-                    ? defaultValues.defaultWorkTimeEnd
+                    ? defaultValues?.defaultWorkTimeEnd ?? 0
                     : oldDayValue.workTimeEnd,
             breakDuration: isNotAWorkDay
                 ? 0
                 : becameWorkDay
-                    ? defaultValues.defaultBreakDuration
+                    ? defaultValues?.defaultBreakDuration ?? 0
                     : oldDayValue.breakDuration,
             firstHalfMode: oldDayValue.firstHalfMode,
             secondHalfMode: secondHalfMode,
