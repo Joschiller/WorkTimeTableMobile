@@ -45,6 +45,8 @@ class DayInputCard extends StatelessWidget {
       dayValue.firstHalfMode == DayMode.workDay ||
       dayValue.secondHalfMode == DayMode.workDay;
 
+  bool get _isToday => isSameDay(dayValue.date, DateTime.now());
+
   final DayInputCardOnChange? onChange;
 
   @override
@@ -54,13 +56,10 @@ class DayInputCard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(32),
             side: BorderSide(
-                color: (isSameDay(dayValue.date, DateTime.now())
-                    ? Colors.yellow.shade400
-                    : Colors.grey.shade400)),
+                color:
+                    _isToday ? Colors.yellow.shade400 : Colors.grey.shade400),
           ),
-          color: isSameDay(dayValue.date, DateTime.now())
-              ? Colors.yellow.shade300
-              : Colors.grey.shade300,
+          color: _isToday ? Colors.yellow.shade300 : Colors.grey.shade300,
           elevation: 8,
           child: Column(
             mainAxisSize: MainAxisSize.min,
