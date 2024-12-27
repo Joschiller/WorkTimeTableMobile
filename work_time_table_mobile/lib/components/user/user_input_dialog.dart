@@ -67,6 +67,7 @@ class _UserInputDialogState extends State<UserInputDialog> {
               ),
               controller: _textEditingController,
             ),
+            // TODO: die Validierungen sind aktuell sofort sichtbar, wenn in das Textfeld geklickt wird -> besser wäre es aber, wenn die erst aktiv würden, sobald mind. ein Zeichen verändert wurde
             for (final v in _validationErrors)
               Text(
                 v.displayText,

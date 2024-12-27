@@ -8,44 +8,42 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PageTemplate(
         title: 'Settings',
-        content: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Configuration',
-                    style: Theme.of(context).textTheme.titleLarge,
+        content: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Configuration',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+            Row(
+              // TODO: mehr Metainformationen anzeigen
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => UserScreenRoute().push(context),
+                    child: const Text('Users'),
                   ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => UserScreenRoute().push(context),
-                      child: const Text('Users'),
-                    ),
+                ),
+                const SizedBox(width: 32),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => WeekSettingScreenRoute().push(context),
+                    child: const Text('Week Settings'),
                   ),
-                  const SizedBox(width: 32),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => WeekSettingScreenRoute().push(context),
-                      child: const Text('Week Settings'),
-                    ),
+                ),
+                const SizedBox(width: 32),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => EventSettingScreenRoute().push(context),
+                    child: const Text('Event Settings'),
                   ),
-                  const SizedBox(width: 32),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => EventSettingScreenRoute().push(context),
-                      child: const Text('Event Settings'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       );
 }

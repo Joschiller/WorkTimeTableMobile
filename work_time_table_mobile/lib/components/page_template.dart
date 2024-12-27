@@ -28,7 +28,12 @@ class PageTemplate extends StatelessWidget {
               )
               .toList(),
         ),
-        body: SafeArea(child: content),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: content,
+          ),
+        ),
         floatingActionButton: floatingButton != null
             ? FloatingActionButton(
                 onPressed: floatingButton!.onPressed,
