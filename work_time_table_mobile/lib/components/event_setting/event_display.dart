@@ -50,10 +50,20 @@ class EventDisplay extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // TODO: also show repetitions
                 ],
               ),
             ),
+            if (event.eventSetting.dayBasedRepetitionRules.isNotEmpty ||
+                event.eventSetting.monthBasedRepetitionRules.isNotEmpty)
+              Tooltip(
+                message: [
+                  ...event.eventSetting.dayBasedRepetitionRules.map((r) =>
+                      'every ${r.repeatAfterDays > 1 ? '${r.repeatAfterDays} days' : 'day'}'),
+                  ...event.eventSetting.monthBasedRepetitionRules.map((r) =>
+                      'every ${r.repeatAfterMonths > 1 ? '${r.repeatAfterMonths}. month on the ' : ''}${r.toDisplayString()}'),
+                ].join('\n'),
+                child: const Icon(Icons.event_repeat),
+              ),
             EventTypeMarker(eventType: event.eventSetting.eventType),
           ],
         ),
