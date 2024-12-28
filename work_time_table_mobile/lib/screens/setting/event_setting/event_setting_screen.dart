@@ -94,7 +94,6 @@ class EventSettingScreen extends StatelessWidget {
               EditableList<EvaluatedEventSetting>(
                 title: 'Event Settings',
                 items: value,
-                // TODO: always show the nearest next instance of that event -> should be realized whilst creating the time input logic
                 templateItem: EvaluatedEventSetting(
                   eventSetting: EventSetting(
                     id: -1,

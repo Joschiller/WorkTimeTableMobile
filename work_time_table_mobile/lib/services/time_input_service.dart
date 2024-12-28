@@ -392,7 +392,6 @@ class TimeInputService extends StreamableService {
     List<DayValue> dayValues,
     bool isConfirmed,
   ) =>
-      // TODO: move all past events to next occurrence
       runContextDependentAction(
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
@@ -406,7 +405,15 @@ class TimeInputService extends StreamableService {
                   isConfirmed,
                   AppError.service_timeInput_unconfirmedClose,
                 ),
-            () => _weekValueDao.create(user.id, value),
+            () => _weekValueDao
+                .create(user.id, value)
+                // move events (this is done with a then-statement as transaction safety is not critical here)
+                .then(
+                  (_) => _eventSettingService
+                      .movePastEventsToNearestFutureOccurrence(
+                    value.weekStartDate,
+                  ),
+                ),
           );
         },
       );
