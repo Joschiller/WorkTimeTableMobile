@@ -3,6 +3,7 @@ import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
+import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
@@ -13,7 +14,11 @@ import 'package:work_time_table_mobile/validator.dart';
 final _stream = ContextDependentListStream<EventSetting>();
 
 class EventSettingService extends StreamableService {
-  EventSettingService(this._userService, this._eventSettingDao) {
+  EventSettingService(
+    this._userService,
+    this._eventSettingDao,
+    this._eventService,
+  ) {
     registerSubscription(_userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
@@ -30,6 +35,7 @@ class EventSettingService extends StreamableService {
 
   final UserService _userService;
   final EventSettingDao _eventSettingDao;
+  final EventService _eventService;
 
   static Validator getEventValidator(EventSetting event) => Validator([
         // start <= end
