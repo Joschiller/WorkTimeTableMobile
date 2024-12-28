@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/day_based_repetition_rule.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
+import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/list/context_dependent_list_stream.dart';
@@ -13,7 +15,11 @@ import 'package:work_time_table_mobile/validator.dart';
 final _stream = ContextDependentListStream<EventSetting>();
 
 class EventSettingService extends StreamableService {
-  EventSettingService(this._userService, this._eventSettingDao) {
+  EventSettingService(
+    this._userService,
+    this._eventSettingDao,
+    this._eventService,
+  ) {
     registerSubscription(_userService.currentUserStream.stream
         .listen((selectedUser) => runContextDependentAction(
               selectedUser,
@@ -30,6 +36,7 @@ class EventSettingService extends StreamableService {
 
   final UserService _userService;
   final EventSettingDao _eventSettingDao;
+  final EventService _eventService;
 
   static Validator getEventValidator(EventSetting event) => Validator([
         // start <= end
@@ -101,6 +108,85 @@ class EventSettingService extends StreamableService {
             AppError.service_eventSettings_unconfirmedDeletion,
           ),
       () => _eventSettingDao.deleteByIds(ids));
+
+  Future<void> movePastEventsToNearestFutureOccurrence(
+    DateTime lastClosedWeek,
+  ) =>
+      runContextDependentAction(
+        _userService.currentUserStream.state,
+        () async => Future.error(AppError.service_noUserLoaded),
+        (user) => runContextDependentAction(
+          _eventSettingDao.stream.state,
+          () async => Future.error(AppError.service_noUserLoaded),
+          (events) async {
+            final firstFutureDay = lastClosedWeek.add(const Duration(days: 7));
+            // move all events that have already ended
+            final pastEvents =
+                events.where((e) => e.endDate.isBefore(firstFutureDay));
+
+            final newEvents = <EventSetting>[];
+            for (final event in pastEvents) {
+              final eventDuration = DateTimeRange(
+                start: event.startDate,
+                end: event.endDate,
+              ).duration;
+              // NOTE: if an event has several repetitions it will be split into several independent events (which should never happen, but is possible in theory)
+              for (final repetition in event.dayBasedRepetitionRules) {
+                var currentDate = event.startDate;
+                while (
+                    currentDate.add(eventDuration).isBefore(firstFutureDay)) {
+                  currentDate =
+                      _eventService.getNextOccurrenceOfDayBasedRepetition(
+                    currentDate,
+                    repetition,
+                  );
+                }
+                newEvents.add(EventSetting(
+                  id: -1,
+                  eventType: event.eventType,
+                  title: event.title,
+                  startDate: currentDate,
+                  endDate: currentDate.add(eventDuration),
+                  startIsHalfDay: event.startIsHalfDay,
+                  endIsHalfDay: event.endIsHalfDay,
+                  dayBasedRepetitionRules: [repetition],
+                  monthBasedRepetitionRules: [],
+                ));
+              }
+              for (final repetition in event.monthBasedRepetitionRules) {
+                var currentDate = event.startDate;
+                while (
+                    currentDate.add(eventDuration).isBefore(firstFutureDay)) {
+                  currentDate =
+                      _eventService.getNextOccurrenceOfMonthBasedRepetition(
+                    currentDate,
+                    repetition,
+                  );
+                }
+                newEvents.add(EventSetting(
+                  id: -1,
+                  eventType: event.eventType,
+                  title: event.title,
+                  startDate: currentDate,
+                  endDate: currentDate.add(eventDuration),
+                  startIsHalfDay: event.startIsHalfDay,
+                  endIsHalfDay: event.endIsHalfDay,
+                  dayBasedRepetitionRules: [],
+                  monthBasedRepetitionRules: [repetition],
+                ));
+              }
+            }
+
+            // all past events are deleted - if an event has a repetition in will have been copied to a new instance; otherwise, the event will be deleted forever
+            await _eventSettingDao.moveEventsToNewStartDate(
+              user.id,
+              // skip invalid events
+              newEvents.where((e) => getEventValidator(e).isValid).toList(),
+              pastEvents.map((e) => e.id).toList(),
+            );
+          },
+        ),
+      );
 
   @override
   close() {

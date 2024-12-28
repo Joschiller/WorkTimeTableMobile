@@ -8,6 +8,7 @@ import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
+import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
@@ -27,6 +28,7 @@ class EditEventSettingScreen extends StatelessWidget {
               context.read<CurrentUserDao>(),
             ),
             context.read<EventSettingDao>(),
+            const EventService(),
           )),
           child: BlocBuilder<EventSettingCubit,
               ContextDependentValue<List<EventSetting>>>(

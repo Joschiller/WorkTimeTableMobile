@@ -88,7 +88,7 @@ class EventService {
             endIsHalfDay: event.endIsHalfDay,
             repetitions: event.dayBasedRepetitionRules,
           ),
-          _getNextOccurenceOfDayBasedRepetition,
+          getNextOccurrenceOfDayBasedRepetition,
         );
     if (result.firstHalf && result.secondHalf) {
       return result;
@@ -104,7 +104,7 @@ class EventService {
             endIsHalfDay: event.endIsHalfDay,
             repetitions: event.monthBasedRepetitionRules,
           ),
-          _getNextOccurenceOfMonthBasedRepetition,
+          getNextOccurrenceOfMonthBasedRepetition,
         );
     return result;
   }
@@ -152,7 +152,7 @@ class EventService {
     return result;
   }
 
-  DateTime _getNextOccurenceOfDayBasedRepetition(
+  DateTime getNextOccurrenceOfDayBasedRepetition(
     DateTime currentDate,
     DayBasedRepetitionRule repetition,
   ) =>
@@ -160,7 +160,7 @@ class EventService {
         days: repetition.repeatAfterDays,
       ));
 
-  DateTime _getNextOccurenceOfMonthBasedRepetition(
+  DateTime getNextOccurrenceOfMonthBasedRepetition(
     DateTime currentDate,
     MonthBasedRepetitionRule repetition,
   ) {

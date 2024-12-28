@@ -67,6 +67,7 @@ class TimeInputScreen extends StatelessWidget {
             create: (context) => EventSettingService(
               context.read<UserService>(),
               context.read<EventSettingDao>(),
+              const EventService(),
             ),
           ),
           RepositoryProvider(

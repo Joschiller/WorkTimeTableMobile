@@ -14,6 +14,7 @@ import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
+import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
@@ -42,6 +43,7 @@ class SettingsScreen extends StatelessWidget {
             create: (context) => EventSettingService(
               context.read<UserService>(),
               context.read<EventSettingDao>(),
+              const EventService(),
             ),
           ),
         ],
