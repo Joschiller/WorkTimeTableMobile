@@ -140,6 +140,7 @@ class TimeInputScreen extends StatelessWidget {
                             icon: const Icon(Icons.settings),
                           ),
                         ],
+                        noDefaultPadding: true,
                         content: Column(
                           children: [
                             TimeInputSummary(
