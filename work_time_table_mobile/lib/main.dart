@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:work_time_table_mobile/app_error.dart';
@@ -9,6 +10,7 @@ import 'package:work_time_table_mobile/blocs/error_cubit.dart';
 import 'package:work_time_table_mobile/blocs/global_setting_cubit.dart';
 import 'package:work_time_table_mobile/constants/app_name.dart';
 import 'package:work_time_table_mobile/constants/app_observer.dart';
+import 'package:work_time_table_mobile/constants/init_test_data.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
 import 'package:work_time_table_mobile/constants/theme.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
@@ -45,6 +47,11 @@ Future<void> main() async {
     }
     return false;
   };
+
+  if (appFlavor == 'docs') {
+    print('===== RUNNING DOCS APP =====');
+    await initTestData();
+  }
 
   runApp(MultiRepositoryProvider(
     providers: [
