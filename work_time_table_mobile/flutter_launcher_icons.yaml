@@ -1,0 +1,5 @@
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/work_time_table_icon.png"
+  adaptive_icon_background: "#A2A2A2"
+  adaptive_icon_foreground: "assets/work_time_table_icon.png"

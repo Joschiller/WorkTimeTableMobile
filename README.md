@@ -1,6 +1,6 @@
 # APPLICATION TITLE
 
-<!-- <img style="float: right;" src="Icon.png" height="80px" /> -->
+<img style="float: right;" src="./work_time_table_icon.svg" height="80px" />
 
 To install the application, please use the latest version of the delivered [.apk-file in the Releases folder](./Releases) to install it on a mobile device. Then the application can be launched by tapping on the application icon.
 
