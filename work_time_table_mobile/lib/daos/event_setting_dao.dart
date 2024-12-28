@@ -111,5 +111,28 @@ class EventSettingDao {
           .map((d) => d.toAppModel())
           .toList());
 
+  Future<void> moveEventsToNewStartDate(
+    int userId,
+    List<EventSetting> newEvents,
+    List<int> idsOfEventsToDelete,
+  ) async {
+    await prisma.$transaction((tx) async {
+      for (final event in newEvents) {
+        await _create(tx, userId, event);
+      }
+      await tx.eventSetting.deleteMany(
+        where: EventSettingWhereInput(
+          id: PrismaUnion.$1(
+            IntFilter(
+              $in: idsOfEventsToDelete,
+            ),
+          ),
+        ),
+      );
+    });
+    // reload all events
+    await loadUserSettings(userId);
+  }
+
   ContextDependentListStream<EventSetting> get stream => _stream;
 }
