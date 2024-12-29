@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
+import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
@@ -99,6 +102,33 @@ class WeekValueService {
       weekClosed: week != null ||
           values.weekValues
               .any((week) => week.weekStartDate.isAfter(weekStartDate)),
+    );
+  }
+
+  int getActualTargetTimeOfWeek(
+    WeekSetting weekSetting,
+    List<DayValue> dayValues,
+  ) {
+    var skippedTargetTimeBasedOnDays = 0.0;
+    // sum up the time of all days that are not a work day
+    for (final dayOfWeek in DayOfWeek.values) {
+      final configuredEquivalent =
+          weekSetting.weekDaySettings[dayOfWeek]?.timeEquivalent ?? 0;
+      final dayValue = dayValues
+          .where((v) => DayOfWeek.fromDateTime(v.date) == dayOfWeek)
+          .firstOrNull;
+      if (dayValue?.firstHalfMode != DayMode.workDay) {
+        skippedTargetTimeBasedOnDays += configuredEquivalent / 2;
+      }
+      if (dayValue?.secondHalfMode != DayMode.workDay) {
+        skippedTargetTimeBasedOnDays += configuredEquivalent / 2;
+      }
+    }
+    // cap value at configured target work time
+    return max(
+      (weekSetting.targetWorkTimePerWeek - skippedTargetTimeBasedOnDays)
+          .toInt(),
+      0,
     );
   }
 }
