@@ -2,4 +2,8 @@
 
 ## Version 1.0.0
 
-- FEATURE LIST
+- creating and managing users
+- configuring work time settings
+- configuring events
+- inserting working hours
+- finishing weeks

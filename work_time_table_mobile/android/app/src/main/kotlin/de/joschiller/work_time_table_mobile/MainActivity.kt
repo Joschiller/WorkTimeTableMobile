@@ -1,4 +1,4 @@
-package com.example.work_time_table_mobile
+package de.joschiller.work_time_table_mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -7,12 +7,14 @@ class PageTemplate extends StatelessWidget {
     required this.content,
     this.menuButtons,
     this.floatingButton,
-  });
+    bool? noDefaultPadding,
+  }) : noDefaultPadding = noDefaultPadding ?? false;
 
   final String title;
   final Widget content;
   final List<({Icon icon, void Function() onPressed})>? menuButtons;
   final ({Icon icon, void Function() onPressed})? floatingButton;
+  final bool noDefaultPadding;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -30,7 +32,7 @@ class PageTemplate extends StatelessWidget {
         ),
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(noDefaultPadding ? 0 : 8),
             child: content,
           ),
         ),

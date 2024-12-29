@@ -56,6 +56,7 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   go_router_builder: ^2.7.1
   build_runner: ^2.4.13
+  flutter_launcher_icons: ^0.14.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -69,10 +70,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/work_time_table_icon.png
     - prisma/migrations/
     - prisma/migrations/20241005160158_v0/migration.sql
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
