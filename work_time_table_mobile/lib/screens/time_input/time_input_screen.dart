@@ -13,7 +13,6 @@ import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
-import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/services/day_value_service.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';
@@ -174,12 +173,7 @@ class TimeInputScreen extends StatelessWidget {
                                     () => context
                                         .read<TimeInputCubit>()
                                         .closeWeek(
-                                          WeekValue(
-                                            weekStartDate:
-                                                weekInformation.weekStartDate,
-                                            targetTime: weekSetting
-                                                .targetWorkTimePerWeek,
-                                          ),
+                                          weekInformation.weekStartDate,
                                           weekInformation.days.values.toList(),
                                           true,
                                         ),

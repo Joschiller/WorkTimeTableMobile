@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
-import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/time_input_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
@@ -83,11 +82,11 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
       _timeInputService.resetDaysOfWeek(weekStartDate, isConfirmed);
 
   Future<void> closeWeek(
-    WeekValue value,
+    DateTime weekStartDate,
     List<DayValue> dayValues,
     bool isConfirmed,
   ) =>
-      _timeInputService.closeWeek(value, dayValues, isConfirmed);
+      _timeInputService.closeWeek(weekStartDate, dayValues, isConfirmed);
 
   void _intializeValues() => _timeInputService
       .loadData(switch (_userService.currentUserStream.state) {
