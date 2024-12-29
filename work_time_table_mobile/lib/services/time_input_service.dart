@@ -388,7 +388,7 @@ class TimeInputService extends StreamableService {
       );
 
   Future<void> closeWeek(
-    WeekValue value,
+    DateTime weekStartDate,
     List<DayValue> dayValues,
     bool isConfirmed,
   ) =>
@@ -399,21 +399,34 @@ class TimeInputService extends StreamableService {
           // save all days in this week
           await updateDaysOfWeek(dayValues);
           // close the week
-          await validateAndRun(
-            getIsWeekClosableValidator(value.weekStartDate) +
-                getIsConfirmedValidator(
-                  isConfirmed,
-                  AppError.service_timeInput_unconfirmedClose,
-                ),
-            () => _weekValueDao
-                .create(user.id, value)
-                // move events (this is done with a then-statement as transaction safety is not critical here)
-                .then(
-                  (_) => _eventSettingService
-                      .movePastEventsToNearestFutureOccurrence(
-                    value.weekStartDate,
+          await runContextDependentAction(
+            _weekSettingService.weekSettingStream.state,
+            () async => Future.error(AppError.service_noUserLoaded),
+            (weekSetting) => validateAndRun(
+              getIsWeekClosableValidator(weekStartDate) +
+                  getIsConfirmedValidator(
+                    isConfirmed,
+                    AppError.service_timeInput_unconfirmedClose,
                   ),
-                ),
+              () => _weekValueDao
+                  .create(
+                    user.id,
+                    WeekValue(
+                      weekStartDate: weekStartDate,
+                      targetTime: _weekValueService.getActualTargetTimeOfWeek(
+                        weekSetting,
+                        dayValues,
+                      ),
+                    ),
+                  )
+                  // move events (this is done with a then-statement as transaction safety is not critical here)
+                  .then(
+                    (_) => _eventSettingService
+                        .movePastEventsToNearestFutureOccurrence(
+                      weekStartDate,
+                    ),
+                  ),
+            ),
           );
         },
       );
