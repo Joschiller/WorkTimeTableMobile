@@ -8,6 +8,14 @@ To install the application, please use the latest version of the delivered [.apk
 
 The `Work Time Table` mobile application can be used to track the weekly working hours and plan regular events like public holidays or vacations.
 
+<!-- to generate screenshots use `flutter run --flavor docs --release` -->
+
+|                                |
+| ------------------------------ |
+| ![](./docs/time_input.png)     |
+| ![](./docs/week_settings.png)  |
+| ![](./docs/event_settings.png) |
+
 For a feature documentation refer to the [Changelog](./Changelog.md).
 
 When contributing to the project, refer to the [Workflows](./Workflows.md).
