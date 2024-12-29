@@ -85,7 +85,7 @@ class WeekValueService {
                     .where((week) => week.weekStartDate.isBefore(weekStartDate))
                     .map((week) => week.targetTime)
                     .reduce((a, b) => a + b));
-    // TODO: theoretically also needs to substract all target values for the unsaved weeks sbefore the current week, but this may be a theoretical scenario
+    // TODO: theoretically also needs to substract all target values for the unsaved weeks before the current week (must be calculated via getActualTargetTimeOfWeek), but this may be a theoretical scenario
 
     return WeekInformation(
       weekStartDate: weekStartDate,
@@ -98,7 +98,12 @@ class WeekValueService {
                   .map((day) =>
                       day.workTimeEnd - day.workTimeStart - day.breakDuration)
                   .reduce((a, b) => a + b)) -
-          (week?.targetTime ?? values.weekSetting.targetWorkTimePerWeek),
+          // use existing value OR calculate new value
+          (week?.targetTime ??
+              getActualTargetTimeOfWeek(
+                values.weekSetting,
+                days.values.toList(),
+              )),
       weekClosed: week != null ||
           values.weekValues
               .any((week) => week.weekStartDate.isAfter(weekStartDate)),
