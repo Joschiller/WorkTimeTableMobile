@@ -62,7 +62,7 @@ Future<void> initTestData() async {
           MonthBasedRepetitionRule(
             repeatAfterMonths: 12,
             monthBasedRepetitionRuleBase: MonthBasedRepetitionRuleBase(
-              dayIndex: 12,
+              dayIndex: 23,
               weekIndex: null,
               countFromEnd: false,
             ),
