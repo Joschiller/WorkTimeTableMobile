@@ -45,6 +45,10 @@ class DayInputCard extends StatelessWidget {
       dayValue.firstHalfMode == DayMode.workDay ||
       dayValue.secondHalfMode == DayMode.workDay;
 
+  bool get _isFullWorkday =>
+      dayValue.firstHalfMode == DayMode.workDay &&
+      dayValue.secondHalfMode == DayMode.workDay;
+
   bool get _isToday => isSameDay(dayValue.date, DateTime.now());
 
   final DayInputCardOnChange? onChange;
@@ -110,9 +114,12 @@ class DayInputCard extends StatelessWidget {
                             start: dayValue.workTimeStart.toTimeOfDay(),
                             end: dayValue.workTimeEnd.toTimeOfDay()
                           ),
-                          startMax:
-                              settings.mandatoryWorkTimeStart.toTimeOfDay(),
-                          endMin: settings.mandatoryWorkTimeEnd.toTimeOfDay(),
+                          startMax: _isFullWorkday
+                              ? settings.mandatoryWorkTimeStart.toTimeOfDay()
+                              : null,
+                          endMin: _isFullWorkday
+                              ? settings.mandatoryWorkTimeEnd.toTimeOfDay()
+                              : null,
                           onChange: onChange != null && _isPartiallyWorkday
                               ? (start, end) => onChange?.onChangeWorkTime((
                                     workTimeStart: start.toInt(),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:table_calendar/table_calendar.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
@@ -116,13 +118,18 @@ class TimeInputService extends StreamableService {
                 : null;
           }
 
-          // work time respects manatory time start
-          if (day.firstHalfMode == DayMode.workDay &&
+          final isFullWorkDay = day.firstHalfMode == DayMode.workDay &&
+              day.secondHalfMode == DayMode.workDay;
+
+          // work time respects manatory time start (in case it is a full work day)
+          if (isFullWorkDay &&
+              day.firstHalfMode == DayMode.workDay &&
               (day.workTimeStart > settingForDay.mandatoryWorkTimeStart)) {
             return AppError.service_timeInput_invalid;
           }
-          // work time respects manatory time end
-          if (day.secondHalfMode == DayMode.workDay &&
+          // work time respects manatory time end (in case it is a full work day)
+          if (isFullWorkDay &&
+              day.secondHalfMode == DayMode.workDay &&
               (day.workTimeEnd < settingForDay.mandatoryWorkTimeEnd)) {
             return AppError.service_timeInput_invalid;
           }
@@ -297,6 +304,10 @@ class TimeInputService extends StreamableService {
           final becameWorkDay = oldDayValue.firstHalfMode != DayMode.workDay &&
               oldDayValue.secondHalfMode != DayMode.workDay &&
               firstHalfMode == DayMode.workDay;
+          final becameFullWorkDay =
+              oldDayValue.firstHalfMode != DayMode.workDay &&
+                  oldDayValue.secondHalfMode == DayMode.workDay &&
+                  firstHalfMode == DayMode.workDay;
           final defaultValues = weekSettings
               .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)];
           return _updateDayOfWeek(DayValue(
@@ -305,12 +316,22 @@ class TimeInputService extends StreamableService {
                 ? 0
                 : becameWorkDay
                     ? defaultValues?.defaultWorkTimeStart ?? 0
-                    : oldDayValue.workTimeStart,
+                    : becameFullWorkDay
+                        ? min(
+                            defaultValues?.mandatoryWorkTimeStart ?? 0,
+                            oldDayValue.workTimeStart,
+                          )
+                        : oldDayValue.workTimeStart,
             workTimeEnd: isNotAWorkDay
                 ? 0
                 : becameWorkDay
                     ? defaultValues?.defaultWorkTimeEnd ?? 0
-                    : oldDayValue.workTimeEnd,
+                    : becameFullWorkDay
+                        ? max(
+                            defaultValues?.mandatoryWorkTimeEnd ?? 0,
+                            oldDayValue.workTimeEnd,
+                          )
+                        : oldDayValue.workTimeEnd,
             breakDuration: isNotAWorkDay
                 ? 0
                 : becameWorkDay
@@ -335,6 +356,10 @@ class TimeInputService extends StreamableService {
           final becameWorkDay = oldDayValue.firstHalfMode != DayMode.workDay &&
               oldDayValue.secondHalfMode != DayMode.workDay &&
               secondHalfMode == DayMode.workDay;
+          final becameFullWorkDay =
+              oldDayValue.firstHalfMode == DayMode.workDay &&
+                  oldDayValue.secondHalfMode != DayMode.workDay &&
+                  secondHalfMode == DayMode.workDay;
           final defaultValues = weekSettings
               .weekDaySettings[DayOfWeek.fromDateTime(oldDayValue.date)];
           return _updateDayOfWeek(DayValue(
@@ -343,12 +368,22 @@ class TimeInputService extends StreamableService {
                 ? 0
                 : becameWorkDay
                     ? defaultValues?.defaultWorkTimeStart ?? 0
-                    : oldDayValue.workTimeStart,
+                    : becameFullWorkDay
+                        ? min(
+                            defaultValues?.mandatoryWorkTimeStart ?? 0,
+                            oldDayValue.workTimeStart,
+                          )
+                        : oldDayValue.workTimeStart,
             workTimeEnd: isNotAWorkDay
                 ? 0
                 : becameWorkDay
                     ? defaultValues?.defaultWorkTimeEnd ?? 0
-                    : oldDayValue.workTimeEnd,
+                    : becameFullWorkDay
+                        ? max(
+                            defaultValues?.mandatoryWorkTimeEnd ?? 0,
+                            oldDayValue.workTimeEnd,
+                          )
+                        : oldDayValue.workTimeEnd,
             breakDuration: isNotAWorkDay
                 ? 0
                 : becameWorkDay
