@@ -62,13 +62,16 @@ class _UserScreenContentState extends State<UserScreenContent> {
   void initState() {
     super.initState();
     if (widget.immediatelyShowAddDialog) {
-      SchedulerBinding.instance.addPostFrameCallback((_) => _showAddDialog(
-            context,
-            widget.users.map((user) => user.name).toList(),
-            (name) => context.read<UserCubit>().addUser(name),
-          ));
+      SchedulerBinding.instance
+          .addPostFrameCallback((_) => _showAddDialogWithCallbacks());
     }
   }
+
+  void _showAddDialogWithCallbacks() => _showAddDialog(
+        context,
+        widget.users.map((user) => user.name).toList(),
+        (name) => context.read<UserCubit>().addUser(name),
+      );
 
   void _showAddDialog(
     BuildContext context,
@@ -148,11 +151,7 @@ class _UserScreenContentState extends State<UserScreenContent> {
             (name) => context.read<UserCubit>().renameUser(item.id, name),
           ),
         ),
-        onAdd: () => _showAddDialog(
-          context,
-          widget.users.map((user) => user.name).toList(),
-          (name) => context.read<UserCubit>().addUser(name),
-        ),
+        onAdd: _showAddDialogWithCallbacks,
         onRemove: (items) => _showDeletionConfirmation(
           context,
           () => context.read<UserCubit>().deleteUsers(
