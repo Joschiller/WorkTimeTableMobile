@@ -83,6 +83,8 @@ class UserScreen extends StatelessWidget {
               title: 'Users',
               items: users,
               templateItem: User(id: -1, name: 'User ...'),
+              emptyText: 'There do not exist any users yet.',
+              addFirstText: 'Add first user',
               buildItem: (item, selected) => UserItem(
                 user: item,
                 selected: selected,

@@ -109,6 +109,8 @@ class EventSettingScreen extends StatelessWidget {
                   firstHalf: true,
                   secondHalf: true,
                 ),
+                emptyText: 'There do not exist any events yet.',
+                addFirstText: 'Add first event',
                 buildItem: (item, selected) => EventDisplay(
                   event: item,
                   selected: selected,

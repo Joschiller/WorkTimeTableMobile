@@ -9,6 +9,8 @@ class EditableList<T extends Identifiable> extends StatefulWidget {
     required this.title,
     required this.items,
     required this.templateItem,
+    required this.emptyText,
+    required this.addFirstText,
     required this.buildItem,
     required this.onAdd,
     required this.onRemove,
@@ -20,6 +22,8 @@ class EditableList<T extends Identifiable> extends StatefulWidget {
 
   final List<T> items;
   final T templateItem;
+  final String emptyText;
+  final String addFirstText;
 
   final Widget Function(T item, bool selected) buildItem;
 
@@ -53,18 +57,45 @@ class _EditableListState<T extends Identifiable>
         content: Row(
           children: [
             Expanded(
-              child: ManagableList(
-                items: widget.items,
-                templateItem: widget.templateItem,
-                buildItem: (item) => widget.buildItem(
-                  item,
-                  _selectedItems.contains(item.identity),
-                ),
-                onTapItem: _selectedItems.isEmpty
-                    ? widget.onTapItem
-                    : _toggleSelection,
-                onLongPressItem: _toggleSelection,
-              ),
+              child: widget.items.isNotEmpty
+                  ? ManagableList(
+                      items: widget.items,
+                      templateItem: widget.templateItem,
+                      buildItem: (item) => widget.buildItem(
+                        item,
+                        _selectedItems.contains(item.identity),
+                      ),
+                      onTapItem: _selectedItems.isEmpty
+                          ? widget.onTapItem
+                          : _toggleSelection,
+                      onLongPressItem: _toggleSelection,
+                    )
+                  : Column(
+                      children: [
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(widget.emptyText),
+                                GestureDetector(
+                                  onTap: widget.onAdd,
+                                  child: Text(
+                                    widget.addFirstText,
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
             ),
             if (widget.detailInformation != null)
               Expanded(
