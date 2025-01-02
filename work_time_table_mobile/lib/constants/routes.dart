@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:work_time_table_mobile/screens/setting/event_setting/edit_event_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/event_setting/event_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/week_setting/week_setting_screen.dart';
-import 'package:work_time_table_mobile/screens/settings_screen.dart';
+import 'package:work_time_table_mobile/screens/setting/settings_screen.dart';
 import 'package:work_time_table_mobile/screens/time_input/time_input_screen.dart';
 import 'package:work_time_table_mobile/screens/user/user_screen.dart';
 
