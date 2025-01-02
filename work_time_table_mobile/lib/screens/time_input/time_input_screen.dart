@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_time_table_mobile/blocs/time_input_cubit.dart';
 import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart';
+import 'package:work_time_table_mobile/components/no_user_page.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
 import 'package:work_time_table_mobile/components/time_input/time_input_summary.dart';
 import 'package:work_time_table_mobile/components/time_input/week_display.dart';
@@ -101,10 +102,27 @@ class TimeInputScreen extends StatelessWidget {
             builder: (context, weekSettingState) => BlocBuilder<TimeInputCubit,
                 ContextDependentValue<WeekInformation>>(
               builder: (context, weekState) => switch (weekSettingState) {
-                NoContextValue<WeekSetting>() => const NoUserPage(),
+                NoContextValue<WeekSetting>() => NoUserPage(
+                    title: 'No user selected',
+                    menuButtons: [
+                      (
+                        onPressed: () => SettingsScreenRoute().push(context),
+                        icon: const Icon(Icons.settings),
+                      ),
+                    ],
+                  ),
                 ContextValue<WeekSetting>(value: final weekSetting) => switch (
                       weekState) {
-                    NoContextValue<WeekInformation>() => const NoUserPage(),
+                    NoContextValue<WeekInformation>() => NoUserPage(
+                        title: 'No user selected',
+                        menuButtons: [
+                          (
+                            onPressed: () =>
+                                SettingsScreenRoute().push(context),
+                            icon: const Icon(Icons.settings),
+                          ),
+                        ],
+                      ),
                     ContextValue<WeekInformation>(
                       value: final weekInformation
                     ) =>
@@ -239,32 +257,6 @@ class TimeInputScreen extends StatelessWidget {
                   },
               },
             ),
-          ),
-        ),
-      );
-}
-
-class NoUserPage extends StatelessWidget {
-  const NoUserPage({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) => PageTemplate(
-        title: 'No user selected',
-        menuButtons: [
-          (
-            onPressed: () => SettingsScreenRoute().push(context),
-            icon: const Icon(Icons.settings),
-          ),
-        ],
-        content: const Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('No user selected'),
-              Text('Go to the settings to configure a user'),
-            ],
           ),
         ),
       );

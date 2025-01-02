@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_time_table_mobile/blocs/current_user_cubit.dart';
 import 'package:work_time_table_mobile/blocs/user_cubit.dart';
@@ -13,7 +14,64 @@ import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
 class UserScreen extends StatelessWidget {
-  const UserScreen({super.key});
+  const UserScreen({
+    super.key,
+    required this.immediatelyShowAddDialog,
+  });
+
+  final bool immediatelyShowAddDialog;
+
+  @override
+  Widget build(BuildContext context) => BlocProvider(
+        create: (_) => UserCubit(UserService(
+          context.read<UserDao>(),
+          context.read<CurrentUserDao>(),
+        )),
+        child: BlocSelector<UserCubit, List<User>, List<User>>(
+          selector: (state) => state..sort((a, b) => a.name.compareTo(b.name)),
+          builder: (context, users) =>
+              BlocBuilder<CurrentUserCubit, ContextDependentValue<User>>(
+            builder: (context, currentUser) => UserScreenContent(
+              immediatelyShowAddDialog: immediatelyShowAddDialog,
+              users: users,
+              currentUser: currentUser,
+            ),
+          ),
+        ),
+      );
+}
+
+class UserScreenContent extends StatefulWidget {
+  const UserScreenContent({
+    super.key,
+    required this.immediatelyShowAddDialog,
+    required this.users,
+    required this.currentUser,
+  });
+
+  final bool immediatelyShowAddDialog;
+  final List<User> users;
+  final ContextDependentValue<User> currentUser;
+
+  @override
+  State<UserScreenContent> createState() => _UserScreenContentState();
+}
+
+class _UserScreenContentState extends State<UserScreenContent> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.immediatelyShowAddDialog) {
+      SchedulerBinding.instance
+          .addPostFrameCallback((_) => _showAddDialogWithCallbacks());
+    }
+  }
+
+  void _showAddDialogWithCallbacks() => _showAddDialog(
+        context,
+        widget.users.map((user) => user.name).toList(),
+        (name) => context.read<UserCubit>().addUser(name),
+      );
 
   void _showAddDialog(
     BuildContext context,
@@ -70,52 +128,38 @@ class UserScreen extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-        create: (_) => UserCubit(UserService(
-          context.read<UserDao>(),
-          context.read<CurrentUserDao>(),
-        )),
-        child: BlocSelector<UserCubit, List<User>, List<User>>(
-          selector: (state) => state..sort((a, b) => a.name.compareTo(b.name)),
-          builder: (context, users) =>
-              BlocBuilder<CurrentUserCubit, ContextDependentValue<User>>(
-            builder: (context, currentUser) => EditableList(
-              title: 'Users',
-              items: users,
-              templateItem: User(id: -1, name: 'User ...'),
-              buildItem: (item, selected) => UserItem(
-                user: item,
-                selected: selected,
-                currentUser: switch (currentUser) {
-                  NoContextValue() => false,
-                  ContextValue(value: var user) => user.id == item.id,
-                },
-                onEditTap: () => _showRenameDialog(
-                  context,
-                  item.name,
-                  users
-                      .where((user) => user.id != item.id)
-                      .map((user) => user.name)
-                      .toList(),
-                  (name) => context.read<UserCubit>().renameUser(item.id, name),
-                ),
-              ),
-              onAdd: () => _showAddDialog(
-                context,
-                users.map((user) => user.name).toList(),
-                (name) => context.read<UserCubit>().addUser(name),
-              ),
-              onRemove: (items) => _showDeletionConfirmation(
-                context,
-                () => context.read<UserCubit>().deleteUsers(
-                      items.map((user) => user.id).toList(),
-                      true,
-                    ),
-              ),
-              onTapItem: (index) =>
-                  context.read<CurrentUserCubit>().selectUser(users[index].id),
-            ),
+  Widget build(BuildContext context) => EditableList(
+        title: 'Users',
+        items: widget.users,
+        templateItem: User(id: -1, name: 'User ...'),
+        emptyText: 'There do not exist any users yet.',
+        addFirstText: 'Add first user',
+        buildItem: (item, selected) => UserItem(
+          user: item,
+          selected: selected,
+          currentUser: switch (widget.currentUser) {
+            NoContextValue() => false,
+            ContextValue(value: var user) => user.id == item.id,
+          },
+          onEditTap: () => _showRenameDialog(
+            context,
+            item.name,
+            widget.users
+                .where((user) => user.id != item.id)
+                .map((user) => user.name)
+                .toList(),
+            (name) => context.read<UserCubit>().renameUser(item.id, name),
           ),
         ),
+        onAdd: _showAddDialogWithCallbacks,
+        onRemove: (items) => _showDeletionConfirmation(
+          context,
+          () => context.read<UserCubit>().deleteUsers(
+                items.map((user) => user.id).toList(),
+                true,
+              ),
+        ),
+        onTapItem: (index) =>
+            context.read<CurrentUserCubit>().selectUser(widget.users[index].id),
       );
 }
