@@ -11,6 +11,7 @@ part 'routes.g.dart';
 
 @TypedGoRoute<TimeInputScreenRoute>(path: '/', routes: [
   TypedGoRoute<UserScreenRoute>(path: 'user'),
+  TypedGoRoute<UserScreenForCreationRoute>(path: 'createUser'),
   TypedGoRoute<SettingsScreenRoute>(path: 'settings'),
   TypedGoRoute<WeekSettingScreenRoute>(path: 'weekSetting'),
   TypedGoRoute<EventSettingScreenRoute>(path: 'eventSetting'),
@@ -29,7 +30,19 @@ class TimeInputScreenRoute extends GoRouteData {
 class UserScreenRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const UserScreen();
+    return const UserScreen(
+      immediatelyShowAddDialog: false,
+    );
+  }
+}
+
+@immutable
+class UserScreenForCreationRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const UserScreen(
+      immediatelyShowAddDialog: true,
+    );
   }
 }
 
