@@ -5,7 +5,7 @@ import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart'
 import 'package:work_time_table_mobile/components/editable_list.dart';
 import 'package:work_time_table_mobile/components/event_setting/event_calendar.dart';
 import 'package:work_time_table_mobile/components/event_setting/event_display.dart';
-import 'package:work_time_table_mobile/components/page_template.dart';
+import 'package:work_time_table_mobile/components/no_user_page.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
@@ -88,11 +88,8 @@ class EventSettingScreen extends StatelessWidget {
                 })),
           },
           builder: (context, state) => switch (state) {
-            NoContextValue<List<EvaluatedEventSetting>>() => const PageTemplate(
+            NoContextValue<List<EvaluatedEventSetting>>() => const NoUserPage(
                 title: 'Event Settings',
-                content: Center(
-                  child: Text('No user selected'),
-                ),
               ),
             ContextValue<List<EvaluatedEventSetting>>(value: var value) =>
               EditableList<EvaluatedEventSetting>(
