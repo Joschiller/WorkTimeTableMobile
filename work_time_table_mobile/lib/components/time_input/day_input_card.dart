@@ -91,7 +91,18 @@ class DayInputCard extends StatelessWidget {
                                         index++)
                                       EventDisplay(
                                         event: events[index],
-                                        selected: index == 0,
+                                        selected: (events[index].firstHalf &&
+                                                events.indexed
+                                                    .where((v) =>
+                                                        v.$1 < index &&
+                                                        v.$2.firstHalf)
+                                                    .isEmpty) ||
+                                            (events[index].secondHalf &&
+                                                events.indexed
+                                                    .where((v) =>
+                                                        v.$1 < index &&
+                                                        v.$2.secondHalf)
+                                                    .isEmpty),
                                       ),
                                   ],
                                 ),

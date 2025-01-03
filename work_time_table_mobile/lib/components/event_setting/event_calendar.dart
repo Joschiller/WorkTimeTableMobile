@@ -139,7 +139,14 @@ class _EventCalendarState extends State<EventCalendar> {
                 itemCount: value.length,
                 itemBuilder: (context, index) => EventDisplay(
                   event: value[index],
-                  selected: index == 0,
+                  selected: (value[index].firstHalf &&
+                          value.indexed
+                              .where((v) => v.$1 < index && v.$2.firstHalf)
+                              .isEmpty) ||
+                      (value[index].secondHalf &&
+                          value.indexed
+                              .where((v) => v.$1 < index && v.$2.secondHalf)
+                              .isEmpty),
                 ),
               ),
             ),
