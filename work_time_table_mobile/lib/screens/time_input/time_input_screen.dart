@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:work_time_table_mobile/blocs/evaluated_event_setting_cubit.dart';
 import 'package:work_time_table_mobile/blocs/time_input_cubit.dart';
 import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart';
@@ -86,6 +87,12 @@ class TimeInputScreen extends StatelessWidget {
             BlocProvider<WeekSettingCubit>(
               create: (context) => WeekSettingCubit(
                 context.read<WeekSettingService>(),
+              ),
+            ),
+            BlocProvider<EvaluatedEventSettingCubit>(
+              create: (context) => EvaluatedEventSettingCubit(
+                const EventService(),
+                context.read<EventSettingService>(),
               ),
             ),
             BlocProvider<TimeInputCubit>(

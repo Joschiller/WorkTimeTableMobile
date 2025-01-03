@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:work_time_table_mobile/blocs/evaluated_event_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/event_setting/circle_decoration.dart';
 import 'package:work_time_table_mobile/components/event_setting/event_display.dart';
 import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
@@ -24,14 +26,14 @@ class _EventCalendarState extends State<EventCalendar> {
   DateTime? _selectedDay;
   late final ValueNotifier<List<EvaluatedEventSetting>> _selectedEvents;
 
-  final _eventCache = <DateTime, List<EvaluatedEventSetting>>{};
-
   @override
   void initState() {
     super.initState();
 
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+    _selectedEvents = ValueNotifier(context
+        .read<EvaluatedEventSettingCubit>()
+        .getEventsForDay(_selectedDay!));
   }
 
   @override
@@ -43,27 +45,17 @@ class _EventCalendarState extends State<EventCalendar> {
   @override
   void didUpdateWidget(covariant EventCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _eventCache.clear();
+    context.read<EvaluatedEventSettingCubit>().resetCache();
     if (_selectedDay != null) {
       _selectDay(_selectedDay!);
     }
   }
 
-  List<EvaluatedEventSetting> _getEventsForDay(DateTime day) {
-    if (!_eventCache.keys.contains(day)) {
-      _eventCache[day] = widget.eventService
-          .getEventsAffectingDate(day, widget.events)
-        ..sort((a, b) =>
-            a.eventSetting.eventType.priority -
-            b.eventSetting.eventType.priority);
-    }
-    return _eventCache[day]!;
-  }
-
   void _selectDay(DateTime day) => setState(() {
         _selectedDay = day;
         _focusedDay = day;
-        _selectedEvents.value = _getEventsForDay(day);
+        _selectedEvents.value =
+            context.read<EvaluatedEventSettingCubit>().getEventsForDay(day);
       });
 
   @override
@@ -86,10 +78,13 @@ class _EventCalendarState extends State<EventCalendar> {
             calendarFormat: CalendarFormat.month,
             rangeSelectionMode: RangeSelectionMode.disabled,
             startingDayOfWeek: StartingDayOfWeek.monday,
-            eventLoader: _getEventsForDay,
+            eventLoader:
+                context.read<EvaluatedEventSettingCubit>().getEventsForDay,
             calendarBuilders: CalendarBuilders(
               prioritizedBuilder: (context, day, focusedDay) {
-                final events = _eventCache[day]!;
+                final events = context
+                    .read<EvaluatedEventSettingCubit>()
+                    .getEventsForDay(day);
                 final firstHalfColor = widget.eventService
                     .getHighestPriorityEventFromList(events
                         .where((e) => e.firstHalf)
@@ -144,7 +139,14 @@ class _EventCalendarState extends State<EventCalendar> {
                 itemCount: value.length,
                 itemBuilder: (context, index) => EventDisplay(
                   event: value[index],
-                  selected: false,
+                  selected: (value[index].firstHalf &&
+                          value.indexed
+                              .where((v) => v.$1 < index && v.$2.firstHalf)
+                              .isEmpty) ||
+                      (value[index].secondHalf &&
+                          value.indexed
+                              .where((v) => v.$1 < index && v.$2.secondHalf)
+                              .isEmpty),
                 ),
               ),
             ),

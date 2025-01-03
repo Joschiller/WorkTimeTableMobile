@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:work_time_table_mobile/blocs/evaluated_event_setting_cubit.dart';
 import 'package:work_time_table_mobile/blocs/event_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart';
 import 'package:work_time_table_mobile/components/editable_list.dart';
@@ -44,94 +45,109 @@ class EventSettingScreen extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-        create: (context) => EventSettingCubit(EventSettingService(
+  Widget build(BuildContext context) => RepositoryProvider<EventSettingService>(
+        create: (context) => EventSettingService(
           UserService(
             context.read<UserDao>(),
             context.read<CurrentUserDao>(),
           ),
           context.read<EventSettingDao>(),
           const EventService(),
-        )),
-        child: BlocSelector<
-            EventSettingCubit,
-            ContextDependentValue<List<EventSetting>>,
-            ContextDependentValue<List<EvaluatedEventSetting>>>(
-          selector: (state) => switch (state) {
-            NoContextValue<List<EventSetting>>() =>
-              NoContextValue<List<EvaluatedEventSetting>>(),
-            ContextValue<List<EventSetting>>(value: var value) =>
-              ContextValue(value
-                  .map(
-                    (e) => EvaluatedEventSetting(
-                      eventSetting: e,
-                      firstHalf: true,
-                      secondHalf: true,
-                    ),
-                  )
-                  .toList()
-                ..sort((a, b) {
-                  final startCompare = a.eventSetting.startDate
-                      .compareTo(b.eventSetting.startDate);
-                  if (startCompare != 0) return startCompare;
-
-                  final typeCompare = a.eventSetting.eventType.priority -
-                      b.eventSetting.eventType.priority;
-                  if (typeCompare != 0) return typeCompare;
-
-                  final endCompare =
-                      a.eventSetting.endDate.compareTo(b.eventSetting.endDate);
-                  if (endCompare != 0) return endCompare;
-
-                  return (a.eventSetting.title ?? '')
-                      .compareTo(b.eventSetting.title ?? '');
-                })),
-          },
-          builder: (context, state) => switch (state) {
-            NoContextValue<List<EvaluatedEventSetting>>() => const NoUserPage(
-                title: 'Event Settings',
+        ),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => EventSettingCubit(
+                context.read<EventSettingService>(),
               ),
-            ContextValue<List<EvaluatedEventSetting>>(value: var value) =>
-              EditableList<EvaluatedEventSetting>(
-                title: 'Event Settings',
-                items: value,
-                templateItem: EvaluatedEventSetting(
-                  eventSetting: EventSetting(
-                    id: -1,
-                    eventType: EventType.dayOff,
-                    title: 'Evemt',
-                    startDate: DateTime.now().toDay(),
-                    endDate: DateTime.now().toDay(),
-                    startIsHalfDay: false,
-                    endIsHalfDay: false,
-                    dayBasedRepetitionRules: [],
-                    monthBasedRepetitionRules: [],
-                  ),
-                  firstHalf: true,
-                  secondHalf: true,
-                ),
-                emptyText: 'There do not exist any events yet.',
-                addFirstText: 'Add first event',
-                buildItem: (item, selected) => EventDisplay(
-                  event: item,
-                  selected: selected,
-                ),
-                onAdd: () => const AddEventSettingScreenRoute().push(context),
-                onTapItem: (index) => EditEventSettingScreenRoute(
-                        eventId: value[index].eventSetting.id)
-                    .push(context),
-                onRemove: (items) => _showDeletionConfirmation(
-                  context,
-                  () => context.read<EventSettingCubit>().deleteEvents(
-                        items.map((event) => event.eventSetting.id).toList(),
-                        true,
+            ),
+            BlocProvider(
+              create: (context) => EvaluatedEventSettingCubit(
+                const EventService(),
+                context.read<EventSettingService>(),
+              ),
+            ),
+          ],
+          child: BlocSelector<
+              EventSettingCubit,
+              ContextDependentValue<List<EventSetting>>,
+              ContextDependentValue<List<EvaluatedEventSetting>>>(
+            selector: (state) => switch (state) {
+              NoContextValue<List<EventSetting>>() =>
+                NoContextValue<List<EvaluatedEventSetting>>(),
+              ContextValue<List<EventSetting>>(value: var value) =>
+                ContextValue(value
+                    .map(
+                      (e) => EvaluatedEventSetting(
+                        eventSetting: e,
+                        firstHalf: true,
+                        secondHalf: true,
                       ),
+                    )
+                    .toList()
+                  ..sort((a, b) {
+                    final startCompare = a.eventSetting.startDate
+                        .compareTo(b.eventSetting.startDate);
+                    if (startCompare != 0) return startCompare;
+
+                    final typeCompare = a.eventSetting.eventType.priority -
+                        b.eventSetting.eventType.priority;
+                    if (typeCompare != 0) return typeCompare;
+
+                    final endCompare = a.eventSetting.endDate
+                        .compareTo(b.eventSetting.endDate);
+                    if (endCompare != 0) return endCompare;
+
+                    return (a.eventSetting.title ?? '')
+                        .compareTo(b.eventSetting.title ?? '');
+                  })),
+            },
+            builder: (context, state) => switch (state) {
+              NoContextValue<List<EvaluatedEventSetting>>() => const NoUserPage(
+                  title: 'Event Settings',
                 ),
-                detailInformation: EventCalendar(
-                  events: value.map((e) => e.eventSetting).toList(),
+              ContextValue<List<EvaluatedEventSetting>>(value: var value) =>
+                EditableList<EvaluatedEventSetting>(
+                  title: 'Event Settings',
+                  items: value,
+                  templateItem: EvaluatedEventSetting(
+                    eventSetting: EventSetting(
+                      id: -1,
+                      eventType: EventType.dayOff,
+                      title: 'Evemt',
+                      startDate: DateTime.now().toDay(),
+                      endDate: DateTime.now().toDay(),
+                      startIsHalfDay: false,
+                      endIsHalfDay: false,
+                      dayBasedRepetitionRules: [],
+                      monthBasedRepetitionRules: [],
+                    ),
+                    firstHalf: true,
+                    secondHalf: true,
+                  ),
+                  emptyText: 'There do not exist any events yet.',
+                  addFirstText: 'Add first event',
+                  buildItem: (item, selected) => EventDisplay(
+                    event: item,
+                    selected: selected,
+                  ),
+                  onAdd: () => const AddEventSettingScreenRoute().push(context),
+                  onTapItem: (index) => EditEventSettingScreenRoute(
+                          eventId: value[index].eventSetting.id)
+                      .push(context),
+                  onRemove: (items) => _showDeletionConfirmation(
+                    context,
+                    () => context.read<EventSettingCubit>().deleteEvents(
+                          items.map((event) => event.eventSetting.id).toList(),
+                          true,
+                        ),
+                  ),
+                  detailInformation: EventCalendar(
+                    events: value.map((e) => e.eventSetting).toList(),
+                  ),
                 ),
-              ),
-          },
+            },
+          ),
         ),
       );
 }

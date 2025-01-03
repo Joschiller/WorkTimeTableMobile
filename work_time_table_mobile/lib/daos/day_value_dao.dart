@@ -54,9 +54,9 @@ class DayValueDao {
     _stream.emitUpdate([updated.toAppModel()]);
   }
 
-  Future<void> deleteByUserIdAndDates(int userId, List<DateTime> dates) async =>
+  Future<void> deleteByUserIdAndDate(int userId, DateTime date) async =>
       _stream.emitDeletion((await deleteManyAndReturn(
-              dates,
+              [date],
               (tx, date) => tx.dayValue.delete(
                     where: DayValueWhereUniqueInput(
                       userIdDate: DayValueUserIdDateCompoundUniqueInput(
