@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:work_time_table_mobile/components/event_setting/event_display.dart';
 import 'package:work_time_table_mobile/components/time_input/day_mode_selector.dart';
 import 'package:work_time_table_mobile/components/time_input/time_input_button.dart';
 import 'package:work_time_table_mobile/components/time_input/time_span_input.dart';
+import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
 import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
@@ -35,11 +38,13 @@ class DayInputCard extends StatelessWidget {
     super.key,
     required this.settings,
     required this.dayValue,
+    required this.events,
     required this.onChange,
   });
 
   final WeekDaySetting settings;
   final DayValue dayValue;
+  final List<EvaluatedEventSetting> events;
 
   bool get _isPartiallyWorkday =>
       dayValue.firstHalfMode == DayMode.workDay ||
@@ -70,7 +75,38 @@ class DayInputCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const SizedBox(width: 24),
+                  events.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(
+                                  'Events on ${displayDateFormat.format(dayValue.date)}'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    for (var index = 0;
+                                        index < events.length;
+                                        index++)
+                                      EventDisplay(
+                                        event: events[index],
+                                        selected: index == 0,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: context.pop,
+                                  child: const Text('Ok'),
+                                ),
+                              ],
+                            ),
+                          ),
+                          child: const Icon(Icons.calendar_month),
+                        )
+                      : const SizedBox(width: 24),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
