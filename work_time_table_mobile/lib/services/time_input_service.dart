@@ -9,8 +9,6 @@ import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
-import 'package:work_time_table_mobile/services/day_value_service.dart';
-import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
@@ -252,14 +250,12 @@ class TimeInputService extends StreamableService {
       );
 
   Future<void> onReset(DayValue oldDayValue) => runContextDependentAction(
-        _getValuesFromDaos(),
+        _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
-        (configuration) => _updateDayOfWeek(
-            const DayValueService(EventService()).getInitialValueForDay(
-          oldDayValue.date,
-          configuration.weekSetting,
-          configuration.eventSettings,
-        )),
+        (user) => validateAndRun(
+          _getWeekNotAlreadyClosedValidator(oldDayValue.date.firstDayOfWeek),
+          () => _dayValueDao.deleteByUserIdAndDate(user.id, oldDayValue.date),
+        ),
       );
 
   Future<void> updateWorkTime(
@@ -401,24 +397,6 @@ class TimeInputService extends StreamableService {
         (user) => validateAndRun(
           _getDayUpdateValidator(value),
           () async => _dayValueDao.upsert(user.id, value),
-        ),
-      );
-
-  Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
-      runContextDependentAction(
-        _userService.currentUserStream.state,
-        () async => Future.error(AppError.service_noUserLoaded),
-        (user) => validateAndRun(
-          _getWeekStartIsMondayValidator(weekStartDate) +
-              _getWeekNotAlreadyClosedValidator(weekStartDate) +
-              getIsConfirmedValidator(
-                isConfirmed,
-                AppError.service_timeInput_unconfirmedReset,
-              ),
-          () => _dayValueDao.deleteByUserIdAndDates(
-            user.id,
-            List.generate(7, (i) => weekStartDate.add(Duration(days: i))),
-          ),
         ),
       );
 

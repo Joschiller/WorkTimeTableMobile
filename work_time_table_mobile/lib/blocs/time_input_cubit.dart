@@ -78,9 +78,6 @@ class TimeInputCubit extends ContextDependentCubit<WeekInformation> {
   ) =>
       _timeInputService.updateSecondHalfMode(oldDayValue, secondHalfMode);
 
-  Future<void> resetDaysOfWeek(DateTime weekStartDate, bool isConfirmed) =>
-      _timeInputService.resetDaysOfWeek(weekStartDate, isConfirmed);
-
   Future<void> closeWeek(
     DateTime weekStartDate,
     List<DayValue> dayValues,
