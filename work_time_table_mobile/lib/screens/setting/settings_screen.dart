@@ -142,6 +142,8 @@ class SettingsScreen extends StatelessWidget {
                                 ) =>
                                   weekSetting.targetWorkTimePerWeek.timeString,
                               },
+                              metadataTitleWeight: 4,
+                              metadataValueWeight: 3,
                             ),
                             MetadataField(
                               title: 'Work days',
@@ -152,6 +154,8 @@ class SettingsScreen extends StatelessWidget {
                                 ) =>
                                   weekSetting.weekDaySettings.length.toString(),
                               },
+                              metadataTitleWeight: 4,
+                              metadataValueWeight: 3,
                             ),
                           ],
                         ),
@@ -173,6 +177,8 @@ class SettingsScreen extends StatelessWidget {
                                 ) =>
                                   events.length.toString(),
                               },
+                              metadataTitleWeight: 4,
+                              metadataValueWeight: 3,
                             ),
                             MetadataField(
                               title: 'Configured without repetition',
@@ -188,6 +194,8 @@ class SettingsScreen extends StatelessWidget {
                                       .length
                                       .toString(),
                               },
+                              metadataTitleWeight: 4,
+                              metadataValueWeight: 3,
                             ),
                             MetadataField(
                               title: 'Configured with repetition',
@@ -205,6 +213,8 @@ class SettingsScreen extends StatelessWidget {
                                       .length
                                       .toString(),
                               },
+                              metadataTitleWeight: 4,
+                              metadataValueWeight: 3,
                             ),
                           ],
                         ),

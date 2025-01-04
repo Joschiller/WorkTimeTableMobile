@@ -5,17 +5,22 @@ class MetadataField extends StatelessWidget {
     super.key,
     required this.title,
     required this.value,
+    required this.metadataTitleWeight,
+    required this.metadataValueWeight,
   });
 
   final String title;
   final String value;
+
+  final int metadataTitleWeight;
+  final int metadataValueWeight;
 
   @override
   Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 4,
+            flex: metadataTitleWeight,
             child: Text(
               '$title:',
               style: Theme.of(context).textTheme.titleSmall,
@@ -23,7 +28,7 @@ class MetadataField extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Expanded(
-            flex: 3,
+            flex: metadataValueWeight,
             child: Text(value),
           ),
         ],
