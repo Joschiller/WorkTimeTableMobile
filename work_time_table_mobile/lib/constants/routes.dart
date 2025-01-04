@@ -9,6 +9,8 @@ import 'package:work_time_table_mobile/screens/user/user_screen.dart';
 
 part 'routes.g.dart';
 
+// generate with: flutter pub run build_runner build
+
 @TypedGoRoute<TimeInputScreenRoute>(path: '/', routes: [
   TypedGoRoute<UserScreenRoute>(path: 'user'),
   TypedGoRoute<UserScreenForCreationRoute>(path: 'createUser'),
