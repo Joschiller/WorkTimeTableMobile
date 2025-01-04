@@ -27,7 +27,6 @@ class SettingsCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -45,26 +44,40 @@ class SettingsCard extends StatelessWidget {
                   height: 24,
                   thickness: 1,
                 ),
-                ...(metadata ?? {}).entries.map(
-                      (e) => showMetadataVertical
-                          ? Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${e.key}:',
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                                Text(e.value),
-                              ],
-                            )
-                          : MetadataField(
-                              title: e.key,
-                              value: e.value,
-                              metadataTitleWeight: metadataTitleWeight,
-                              metadataValueWeight: metadataValueWeight,
-                            ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: (metadata ?? {})
+                          .entries
+                          .map(
+                            (e) => showMetadataVertical
+                                ? Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${e.key}:',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall,
+                                      ),
+                                      Text(e.value),
+                                    ],
+                                  )
+                                : MetadataField(
+                                    title: e.key,
+                                    value: e.value,
+                                    metadataTitleWeight: metadataTitleWeight,
+                                    metadataValueWeight: metadataValueWeight,
+                                  ),
+                          )
+                          .toList(),
                     ),
+                  ),
+                ),
               ],
             ),
           ),
