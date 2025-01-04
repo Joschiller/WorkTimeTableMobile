@@ -169,6 +169,12 @@ class SettingsScreen extends StatelessWidget {
                           },
                         ),
                       ),
+                      SettingsCard(
+                        title: 'Global Settings',
+                        onTap: () => GlobalSettingScreenRoute().push(context),
+                        metadataTitleWeight: 1,
+                        metadataValueWeight: 1,
+                      ),
                     ],
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:work_time_table_mobile/screens/setting/event_setting/edit_event_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/event_setting/event_setting_screen.dart';
+import 'package:work_time_table_mobile/screens/setting/global_setting/global_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/week_setting/week_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/settings_screen.dart';
 import 'package:work_time_table_mobile/screens/time_input/time_input_screen.dart';
@@ -20,6 +21,7 @@ part 'routes.g.dart';
   TypedGoRoute<AddEventSettingScreenRoute>(path: 'settings/event/edit'),
   TypedGoRoute<EditEventSettingScreenRoute>(
       path: 'settings/event/edit/:eventId'),
+  TypedGoRoute<GlobalSettingScreenRoute>(path: 'settings/global'),
 ])
 @immutable
 class TimeInputScreenRoute extends GoRouteData {
@@ -94,5 +96,13 @@ class EditEventSettingScreenRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return EditEventSettingScreen(eventId: eventId);
+  }
+}
+
+@immutable
+class GlobalSettingScreenRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const GlobalSettingScreen();
   }
 }
