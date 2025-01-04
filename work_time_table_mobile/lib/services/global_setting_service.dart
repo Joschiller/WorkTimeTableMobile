@@ -22,6 +22,7 @@ class GlobalSettingService extends StreamableService {
     prepareComplexListen(
       [_globalSettingDao.stream],
       () => ContextValue({
+        // use default values if no setting exists
         GlobalSettingKey.scrollInterval: runContextDependentAction(
               _globalSettingDao.stream.state,
               () => SettingsMap(),
