@@ -17,15 +17,17 @@ class GlobalSettingEditor extends StatelessWidget {
   ) onChange;
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ScrollIntervalSettingInput(
-            initialValue: initialValue[GlobalSettingKey.scrollInterval],
-            onChange: (value) =>
-                onChange(GlobalSettingKey.scrollInterval, value),
-            onReset: () => onChange(GlobalSettingKey.scrollInterval, null),
-          ),
-        ],
+  Widget build(BuildContext context) => SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ScrollIntervalSettingInput(
+              initialValue: initialValue[GlobalSettingKey.scrollInterval],
+              onChange: (value) =>
+                  onChange(GlobalSettingKey.scrollInterval, value),
+              onReset: () => onChange(GlobalSettingKey.scrollInterval, null),
+            ),
+          ],
+        ),
       );
 }
