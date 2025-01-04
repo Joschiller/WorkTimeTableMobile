@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/no_user_page.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
-import 'package:work_time_table_mobile/components/week_setting/week_setting_editor.dart';
+import 'package:work_time_table_mobile/components/settings/week_setting/week_setting_editor.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';

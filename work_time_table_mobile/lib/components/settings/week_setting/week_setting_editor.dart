@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/components/validation_result_display.dart';
-import 'package:work_time_table_mobile/components/week_setting/global_week_day_setting_input.dart';
-import 'package:work_time_table_mobile/components/week_setting/global_week_day_setting_input_header.dart';
-import 'package:work_time_table_mobile/components/week_setting/week_day_setting_input.dart';
-import 'package:work_time_table_mobile/components/week_setting/week_day_setting_input_header.dart';
+import 'package:work_time_table_mobile/components/settings/week_setting/global_week_day_setting_input.dart';
+import 'package:work_time_table_mobile/components/settings/week_setting/global_week_day_setting_input_header.dart';
+import 'package:work_time_table_mobile/components/settings/week_setting/week_day_setting_input.dart';
+import 'package:work_time_table_mobile/components/settings/week_setting/week_day_setting_input_header.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_day_setting.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';

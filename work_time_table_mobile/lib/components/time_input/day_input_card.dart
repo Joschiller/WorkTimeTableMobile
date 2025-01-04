@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_display.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_display.dart';
 import 'package:work_time_table_mobile/components/time_input/day_mode_selector.dart';
 import 'package:work_time_table_mobile/components/time_input/time_input_button.dart';
 import 'package:work_time_table_mobile/components/time_input/time_span_input.dart';

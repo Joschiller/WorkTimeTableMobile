@@ -4,8 +4,8 @@ import 'package:work_time_table_mobile/blocs/evaluated_event_setting_cubit.dart'
 import 'package:work_time_table_mobile/blocs/event_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/confirmable_alert_dialog.dart';
 import 'package:work_time_table_mobile/components/editable_list.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_calendar.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_display.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_calendar.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_display.dart';
 import 'package:work_time_table_mobile/components/no_user_page.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
