@@ -133,7 +133,7 @@ class SettingsScreen extends StatelessWidget {
                           title: 'Event Settings',
                           onTap: () => EventSettingScreenRoute().push(context),
                           metadataTitleWeight: 4,
-                          metadataValueWeight: 3,
+                          metadataValueWeight: 1,
                           metadata: {
                             'Configured events': switch (state) {
                               NoContextValue<List<EventSetting>>() => '0',
