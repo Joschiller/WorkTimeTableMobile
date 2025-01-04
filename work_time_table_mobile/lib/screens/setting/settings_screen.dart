@@ -77,13 +77,12 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SingleChildScrollView(
+                Expanded(
                   child: GridView.count(
                     padding: const EdgeInsets.all(16),
                     crossAxisSpacing: 32,
                     mainAxisSpacing: 32,
                     crossAxisCount: 3,
-                    shrinkWrap: true,
                     children: [
                       BlocBuilder<CurrentUserCubit,
                           ContextDependentValue<User>>(
