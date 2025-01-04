@@ -4,8 +4,8 @@ import 'package:work_time_table_mobile/blocs/current_user_cubit.dart';
 import 'package:work_time_table_mobile/blocs/event_setting_cubit.dart';
 import 'package:work_time_table_mobile/blocs/user_cubit.dart';
 import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
-import 'package:work_time_table_mobile/components/metadata_field.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
+import 'package:work_time_table_mobile/components/settings/settings_card.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
@@ -77,150 +77,100 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => UserScreenRoute().push(context),
-                        child: const Text('Users'),
+                SingleChildScrollView(
+                  child: GridView.count(
+                    padding: const EdgeInsets.all(16),
+                    crossAxisSpacing: 32,
+                    mainAxisSpacing: 32,
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    children: [
+                      BlocBuilder<CurrentUserCubit,
+                          ContextDependentValue<User>>(
+                        builder: (context, state) => SettingsCard(
+                          title: 'Users',
+                          onTap: () => UserScreenRoute().push(context),
+                          metadataTitleWeight: 1,
+                          metadataValueWeight: 1,
+                          metadata: {
+                            'Current user': switch (state) {
+                              NoContextValue<User>() => '-',
+                              ContextValue<User>(value: final user) =>
+                                user.name,
+                            },
+                          },
+                          showMetadataVertical: true,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 32),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => WeekSettingScreenRoute().push(context),
-                        child: const Text('Week Settings'),
-                      ),
-                    ),
-                    const SizedBox(width: 32),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () =>
-                            EventSettingScreenRoute().push(context),
-                        child: const Text('Event Settings'),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Current user:',
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                          BlocBuilder<CurrentUserCubit,
-                              ContextDependentValue<User>>(
-                            builder: (context, state) => Text(
-                              switch (state) {
-                                NoContextValue<User>() => '-',
-                                ContextValue<User>(value: final user) =>
-                                  user.name,
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 32),
-                    Expanded(
-                      child: BlocBuilder<WeekSettingCubit,
+                      BlocBuilder<WeekSettingCubit,
                           ContextDependentValue<WeekSetting>>(
-                        builder: (context, state) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            MetadataField(
-                              title: 'Target work time per week',
-                              value: switch (state) {
-                                NoContextValue<WeekSetting>() => 0.timeString,
-                                ContextValue<WeekSetting>(
-                                  value: final weekSetting
-                                ) =>
-                                  weekSetting.targetWorkTimePerWeek.timeString,
-                              },
-                              metadataTitleWeight: 4,
-                              metadataValueWeight: 3,
-                            ),
-                            MetadataField(
-                              title: 'Work days',
-                              value: switch (state) {
-                                NoContextValue<WeekSetting>() => '0',
-                                ContextValue<WeekSetting>(
-                                  value: final weekSetting
-                                ) =>
-                                  weekSetting.weekDaySettings.length.toString(),
-                              },
-                              metadataTitleWeight: 4,
-                              metadataValueWeight: 3,
-                            ),
-                          ],
+                        builder: (context, state) => SettingsCard(
+                          title: 'Week Settings',
+                          onTap: () => WeekSettingScreenRoute().push(context),
+                          metadataTitleWeight: 4,
+                          metadataValueWeight: 3,
+                          metadata: {
+                            'Target work time per week': switch (state) {
+                              NoContextValue<WeekSetting>() => 0.timeString,
+                              ContextValue<WeekSetting>(
+                                value: final weekSetting
+                              ) =>
+                                weekSetting.targetWorkTimePerWeek.timeString,
+                            },
+                            'Work days': switch (state) {
+                              NoContextValue<WeekSetting>() => '0',
+                              ContextValue<WeekSetting>(
+                                value: final weekSetting
+                              ) =>
+                                weekSetting.weekDaySettings.length.toString(),
+                            },
+                          },
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 32),
-                    Expanded(
-                      child: BlocBuilder<EventSettingCubit,
+                      BlocBuilder<EventSettingCubit,
                           ContextDependentValue<List<EventSetting>>>(
-                        builder: (context, state) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            MetadataField(
-                              title: 'Configured events',
-                              value: switch (state) {
-                                NoContextValue<List<EventSetting>>() => '0',
-                                ContextValue<List<EventSetting>>(
-                                  value: final events
-                                ) =>
-                                  events.length.toString(),
-                              },
-                              metadataTitleWeight: 4,
-                              metadataValueWeight: 3,
-                            ),
-                            MetadataField(
-                              title: 'Configured without repetition',
-                              value: switch (state) {
-                                NoContextValue<List<EventSetting>>() => '0',
-                                ContextValue<List<EventSetting>>(
-                                  value: final events
-                                ) =>
-                                  events
-                                      .where((e) =>
-                                          e.dayBasedRepetitionRules.isEmpty &&
-                                          e.monthBasedRepetitionRules.isEmpty)
-                                      .length
-                                      .toString(),
-                              },
-                              metadataTitleWeight: 4,
-                              metadataValueWeight: 3,
-                            ),
-                            MetadataField(
-                              title: 'Configured with repetition',
-                              value: switch (state) {
-                                NoContextValue<List<EventSetting>>() => '0',
-                                ContextValue<List<EventSetting>>(
-                                  value: final events
-                                ) =>
-                                  events
-                                      .where((e) =>
-                                          e.dayBasedRepetitionRules
-                                              .isNotEmpty ||
-                                          e.monthBasedRepetitionRules
-                                              .isNotEmpty)
-                                      .length
-                                      .toString(),
-                              },
-                              metadataTitleWeight: 4,
-                              metadataValueWeight: 3,
-                            ),
-                          ],
+                        builder: (context, state) => SettingsCard(
+                          title: 'Event Settings',
+                          onTap: () => EventSettingScreenRoute().push(context),
+                          metadataTitleWeight: 4,
+                          metadataValueWeight: 3,
+                          metadata: {
+                            'Configured events': switch (state) {
+                              NoContextValue<List<EventSetting>>() => '0',
+                              ContextValue<List<EventSetting>>(
+                                value: final events
+                              ) =>
+                                events.length.toString(),
+                            },
+                            'Configured without repetition': switch (state) {
+                              NoContextValue<List<EventSetting>>() => '0',
+                              ContextValue<List<EventSetting>>(
+                                value: final events
+                              ) =>
+                                events
+                                    .where((e) =>
+                                        e.dayBasedRepetitionRules.isEmpty &&
+                                        e.monthBasedRepetitionRules.isEmpty)
+                                    .length
+                                    .toString(),
+                            },
+                            'Configured with repetition': switch (state) {
+                              NoContextValue<List<EventSetting>>() => '0',
+                              ContextValue<List<EventSetting>>(
+                                value: final events
+                              ) =>
+                                events
+                                    .where((e) =>
+                                        e.dayBasedRepetitionRules.isNotEmpty ||
+                                        e.monthBasedRepetitionRules.isNotEmpty)
+                                    .length
+                                    .toString(),
+                            },
+                          },
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
