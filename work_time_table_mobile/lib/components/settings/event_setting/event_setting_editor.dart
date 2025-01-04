@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:work_time_table_mobile/app_error.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_repetition_input.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_setting_editor_section.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_time_span_input.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_type_selector.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_repetition_input.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_setting_editor_section.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_time_span_input.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_type_selector.dart';
 import 'package:work_time_table_mobile/components/validation_result_display.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_type.dart';

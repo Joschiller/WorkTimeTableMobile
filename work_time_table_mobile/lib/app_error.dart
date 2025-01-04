@@ -20,6 +20,10 @@ enum AppError {
       'Deleting the event was not confirmed.'),
   service_eventSettings_unknown('There exists no event with that given id.'),
 
+  service_globalSettings_int_invalid('The setting must be a valid integer.'),
+  service_globalSettings_scrollInterval_invalid(
+      'The scroll interval must be a valid integer.'),
+
   service_timeInput_invalid('The inserted values are invalid.'),
   service_timeInput_alreadyClosed('The week is already finished.'),
   service_timeInput_unconfirmedReset('Resetting the week was not confirmed.'),

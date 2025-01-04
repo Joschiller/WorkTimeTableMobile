@@ -1,3 +1,13 @@
+enum GlobalSettingKeyType {
+  int,
+  ;
+}
+
 enum GlobalSettingKey {
-  lastOpenedView;
+  scrollInterval(type: GlobalSettingKeyType.int),
+  ;
+
+  final GlobalSettingKeyType type;
+
+  const GlobalSettingKey({required this.type});
 }

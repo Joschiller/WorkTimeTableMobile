@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:work_time_table_mobile/blocs/global_setting_cubit.dart';
+import 'package:work_time_table_mobile/models/global_setting_key.dart';
+import 'package:work_time_table_mobile/models/settings_map.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 
 class DurationInput extends StatelessWidget {
   const DurationInput({
@@ -39,15 +44,27 @@ class DurationInput extends StatelessWidget {
               itemHeight: 35,
             ),
             const Text(':'),
-            NumberPicker(
-              value: initialValue % 60,
-              minValue: 0,
-              maxValue: 59,
-              onChanged: (value) =>
-                  _onChangeInBounds(((initialValue ~/ 60) * 60) + value),
-              zeroPad: true,
-              itemWidth: 40,
-              itemHeight: 35,
+            BlocSelector<GlobalSettingCubit, ContextDependentValue<SettingsMap>,
+                int>(
+              selector: (state) => runContextDependentAction(
+                state,
+                () => 5,
+                (value) =>
+                    int.tryParse(
+                        value[GlobalSettingKey.scrollInterval] ?? '5') ??
+                    5,
+              ),
+              builder: (context, scrollInterval) => NumberPicker(
+                value: initialValue % 60,
+                minValue: 0,
+                maxValue: 59,
+                step: scrollInterval,
+                onChanged: (value) =>
+                    _onChangeInBounds(((initialValue ~/ 60) * 60) + value),
+                zeroPad: true,
+                itemWidth: 40,
+                itemHeight: 35,
+              ),
             ),
             const Text('h'),
           ],

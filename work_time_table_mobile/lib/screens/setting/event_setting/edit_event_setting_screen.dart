@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:work_time_table_mobile/blocs/event_setting_cubit.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_setting_editor.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_setting_editor.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/event_setting_dao.dart';

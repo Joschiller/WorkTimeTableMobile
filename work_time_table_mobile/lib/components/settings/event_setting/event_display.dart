@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:work_time_table_mobile/components/event_setting/event_type_marker.dart';
+import 'package:work_time_table_mobile/components/settings/event_setting/event_type_marker.dart';
 import 'package:work_time_table_mobile/components/selectable_card.dart';
 import 'package:work_time_table_mobile/models/event_setting/evaluated_event_setting.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';

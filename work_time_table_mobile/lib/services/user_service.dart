@@ -87,7 +87,10 @@ class UserService extends StreamableService {
                   .map((u) => u.name)
                   .toList(),
             ),
-        () => _userDao.renameById(id, newName.trim()),
+        () => _userDao.renameById(id, newName.trim()).then(
+              // in case the current user was renamed
+              (value) => _currentUserDao.loadData(),
+            ),
       );
 
   Future<void> deleteUsers(List<int> ids, bool isConfirmed) => validateAndRun(

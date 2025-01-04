@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:work_time_table_mobile/screens/setting/event_setting/edit_event_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/event_setting/event_setting_screen.dart';
+import 'package:work_time_table_mobile/screens/setting/global_setting/global_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/week_setting/week_setting_screen.dart';
 import 'package:work_time_table_mobile/screens/setting/settings_screen.dart';
 import 'package:work_time_table_mobile/screens/time_input/time_input_screen.dart';
@@ -9,14 +10,18 @@ import 'package:work_time_table_mobile/screens/user/user_screen.dart';
 
 part 'routes.g.dart';
 
+// generate with: flutter pub run build_runner build
+
 @TypedGoRoute<TimeInputScreenRoute>(path: '/', routes: [
-  TypedGoRoute<UserScreenRoute>(path: 'user'),
-  TypedGoRoute<UserScreenForCreationRoute>(path: 'createUser'),
+  TypedGoRoute<UserScreenRoute>(path: 'settings/user'),
+  TypedGoRoute<UserScreenForCreationRoute>(path: 'settings/user/create'),
   TypedGoRoute<SettingsScreenRoute>(path: 'settings'),
-  TypedGoRoute<WeekSettingScreenRoute>(path: 'weekSetting'),
-  TypedGoRoute<EventSettingScreenRoute>(path: 'eventSetting'),
-  TypedGoRoute<AddEventSettingScreenRoute>(path: 'eventSettingEdit'),
-  TypedGoRoute<EditEventSettingScreenRoute>(path: 'eventSettingEdit/:eventId'),
+  TypedGoRoute<WeekSettingScreenRoute>(path: 'settings/week'),
+  TypedGoRoute<EventSettingScreenRoute>(path: 'settings/event'),
+  TypedGoRoute<AddEventSettingScreenRoute>(path: 'settings/event/edit'),
+  TypedGoRoute<EditEventSettingScreenRoute>(
+      path: 'settings/event/edit/:eventId'),
+  TypedGoRoute<GlobalSettingScreenRoute>(path: 'settings/global'),
 ])
 @immutable
 class TimeInputScreenRoute extends GoRouteData {
@@ -91,5 +96,13 @@ class EditEventSettingScreenRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return EditEventSettingScreen(eventId: eventId);
+  }
+}
+
+@immutable
+class GlobalSettingScreenRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const GlobalSettingScreen();
   }
 }
