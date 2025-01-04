@@ -20,10 +20,14 @@ class GlobalSettingDao {
       where: GlobalSettingWhereInput(userId: PrismaUnion.$2(userId)),
     );
     _stream.emitReload(
-        ContextValue(Map.fromIterable(settings.map((setting) => MapEntry(
-              GlobalSettingKey.values.firstWhere((d) => d.name == setting.key),
-              setting.value,
-            )))));
+      ContextValue(
+        {
+          for (var setting in settings)
+            GlobalSettingKey.values.firstWhere((d) => d.name == setting.key):
+                setting.value!,
+        },
+      ),
+    );
   }
 
   Future<void> updateByUserIdAndKey(
