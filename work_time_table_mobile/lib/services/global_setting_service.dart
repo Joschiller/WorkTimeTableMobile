@@ -6,6 +6,8 @@ import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
+import 'package:work_time_table_mobile/validate_and_run.dart';
+import 'package:work_time_table_mobile/validator.dart';
 
 final _stream = ContextDependentStream<SettingsMap>();
 
@@ -17,7 +19,18 @@ class GlobalSettingService extends StreamableService {
               () => _loadData(null),
               (user) => _loadData(user.id),
             )));
-    prepareListen(_globalSettingDao.stream, _stream);
+    prepareComplexListen(
+      [_globalSettingDao.stream],
+      () => ContextValue({
+        GlobalSettingKey.scrollInterval: runContextDependentAction(
+              _globalSettingDao.stream.state,
+              () => SettingsMap(),
+              (value) => value,
+            )[GlobalSettingKey.scrollInterval] ??
+            '5',
+      }),
+      _stream,
+    );
     runContextDependentAction(
       _userService.currentUserStream.state,
       () => _loadData(null),
@@ -27,6 +40,30 @@ class GlobalSettingService extends StreamableService {
 
   final UserService _userService;
   final GlobalSettingDao _globalSettingDao;
+
+  static Validator _getGlobalSettingTypeValidator(
+    GlobalSettingKeyType type,
+    String? value,
+  ) =>
+      switch (type) {
+        GlobalSettingKeyType.int => Validator([
+            () => value != null && int.tryParse(value) == null
+                ? AppError.service_globalSettings_int_invalid
+                : null,
+          ]),
+      };
+
+  static Validator _getGlobalSettingValidator(
+    GlobalSettingKey key,
+    String? value,
+  ) =>
+      switch (key) {
+        GlobalSettingKey.scrollInterval => Validator([
+            () => !_getGlobalSettingTypeValidator(key.type, value).isValid
+                ? AppError.service_globalSettings_scrollInterval_invalid
+                : null,
+          ]),
+      };
 
   ContextDependentStream<SettingsMap> get globalSettingStream => _stream;
 
@@ -40,8 +77,10 @@ class GlobalSettingService extends StreamableService {
       runContextDependentAction(
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
-        // TODO: Validation
-        (user) => _globalSettingDao.updateByUserIdAndKey(user.id, key, value),
+        (user) => validateAndRun(
+          _getGlobalSettingValidator(key, value),
+          () => _globalSettingDao.updateByUserIdAndKey(user.id, key, value),
+        ),
       );
 
   @override
