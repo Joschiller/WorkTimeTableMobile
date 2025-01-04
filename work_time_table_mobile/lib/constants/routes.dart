@@ -12,13 +12,14 @@ part 'routes.g.dart';
 // generate with: flutter pub run build_runner build
 
 @TypedGoRoute<TimeInputScreenRoute>(path: '/', routes: [
-  TypedGoRoute<UserScreenRoute>(path: 'user'),
-  TypedGoRoute<UserScreenForCreationRoute>(path: 'createUser'),
+  TypedGoRoute<UserScreenRoute>(path: 'settings/user'),
+  TypedGoRoute<UserScreenForCreationRoute>(path: 'settings/user/create'),
   TypedGoRoute<SettingsScreenRoute>(path: 'settings'),
-  TypedGoRoute<WeekSettingScreenRoute>(path: 'weekSetting'),
-  TypedGoRoute<EventSettingScreenRoute>(path: 'eventSetting'),
-  TypedGoRoute<AddEventSettingScreenRoute>(path: 'eventSettingEdit'),
-  TypedGoRoute<EditEventSettingScreenRoute>(path: 'eventSettingEdit/:eventId'),
+  TypedGoRoute<WeekSettingScreenRoute>(path: 'settings/week'),
+  TypedGoRoute<EventSettingScreenRoute>(path: 'settings/event'),
+  TypedGoRoute<AddEventSettingScreenRoute>(path: 'settings/event/edit'),
+  TypedGoRoute<EditEventSettingScreenRoute>(
+      path: 'settings/event/edit/:eventId'),
 ])
 @immutable
 class TimeInputScreenRoute extends GoRouteData {
