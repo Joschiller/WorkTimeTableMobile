@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:work_time_table_mobile/app_error.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
@@ -119,7 +120,9 @@ class ExportService {
             return Future.error(AppError.service_export_error_export_aborted);
           }
         } catch (e) {
-          print(e);
+          if (kDebugMode) {
+            print(e);
+          }
           return Future.error(AppError.service_export_error_export);
         }
       },
@@ -283,7 +286,9 @@ class ExportService {
       // reload current user, in case the current user was modified by the import
       await _currentUserDao.loadData();
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       if (e == AppError.service_user_duplicateName) {
         return Future.error(AppError.service_export_error_import_duplicate);
       }
