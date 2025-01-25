@@ -66,7 +66,7 @@ class EventSettingDto {
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'eventType': eventType.name,
+        'eventType': eventType,
         'title': title,
         'startDate': technicalDateFormat.format(startDate),
         'endDate': technicalDateFormat.format(endDate),
