@@ -53,7 +53,7 @@ class ExportService {
         SettingsMap globalSettings,
         List<DayValue> dayValues,
         List<WeekValue> weekValues,
-      })> getAllValues() => runContextDependentAction(
+      })> _getAllValues() => runContextDependentAction(
         _currentUserDao.stream.state,
         () => NoContextValue(),
         (user) => runContextDependentAction(
@@ -91,7 +91,7 @@ class ExportService {
 
   Future<void> exportCurrentUser() async {
     return runContextDependentAction(
-      getAllValues(),
+      _getAllValues(),
       () async => Future.error(AppError.service_noUserLoaded),
       (values) async {
         try {
