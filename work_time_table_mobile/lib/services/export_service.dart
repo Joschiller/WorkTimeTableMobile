@@ -146,7 +146,11 @@ class ExportService {
         // all consecutive days (days in ascending order and count of days equals total timespan)
         () => days.asMap().entries.any((element) =>
                 element.key != 0 &&
-                !days[element.key - 1].date.isBefore(element.value.date))
+                days[element.key - 1]
+                        .date
+                        .add(const Duration(days: 1))
+                        .compareTo(element.value.date) !=
+                    0)
             ? AppError.service_export_error_import_invalid
             : null,
         () => days.isNotEmpty &&
@@ -201,9 +205,11 @@ class ExportService {
         // all consecutive weeks (weeks in ascending order and count of weeks equals total timespan)
         () => weeks.asMap().entries.any((element) =>
                 element.key != 0 &&
-                !weeks[element.key - 1]
-                    .weekStartDate
-                    .isBefore(element.value.weekStartDate))
+                weeks[element.key - 1]
+                        .weekStartDate
+                        .add(const Duration(days: 7))
+                        .compareTo(element.value.weekStartDate) !=
+                    0)
             ? AppError.service_export_error_import_invalid
             : null,
         () => weeks.isNotEmpty &&
