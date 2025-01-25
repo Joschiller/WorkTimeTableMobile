@@ -65,11 +65,11 @@ class UserDto {
 
   Map<String, dynamic> toJson() => {
         'name': name,
-        'weekSettings': weekSettings.toJson(),
-        'eventSettings': eventSettings.map((e) => e.toJson()),
-        'globalSettings': globalSettings.toJson(),
-        'dayValues': dayValues.map((e) => e.toJson()),
-        'weekValues': weekValues.map((e) => e.toJson()),
+        'weekSettings': weekSettings,
+        'eventSettings': eventSettings,
+        'globalSettings': globalSettings,
+        'dayValues': dayValues,
+        'weekValues': weekValues,
       };
 
   ({

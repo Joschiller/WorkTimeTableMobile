@@ -26,7 +26,8 @@ class WeekDaySettingDto {
 
   factory WeekDaySettingDto.fromJson(Map<String, dynamic> json) =>
       WeekDaySettingDto(
-        dayOfWeek: json['dayOfWeek'],
+        dayOfWeek:
+            DayOfWeek.values.firstWhere((e) => e.name == json['dayOfWeek']),
         timeEquivalent: json['timeEquivalent'],
         mandatoryWorkTimeStart: json['mandatoryWorkTimeStart'],
         mandatoryWorkTimeEnd: json['mandatoryWorkTimeEnd'],
@@ -47,7 +48,7 @@ class WeekDaySettingDto {
       );
 
   Map<String, dynamic> toJson() => {
-        'dayOfWeek': dayOfWeek,
+        'dayOfWeek': dayOfWeek.name,
         'timeEquivalent': timeEquivalent,
         'mandatoryWorkTimeStart': mandatoryWorkTimeStart,
         'mandatoryWorkTimeEnd': mandatoryWorkTimeEnd,

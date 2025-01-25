@@ -22,8 +22,10 @@ class DayValueDto {
 
   factory DayValueDto.fromJson(Map<String, dynamic> json) => DayValueDto(
         date: DateTime.parse(json['date']),
-        firstHalfMode: json['firstHalfMode'],
-        secondHalfMode: json['secondHalfMode'],
+        firstHalfMode:
+            DayMode.values.firstWhere((e) => e.name == json['firstHalfMode']),
+        secondHalfMode:
+            DayMode.values.firstWhere((e) => e.name == json['secondHalfMode']),
         workTimeStart: json['workTimeStart'],
         workTimeEnd: json['workTimeEnd'],
         breakDuration: json['breakDuration'],
@@ -40,8 +42,8 @@ class DayValueDto {
 
   Map<String, dynamic> toJson() => {
         'date': technicalDateFormat.format(date),
-        'firstHalfMode': firstHalfMode,
-        'secondHalfMode': secondHalfMode,
+        'firstHalfMode': firstHalfMode.name,
+        'secondHalfMode': secondHalfMode.name,
         'workTimeStart': workTimeStart,
         'workTimeEnd': workTimeEnd,
         'breakDuration': breakDuration,

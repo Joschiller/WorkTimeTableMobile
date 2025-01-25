@@ -33,7 +33,8 @@ class EventSettingDto {
   factory EventSettingDto.fromJson(Map<String, dynamic> json) =>
       EventSettingDto(
         id: json['id'],
-        eventType: json['eventType'],
+        eventType:
+            EventType.values.firstWhere((e) => e.name == json['eventType']),
         title: json['title'],
         startDate: DateTime.parse(json['startDate']),
         endDate: DateTime.parse(json['endDate']),
@@ -67,16 +68,14 @@ class EventSettingDto {
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'eventType': eventType,
+        'eventType': eventType.name,
         'title': title,
         'startDate': technicalDateFormat.format(startDate),
         'endDate': technicalDateFormat.format(endDate),
         'startIsHalfDay': startIsHalfDay,
         'endIsHalfDay': endIsHalfDay,
-        'dayBasedRepetitionRules':
-            dayBasedRepetitionRules.map((e) => e.toJson()),
-        'monthBasedRepetitionRules':
-            monthBasedRepetitionRules.map((e) => e.toJson()),
+        'dayBasedRepetitionRules': dayBasedRepetitionRules,
+        'monthBasedRepetitionRules': monthBasedRepetitionRules,
       };
 
   EventSetting toAppModel() => EventSetting(

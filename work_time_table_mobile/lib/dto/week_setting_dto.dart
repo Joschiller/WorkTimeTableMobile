@@ -26,7 +26,7 @@ class WeekSettingDto {
 
   Map<String, dynamic> toJson() => {
         'targetWorkTimePerWeek': targetWorkTimePerWeek,
-        'weekDaySettings': weekDaySettings.map((e) => e.toJson()),
+        'weekDaySettings': weekDaySettings,
       };
 
   WeekSetting toAppModel() => WeekSetting(
