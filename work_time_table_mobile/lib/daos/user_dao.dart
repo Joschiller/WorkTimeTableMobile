@@ -16,7 +16,7 @@ class UserDao {
     _stream.emitReload(users.map((u) => u.toAppModel()).toList());
   }
 
-  Future<void> createFirstUser(String name) async {
+  Future<int> createFirstUser(String name) async {
     final created = await prisma.user.create(
         data: PrismaUnion.$1(
       UserCreateInput(
@@ -26,9 +26,10 @@ class UserDao {
       ),
     ));
     _stream.emitInsertion([created.toAppModel()]);
+    return created.id!;
   }
 
-  Future<void> create(String name) async {
+  Future<int> create(String name) async {
     final created = await prisma.user.create(
         data: PrismaUnion.$1(
       UserCreateInput(
@@ -38,6 +39,7 @@ class UserDao {
       ),
     ));
     _stream.emitInsertion([created.toAppModel()]);
+    return created.id!;
   }
 
   Future<void> renameById(int id, String newName) async {

@@ -66,15 +66,18 @@ class UserService extends StreamableService {
         () => _currentUserDao.setSelectedUser(id),
       );
 
-  Future<void> addUser(String name) => validateAndRun(
+  Future<int> addUser(String name) => validateAndRun(
         getUserNameValidator(
           name,
           _userDao.stream.state.map((u) => u.name).toList(),
         ),
         () => _userDao.stream.state.isEmpty
             ? _userDao.createFirstUser(name.trim()).then(
-                  (value) => _currentUserDao.loadData(),
-                )
+                (value) {
+                  _currentUserDao.loadData();
+                  return value;
+                },
+              )
             : _userDao.create(name.trim()),
       );
 
