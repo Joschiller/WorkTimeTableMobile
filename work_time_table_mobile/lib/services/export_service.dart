@@ -103,8 +103,9 @@ class ExportService {
           final targetFile = await FilePicker.platform.saveFile(
             dialogTitle: 'Select a location for your export file',
             fileName:
-                '${values.user.name} ${technicalDateFormat.format(DateTime.now())}.json',
+                '${values.user.name}_${technicalDateFormat.format(DateTime.now())}.json',
             allowedExtensions: ['json'],
+            type: FileType.custom,
             bytes: _stringToUint8List(
               jsonEncode(
                 UserDto.fromAppModel(
