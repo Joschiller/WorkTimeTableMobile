@@ -126,6 +126,10 @@ class SettingsScreen extends StatelessWidget {
                               action:
                                   context.read<ExportCubit>().exportCurrentUser,
                             ),
+                            (
+                              text: 'Import User',
+                              action: context.read<ExportCubit>().import,
+                            ),
                           ],
                         ),
                       ),

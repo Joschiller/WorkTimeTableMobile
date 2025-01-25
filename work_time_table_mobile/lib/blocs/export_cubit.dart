@@ -10,4 +10,8 @@ class ExportCubit extends Cubit<Null> {
   Future<void> exportCurrentUser() => _exportService
       .exportCurrentUser()
       .then((_) => displaySnackbar('Export finished!'));
+
+  Future<void> import() => _exportService
+      .import()
+      .then((_) => displaySnackbar('Import successful!'));
 }
