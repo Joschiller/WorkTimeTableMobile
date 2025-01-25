@@ -36,8 +36,8 @@ class EventSettingDto {
         eventType:
             EventType.values.firstWhere((e) => e.name == json['eventType']),
         title: json['title'],
-        startDate: DateTime.parse(json['startDate']),
-        endDate: DateTime.parse(json['endDate']),
+        startDate: technicalDateFormat.parse(json['startDate'], true),
+        endDate: technicalDateFormat.parse(json['endDate'], true),
         startIsHalfDay: json['startIsHalfDay'],
         endIsHalfDay: json['endIsHalfDay'],
         dayBasedRepetitionRules: (json['dayBasedRepetitionRules'] as List)

@@ -8,7 +8,7 @@ class WeekValueDto {
   WeekValueDto({required this.weekStartDate, required this.targetTime});
 
   factory WeekValueDto.fromJson(Map<String, dynamic> json) => WeekValueDto(
-        weekStartDate: DateTime.parse(json['weekStartDate']),
+        weekStartDate: technicalDateFormat.parse(json['weekStartDate'], true),
         targetTime: json['targetTime'],
       );
 

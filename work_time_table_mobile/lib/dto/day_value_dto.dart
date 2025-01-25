@@ -21,7 +21,7 @@ class DayValueDto {
   });
 
   factory DayValueDto.fromJson(Map<String, dynamic> json) => DayValueDto(
-        date: DateTime.parse(json['date']),
+        date: technicalDateFormat.parse(json['date'], true),
         firstHalfMode:
             DayMode.values.firstWhere((e) => e.name == json['firstHalfMode']),
         secondHalfMode:
