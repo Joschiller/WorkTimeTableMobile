@@ -9,7 +9,8 @@ class GlobalSettingsDto {
   factory GlobalSettingsDto.fromJson(Map<String, dynamic> json) =>
       GlobalSettingsDto(
         settings: {
-          for (final e in GlobalSettingKey.values) e: json[e.name],
+          for (final e in GlobalSettingKey.values)
+            if (json[e.name] != null) e: json[e.name],
         },
       );
 
