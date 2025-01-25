@@ -33,8 +33,9 @@ class GlobalSettingDao {
   Future<void> updateByUserIdAndKey(
     int userId,
     GlobalSettingKey key,
-    String? value,
-  ) async {
+    String? value, {
+    bool reload = true,
+  }) async {
     if (value == null) {
       await prisma.globalSetting.delete(
         where: GlobalSettingWhereUniqueInput(
@@ -43,7 +44,6 @@ class GlobalSettingDao {
           key: key.name,
         )),
       );
-      await loadUserValues(userId);
     } else {
       await prisma.globalSetting.upsert(
         where: GlobalSettingWhereUniqueInput(
@@ -62,8 +62,8 @@ class GlobalSettingDao {
           value: PrismaUnion.$1(value),
         )),
       );
-      await loadUserValues(userId);
     }
+    if (reload) await loadUserValues(userId);
   }
 
   ContextDependentStream<SettingsMap> get stream => _stream;

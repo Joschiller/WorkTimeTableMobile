@@ -20,14 +20,12 @@ import 'package:work_time_table_mobile/daos/global_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
+import 'package:work_time_table_mobile/display_snackbar.dart';
 import 'package:work_time_table_mobile/prisma.dart';
 import 'package:work_time_table_mobile/services/global_setting_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 
-void displayAppError(AppError error) =>
-    MyApp.scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(content: Text(error.displayText)),
-    );
+void _displayAppError(AppError error) => displaySnackbar(error.displayText);
 
 Future<void> main() async {
   await initPrismaClient();
@@ -37,13 +35,13 @@ Future<void> main() async {
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     if (details.exception is AppError) {
-      displayAppError(details.exception as AppError);
+      _displayAppError(details.exception as AppError);
     }
   };
 
   PlatformDispatcher.instance.onError = (error, stack) {
     if (error is AppError) {
-      displayAppError(error);
+      _displayAppError(error);
     }
     return false;
   };

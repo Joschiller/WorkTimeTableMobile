@@ -23,7 +23,11 @@ class WeekValueDao {
         .emitReload(ContextValue(values.map((v) => v.toAppModel()).toList()));
   }
 
-  Future<void> create(int userId, WeekValue value) async {
+  Future<void> create(
+    int userId,
+    WeekValue value, {
+    bool reload = true,
+  }) async {
     final inserted = await prisma.weekValue.create(
         data: PrismaUnion.$1(WeekValueCreateInput(
       weekStartDate: value.weekStartDate,
@@ -32,7 +36,7 @@ class WeekValueDao {
         connect: UserWhereUniqueInput(id: userId),
       ),
     )));
-    _stream.emitInsertion([inserted.toAppModel()]);
+    if (reload) _stream.emitInsertion([inserted.toAppModel()]);
   }
 
   ContextDependentListStream<WeekValue> get stream => _stream;

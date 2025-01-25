@@ -10,6 +10,7 @@ class SettingsCard extends StatelessWidget {
     required this.metadataTitleWeight,
     required this.metadataValueWeight,
     bool? showMetadataVertical,
+    this.actions,
   }) : showMetadataVertical = showMetadataVertical ?? false;
 
   final String title;
@@ -18,6 +19,7 @@ class SettingsCard extends StatelessWidget {
   final int metadataTitleWeight;
   final int metadataValueWeight;
   final bool showMetadataVertical;
+  final List<({String text, void Function() action})>? actions;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -78,6 +80,24 @@ class SettingsCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (actions != null)
+                  const Divider(
+                    height: 24,
+                    thickness: 1,
+                  ),
+                if (actions != null)
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: actions!
+                        .map(
+                          (e) => ElevatedButton(
+                            onPressed: e.action,
+                            child: Text(e.text),
+                          ),
+                        )
+                        .toList(),
+                  ),
               ],
             ),
           ),

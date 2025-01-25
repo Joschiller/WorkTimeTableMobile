@@ -54,7 +54,7 @@ class GlobalSettingService extends StreamableService {
           ]),
       };
 
-  static Validator _getGlobalSettingValidator(
+  static Validator getGlobalSettingValidator(
     GlobalSettingKey key,
     String? value,
   ) =>
@@ -79,7 +79,7 @@ class GlobalSettingService extends StreamableService {
         _userService.currentUserStream.state,
         () async => Future.error(AppError.service_noUserLoaded),
         (user) => validateAndRun(
-          _getGlobalSettingValidator(key, value),
+          getGlobalSettingValidator(key, value),
           () => _globalSettingDao.updateByUserIdAndKey(user.id, key, value),
         ),
       );

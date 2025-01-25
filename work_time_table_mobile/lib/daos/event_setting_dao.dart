@@ -85,9 +85,13 @@ class EventSettingDao {
         include: _include,
       );
 
-  Future<void> create(int userId, EventSetting event) async {
+  Future<void> create(
+    int userId,
+    EventSetting event, {
+    bool reload = true,
+  }) async {
     final created = await _create(prisma, userId, event);
-    _stream.emitInsertion([created.toAppModel()]);
+    if (reload) _stream.emitInsertion([created.toAppModel()]);
   }
 
   Future<void> update(int userId, EventSetting event) async {

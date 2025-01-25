@@ -29,7 +29,11 @@ class WeekSettingDao {
     _stream.emitReload(ContextValue(user.toWeekSetting(weekDaySettings)));
   }
 
-  Future<void> updateByUserId(int userId, WeekSetting settings) async {
+  Future<void> updateByUserId(
+    int userId,
+    WeekSetting settings, {
+    bool reload = true,
+  }) async {
     await prisma.$transaction(
       (prisma) async {
         await prisma.user.update(
@@ -58,7 +62,7 @@ class WeekSettingDao {
                     ))));
       },
     );
-    await loadUserSettings(userId);
+    if (reload) await loadUserSettings(userId);
   }
 
   ContextDependentStream<WeekSetting> get stream => _stream;

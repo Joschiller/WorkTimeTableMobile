@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_time_table_mobile/blocs/current_user_cubit.dart';
 import 'package:work_time_table_mobile/blocs/event_setting_cubit.dart';
+import 'package:work_time_table_mobile/blocs/export_cubit.dart';
 import 'package:work_time_table_mobile/blocs/user_cubit.dart';
 import 'package:work_time_table_mobile/blocs/week_setting_cubit.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
 import 'package:work_time_table_mobile/components/settings/settings_card.dart';
 import 'package:work_time_table_mobile/constants/routes.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
+import 'package:work_time_table_mobile/daos/day_value_dao.dart';
 import 'package:work_time_table_mobile/daos/event_setting_dao.dart';
+import 'package:work_time_table_mobile/daos/global_setting_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
 import 'package:work_time_table_mobile/daos/week_setting_dao.dart';
+import 'package:work_time_table_mobile/daos/week_value_dao.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 import 'package:work_time_table_mobile/services/event_service.dart';
 import 'package:work_time_table_mobile/services/event_setting_service.dart';
+import 'package:work_time_table_mobile/services/export_service.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/services/week_setting_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
@@ -46,6 +51,17 @@ class SettingsScreen extends StatelessWidget {
               const EventService(),
             ),
           ),
+          RepositoryProvider(
+            create: (context) => ExportService(
+              context.read<CurrentUserDao>(),
+              context.read<WeekSettingDao>(),
+              context.read<EventSettingDao>(),
+              context.read<GlobalSettingDao>(),
+              context.read<DayValueDao>(),
+              context.read<WeekValueDao>(),
+              context.read<UserService>(),
+            ),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -62,6 +78,11 @@ class SettingsScreen extends StatelessWidget {
             BlocProvider(
               create: (context) => EventSettingCubit(
                 context.read<EventSettingService>(),
+              ),
+            ),
+            BlocProvider(
+              create: (context) => ExportCubit(
+                context.read<ExportService>(),
               ),
             ),
           ],
@@ -99,6 +120,17 @@ class SettingsScreen extends StatelessWidget {
                             },
                           },
                           showMetadataVertical: true,
+                          actions: [
+                            (
+                              text: 'Export Current User',
+                              action:
+                                  context.read<ExportCubit>().exportCurrentUser,
+                            ),
+                            (
+                              text: 'Import User',
+                              action: context.read<ExportCubit>().import,
+                            ),
+                          ],
                         ),
                       ),
                       BlocBuilder<WeekSettingCubit,

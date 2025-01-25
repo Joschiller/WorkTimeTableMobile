@@ -24,7 +24,11 @@ class DayValueDao {
         .emitReload(ContextValue(values.map((v) => v.toAppModel()).toList()));
   }
 
-  Future<void> upsert(int userId, DayValue value) async {
+  Future<void> upsert(
+    int userId,
+    DayValue value, {
+    bool reload = true,
+  }) async {
     final updated = await prisma.dayValue.upsert(
       where: DayValueWhereUniqueInput(
         userIdDate: DayValueUserIdDateCompoundUniqueInput(
@@ -51,7 +55,7 @@ class DayValueDao {
         breakDuration: PrismaUnion.$1(value.breakDuration),
       )),
     );
-    _stream.emitUpdate([updated.toAppModel()]);
+    if (reload) _stream.emitUpdate([updated.toAppModel()]);
   }
 
   Future<void> deleteByUserIdAndDate(int userId, DateTime date) async =>
