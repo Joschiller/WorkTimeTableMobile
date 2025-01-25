@@ -230,7 +230,7 @@ class ExportService {
       ).toAppModel();
 
       // user insertion is run via the services to validate the value
-      // TODO: if the user already exists -> ask user whether to override the existing user or abort the import (would clear all data and then re-create the user)
+      // TODO (UX): if the user already exists -> ask user whether to override the existing user or abort the import (would clear all data and then re-create the user)
       final userId = await _userService.addUser(values.user.name);
 
       // all other values are validated using the validators
