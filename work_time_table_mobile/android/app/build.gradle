@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "de.joschiller.work_time_table_mobile"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "25.1.8937393"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
