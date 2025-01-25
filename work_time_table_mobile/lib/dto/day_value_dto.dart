@@ -1,4 +1,5 @@
 import 'package:work_time_table_mobile/models/value/day_mode.dart';
+import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
 class DayValueDto {
@@ -26,6 +27,15 @@ class DayValueDto {
         workTimeStart: json['workTimeStart'],
         workTimeEnd: json['workTimeEnd'],
         breakDuration: json['breakDuration'],
+      );
+
+  factory DayValueDto.fromAppModel(DayValue model) => DayValueDto(
+        date: model.date,
+        firstHalfMode: model.firstHalfMode,
+        secondHalfMode: model.secondHalfMode,
+        workTimeStart: model.workTimeStart,
+        workTimeEnd: model.workTimeEnd,
+        breakDuration: model.breakDuration,
       );
 
   Map<String, dynamic> toJson() => {

@@ -1,3 +1,5 @@
+import 'package:work_time_table_mobile/models/event_setting/month_based_repetition_rule.dart';
+
 class MonthBasedRepetitionRuleDto {
   final int repeatAfterMonths;
   final int dayIndex;
@@ -17,6 +19,15 @@ class MonthBasedRepetitionRuleDto {
         dayIndex: json['dayIndex'],
         weekIndex: json['weekIndex'],
         countFromEnd: json['countFromEnd'],
+      );
+
+  factory MonthBasedRepetitionRuleDto.fromAppModel(
+          MonthBasedRepetitionRule model) =>
+      MonthBasedRepetitionRuleDto(
+        repeatAfterMonths: model.repeatAfterMonths,
+        dayIndex: model.monthBasedRepetitionRuleBase.dayIndex,
+        weekIndex: model.monthBasedRepetitionRuleBase.weekIndex,
+        countFromEnd: model.monthBasedRepetitionRuleBase.countFromEnd,
       );
 
   Map<String, dynamic> toJson() => {

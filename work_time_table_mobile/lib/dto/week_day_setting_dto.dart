@@ -1,4 +1,5 @@
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
+import 'package:work_time_table_mobile/models/week_setting/week_day_setting.dart';
 
 class WeekDaySettingDto {
   final DayOfWeek dayOfWeek;
@@ -32,6 +33,17 @@ class WeekDaySettingDto {
         defaultWorkTimeStart: json['defaultWorkTimeStart'],
         defaultWorkTimeEnd: json['defaultWorkTimeEnd'],
         defaultBreakDuration: json['defaultBreakDuration'],
+      );
+
+  factory WeekDaySettingDto.fromAppModel(WeekDaySetting model) =>
+      WeekDaySettingDto(
+        dayOfWeek: model.dayOfWeek,
+        timeEquivalent: model.timeEquivalent,
+        mandatoryWorkTimeStart: model.mandatoryWorkTimeStart,
+        mandatoryWorkTimeEnd: model.mandatoryWorkTimeEnd,
+        defaultWorkTimeStart: model.defaultWorkTimeStart,
+        defaultWorkTimeEnd: model.defaultWorkTimeEnd,
+        defaultBreakDuration: model.defaultBreakDuration,
       );
 
   Map<String, dynamic> toJson() => {

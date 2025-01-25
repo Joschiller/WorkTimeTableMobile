@@ -1,5 +1,6 @@
 import 'package:work_time_table_mobile/dto/day_based_repetition_rule_dto.dart';
 import 'package:work_time_table_mobile/dto/month_based_repetition_rule_dto.dart';
+import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_type.dart';
 import 'package:work_time_table_mobile/utils.dart';
 
@@ -46,6 +47,22 @@ class EventSettingDto {
             (json['monthBasedRepetitionRules'] as List<Map<String, dynamic>>)
                 .map(MonthBasedRepetitionRuleDto.fromJson)
                 .toList(),
+      );
+
+  factory EventSettingDto.fromAppModel(EventSetting model) => EventSettingDto(
+        id: model.id,
+        eventType: model.eventType,
+        title: model.title,
+        startDate: model.startDate,
+        endDate: model.endDate,
+        startIsHalfDay: model.startIsHalfDay,
+        endIsHalfDay: model.endIsHalfDay,
+        dayBasedRepetitionRules: model.dayBasedRepetitionRules
+            .map(DayBasedRepetitionRuleDto.fromAppModel)
+            .toList(),
+        monthBasedRepetitionRules: model.monthBasedRepetitionRules
+            .map(MonthBasedRepetitionRuleDto.fromAppModel)
+            .toList(),
       );
 
   Map<String, dynamic> toJson() => {
