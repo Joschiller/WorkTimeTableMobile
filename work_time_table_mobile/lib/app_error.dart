@@ -31,6 +31,9 @@ enum AppError {
       'The preceeding week must be closed first.'),
   service_timeInput_earlyClose('The week cannot be closed yet.'),
   service_timeInput_unconfirmedClose('Finishing the week was not confirmed.'),
+
+  service_export_error_export('Exporting the data failed.'),
+  service_export_error_export_aborted('Export aborted.'),
   ;
 
   final String displayText;
