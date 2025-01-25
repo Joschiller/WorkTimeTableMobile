@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 
 final displayDateFormat = DateFormat('dd.MM.yyyy');
+final technicalDateFormat = DateFormat('yyyy-MM-dd');
 
 extension IsBlank on String {
   bool get isBlank => trim().isEmpty;
