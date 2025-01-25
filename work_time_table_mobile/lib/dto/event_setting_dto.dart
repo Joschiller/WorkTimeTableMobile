@@ -40,14 +40,12 @@ class EventSettingDto {
         endDate: DateTime.parse(json['endDate']),
         startIsHalfDay: json['startIsHalfDay'],
         endIsHalfDay: json['endIsHalfDay'],
-        dayBasedRepetitionRules:
-            (json['dayBasedRepetitionRules'] as List<Map<String, dynamic>>)
-                .map(DayBasedRepetitionRuleDto.fromJson)
-                .toList(),
-        monthBasedRepetitionRules:
-            (json['monthBasedRepetitionRules'] as List<Map<String, dynamic>>)
-                .map(MonthBasedRepetitionRuleDto.fromJson)
-                .toList(),
+        dayBasedRepetitionRules: (json['dayBasedRepetitionRules'] as List)
+            .map((e) => DayBasedRepetitionRuleDto.fromJson(e))
+            .toList(),
+        monthBasedRepetitionRules: (json['monthBasedRepetitionRules'] as List)
+            .map((e) => MonthBasedRepetitionRuleDto.fromJson(e))
+            .toList(),
       );
 
   factory EventSettingDto.fromAppModel(EventSetting model) => EventSettingDto(

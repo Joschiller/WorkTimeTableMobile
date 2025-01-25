@@ -32,15 +32,15 @@ class UserDto {
   factory UserDto.fromJson(Map<String, dynamic> json) => UserDto(
         name: json['name'],
         weekSettings: WeekSettingDto.fromJson(json['weekSettings']),
-        eventSettings: (json['eventSettings'] as List<Map<String, dynamic>>)
-            .map(EventSettingDto.fromJson)
+        eventSettings: (json['eventSettings'] as List)
+            .map((e) => EventSettingDto.fromJson(e))
             .toList(),
         globalSettings: GlobalSettingsDto.fromJson(json['globalSettings']),
-        dayValues: (json['dayValues'] as List<Map<String, dynamic>>)
-            .map(DayValueDto.fromJson)
+        dayValues: (json['dayValues'] as List)
+            .map((e) => DayValueDto.fromJson(e))
             .toList(),
-        weekValues: (json['weekValues'] as List<Map<String, dynamic>>)
-            .map(WeekValueDto.fromJson)
+        weekValues: (json['weekValues'] as List)
+            .map((e) => WeekValueDto.fromJson(e))
             .toList(),
       );
 

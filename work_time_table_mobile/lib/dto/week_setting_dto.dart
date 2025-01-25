@@ -12,8 +12,8 @@ class WeekSettingDto {
 
   factory WeekSettingDto.fromJson(Map<String, dynamic> json) => WeekSettingDto(
         targetWorkTimePerWeek: json['targetWorkTimePerWeek'],
-        weekDaySettings: (json['weekDaySettings'] as List<Map<String, dynamic>>)
-            .map(WeekDaySettingDto.fromJson)
+        weekDaySettings: (json['weekDaySettings'] as List)
+            .map((e) => WeekDaySettingDto.fromJson(e))
             .toList(),
       );
 
