@@ -34,6 +34,9 @@ enum AppError {
 
   service_export_error_export('Exporting the data failed.'),
   service_export_error_export_aborted('Export aborted.'),
+
+  service_export_error_import_incompatible_version(
+      'The import file is incompatible with the current app version.\nUpdate the app to import newer files!'),
   service_export_error_import('Importing the data failed.'),
   service_export_error_import_duplicate('The user already exists.'),
   service_export_error_import_invalid(

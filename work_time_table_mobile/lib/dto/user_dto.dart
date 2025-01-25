@@ -10,6 +10,7 @@ import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
 
 class UserDto {
+  final int exportVersion;
   final String name;
 
   final WeekSettingDto weekSettings;
@@ -20,6 +21,7 @@ class UserDto {
   final List<WeekValueDto> weekValues;
 
   UserDto({
+    required this.exportVersion,
     required this.name,
     required this.weekSettings,
     required this.eventSettings,
@@ -29,6 +31,7 @@ class UserDto {
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) => UserDto(
+        exportVersion: json['exportVersion'],
         name: json['name'],
         weekSettings: WeekSettingDto.fromJson(json['weekSettings']),
         eventSettings: (json['eventSettings'] as List)
@@ -44,6 +47,7 @@ class UserDto {
       );
 
   factory UserDto.fromAppModel(
+    int exportVersion,
     String userName,
     WeekSetting weekSetting,
     List<EventSetting> eventSettings,
@@ -52,6 +56,7 @@ class UserDto {
     List<WeekValue> weekValues,
   ) =>
       UserDto(
+        exportVersion: exportVersion,
         name: userName,
         weekSettings: WeekSettingDto.fromAppModel(weekSetting),
         eventSettings: eventSettings.map(EventSettingDto.fromAppModel).toList(),
@@ -63,6 +68,7 @@ class UserDto {
       );
 
   Map<String, dynamic> toJson() => {
+        'exportVersion': exportVersion,
         'name': name,
         'weekSettings': weekSettings,
         'eventSettings': eventSettings,
@@ -72,6 +78,7 @@ class UserDto {
       };
 
   ({
+    int exportVersion,
     String userName,
     WeekSetting weekSetting,
     List<EventSetting> eventSettings,
@@ -79,6 +86,7 @@ class UserDto {
     List<DayValue> dayValues,
     List<WeekValue> weekValues,
   }) toAppModel() => (
+        exportVersion: exportVersion,
         userName: name,
         weekSetting: weekSettings.toAppModel(),
         eventSettings: eventSettings.map((e) => e.toAppModel()).toList(),

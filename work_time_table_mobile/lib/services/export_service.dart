@@ -28,6 +28,8 @@ import 'package:work_time_table_mobile/utils.dart';
 import 'package:work_time_table_mobile/validate_and_run.dart';
 import 'package:work_time_table_mobile/validator.dart';
 
+const currentExportVerison = 0;
+
 class ExportService {
   ExportService(
     this._currentUserDao,
@@ -106,6 +108,7 @@ class ExportService {
             bytes: _stringToUint8List(
               jsonEncode(
                 UserDto.fromAppModel(
+                  currentExportVerison,
                   values.user.name,
                   values.weekSetting,
                   values.eventSettings,
@@ -228,6 +231,11 @@ class ExportService {
           File(sourceFile).readAsStringSync(),
         ),
       ).toAppModel();
+
+      if (values.exportVersion > currentExportVerison) {
+        return Future.error(
+            AppError.service_export_error_import_incompatible_version);
+      }
 
       // user insertion is run via the services to validate the value
       // TODO (UX): if the user already exists -> ask user whether to override the existing user or abort the import (would clear all data and then re-create the user)
