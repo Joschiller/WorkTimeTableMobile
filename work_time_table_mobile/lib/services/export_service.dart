@@ -119,6 +119,7 @@ class ExportService {
             return Future.error(AppError.service_export_error_export_aborted);
           }
         } catch (e) {
+          print(e);
           return Future.error(AppError.service_export_error_export);
         }
       },
@@ -232,13 +233,17 @@ class ExportService {
       // all other values are validated using the validators
       await validateAndRun(
         WeekSettingService.getWeekSettingsValidator(values.weekSetting),
-        () => _weekSettingDao.updateByUserId(userId, values.weekSetting),
+        () => _weekSettingDao.updateByUserId(
+          userId,
+          values.weekSetting,
+          reload: false,
+        ),
       );
       await Future.wait(
         values.eventSettings.map(
           (event) => validateAndRun(
             EventSettingService.getEventValidator(event),
-            () => _eventSettingDao.create(userId, event),
+            () => _eventSettingDao.create(userId, event, reload: false),
           ),
         ),
       );
@@ -253,6 +258,7 @@ class ExportService {
               userId,
               setting.key,
               setting.value,
+              reload: false,
             ),
           ),
         ),
@@ -261,7 +267,7 @@ class ExportService {
         _getDaysValidator(values.dayValues),
         () => Future.wait(
           values.dayValues.map(
-            (day) => _dayValueDao.upsert(userId, day),
+            (day) => _dayValueDao.upsert(userId, day, reload: false),
           ),
         ),
       );
@@ -269,10 +275,13 @@ class ExportService {
         _getWeeksValidator(values.dayValues, values.weekValues),
         () => Future.wait(
           values.weekValues.map(
-            (week) => _weekValueDao.create(userId, week),
+            (week) => _weekValueDao.create(userId, week, reload: false),
           ),
         ),
       );
+
+      // reload current user, in case the current user was modified by the import
+      await _currentUserDao.loadData();
     } catch (e) {
       print(e);
       if (e == AppError.service_user_duplicateName) {
