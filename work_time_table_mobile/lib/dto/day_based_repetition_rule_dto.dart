@@ -19,4 +19,8 @@ class DayBasedRepetitionRuleDto {
   Map<String, dynamic> toJson() => {
         'repeatAfterDays': repeatAfterDays,
       };
+
+  DayBasedRepetitionRule toAppModel() => DayBasedRepetitionRule(
+        repeatAfterDays: repeatAfterDays,
+      );
 }

@@ -21,4 +21,9 @@ class WeekValueDto {
         'weekStartDate': technicalDateFormat.format(weekStartDate),
         'targetTime': targetTime,
       };
+
+  WeekValue toAppModel() => WeekValue(
+        weekStartDate: weekStartDate,
+        targetTime: targetTime,
+      );
 }

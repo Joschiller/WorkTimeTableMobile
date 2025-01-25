@@ -28,4 +28,12 @@ class WeekSettingDto {
         'targetWorkTimePerWeek': targetWorkTimePerWeek,
         'weekDaySettings': weekDaySettings.map((e) => e.toJson()),
       };
+
+  WeekSetting toAppModel() => WeekSetting(
+        targetWorkTimePerWeek: targetWorkTimePerWeek,
+        weekDaySettings: {
+          for (final day in weekDaySettings.map((e) => e.toAppModel()))
+            day.dayOfWeek: day,
+        },
+      );
 }

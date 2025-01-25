@@ -71,4 +71,23 @@ class UserDto {
         'dayValues': dayValues.map((e) => e.toJson()),
         'weekValues': weekValues.map((e) => e.toJson()),
       };
+
+  ({
+    User user,
+    WeekSetting weekSetting,
+    List<EventSetting> eventSettings,
+    SettingsMap globalSettings,
+    List<DayValue> dayValues,
+    List<WeekValue> weekValues,
+  }) toAppModel() => (
+        user: User(
+          id: -1,
+          name: name,
+        ),
+        weekSetting: weekSettings.toAppModel(),
+        eventSettings: eventSettings.map((e) => e.toAppModel()).toList(),
+        globalSettings: globalSettings.settings,
+        dayValues: dayValues.map((e) => e.toAppModel()).toList(),
+        weekValues: weekValues.map((e) => e.toAppModel()).toList(),
+      );
 }

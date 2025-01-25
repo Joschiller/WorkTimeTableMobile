@@ -55,4 +55,14 @@ class WeekDaySettingDto {
         'defaultWorkTimeEnd': defaultWorkTimeEnd,
         'defaultBreakDuration': defaultBreakDuration,
       };
+
+  WeekDaySetting toAppModel() => WeekDaySetting(
+        dayOfWeek: dayOfWeek,
+        timeEquivalent: timeEquivalent,
+        mandatoryWorkTimeStart: mandatoryWorkTimeStart,
+        mandatoryWorkTimeEnd: mandatoryWorkTimeEnd,
+        defaultWorkTimeStart: defaultWorkTimeStart,
+        defaultWorkTimeEnd: defaultWorkTimeEnd,
+        defaultBreakDuration: defaultBreakDuration,
+      );
 }

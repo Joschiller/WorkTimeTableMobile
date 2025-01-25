@@ -36,4 +36,13 @@ class MonthBasedRepetitionRuleDto {
         'weekIndex': weekIndex,
         'countFromEnd': countFromEnd,
       };
+
+  MonthBasedRepetitionRule toAppModel() => MonthBasedRepetitionRule(
+        repeatAfterMonths: repeatAfterMonths,
+        monthBasedRepetitionRuleBase: MonthBasedRepetitionRuleBase(
+          dayIndex: dayIndex,
+          weekIndex: weekIndex,
+          countFromEnd: countFromEnd,
+        ),
+      );
 }

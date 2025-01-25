@@ -46,4 +46,13 @@ class DayValueDto {
         'workTimeEnd': workTimeEnd,
         'breakDuration': breakDuration,
       };
+
+  DayValue toAppModel() => DayValue(
+        date: date,
+        firstHalfMode: firstHalfMode,
+        secondHalfMode: secondHalfMode,
+        workTimeStart: workTimeStart,
+        workTimeEnd: workTimeEnd,
+        breakDuration: breakDuration,
+      );
 }

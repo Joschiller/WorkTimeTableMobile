@@ -78,4 +78,18 @@ class EventSettingDto {
         'monthBasedRepetitionRules':
             monthBasedRepetitionRules.map((e) => e.toJson()),
       };
+
+  EventSetting toAppModel() => EventSetting(
+        id: id,
+        eventType: eventType,
+        title: title,
+        startDate: startDate,
+        endDate: endDate,
+        startIsHalfDay: startIsHalfDay,
+        endIsHalfDay: endIsHalfDay,
+        dayBasedRepetitionRules:
+            dayBasedRepetitionRules.map((e) => e.toAppModel()).toList(),
+        monthBasedRepetitionRules:
+            monthBasedRepetitionRules.map((e) => e.toAppModel()).toList(),
+      );
 }
