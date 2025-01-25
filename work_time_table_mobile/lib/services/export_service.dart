@@ -106,7 +106,7 @@ class ExportService {
             bytes: _stringToUint8List(
               jsonEncode(
                 UserDto.fromAppModel(
-                  values.user,
+                  values.user.name,
                   values.weekSetting,
                   values.eventSettings,
                   values.globalSettings,
@@ -231,7 +231,7 @@ class ExportService {
 
       // user insertion is run via the services to validate the value
       // TODO (UX): if the user already exists -> ask user whether to override the existing user or abort the import (would clear all data and then re-create the user)
-      final userId = await _userService.addUser(values.user.name);
+      final userId = await _userService.addUser(values.userName);
 
       // all other values are validated using the validators
       await validateAndRun(

@@ -5,7 +5,6 @@ import 'package:work_time_table_mobile/dto/week_setting_dto.dart';
 import 'package:work_time_table_mobile/dto/week_value_dto.dart';
 import 'package:work_time_table_mobile/models/event_setting/event_setting.dart';
 import 'package:work_time_table_mobile/models/settings_map.dart';
-import 'package:work_time_table_mobile/models/user.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/models/week_setting/week_setting.dart';
@@ -45,7 +44,7 @@ class UserDto {
       );
 
   factory UserDto.fromAppModel(
-    User user,
+    String userName,
     WeekSetting weekSetting,
     List<EventSetting> eventSettings,
     SettingsMap globalSettings,
@@ -53,7 +52,7 @@ class UserDto {
     List<WeekValue> weekValues,
   ) =>
       UserDto(
-        name: user.name,
+        name: userName,
         weekSettings: WeekSettingDto.fromAppModel(weekSetting),
         eventSettings: eventSettings.map(EventSettingDto.fromAppModel).toList(),
         globalSettings: GlobalSettingsDto(
@@ -73,17 +72,14 @@ class UserDto {
       };
 
   ({
-    User user,
+    String userName,
     WeekSetting weekSetting,
     List<EventSetting> eventSettings,
     SettingsMap globalSettings,
     List<DayValue> dayValues,
     List<WeekValue> weekValues,
   }) toAppModel() => (
-        user: User(
-          id: -1,
-          name: name,
-        ),
+        userName: name,
         weekSetting: weekSettings.toAppModel(),
         eventSettings: eventSettings.map((e) => e.toAppModel()).toList(),
         globalSettings: globalSettings.settings,
