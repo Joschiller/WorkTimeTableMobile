@@ -1,9 +1,6 @@
-sealed class StatisticsState {}
-
-class StatisticsStateNoUser extends StatisticsState {}
-
-class StatisticsStateNotEnoughData extends StatisticsState {}
-
-class StatisticsStateResult extends StatisticsState {
+class StatisticsState {
+  final bool notEnoughDataWarning;
   // TODO: details
+
+  StatisticsState({required this.notEnoughDataWarning});
 }

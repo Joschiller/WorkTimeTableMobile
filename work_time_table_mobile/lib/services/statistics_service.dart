@@ -4,7 +4,7 @@ import 'package:work_time_table_mobile/models/statistics/statistics_state.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
-import 'package:work_time_table_mobile/stream_helpers/cached_stream.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
 
@@ -39,25 +39,25 @@ class StatisticsService extends StreamableService {
   final DayValueDao _dayValueDao;
   final WeekValueDao _weekValueDao;
 
-  final statisticsStream =
-      CachedStream<StatisticsState>(StatisticsStateNoUser());
+  final statisticsStream = ContextDependentStream<StatisticsState>();
 
-  StatisticsState _calculateState(
+  ContextDependentValue<StatisticsState> _calculateState(
     ContextDependentValue<List<DayValue>> contextDays,
     ContextDependentValue<List<WeekValue>> contextWeeks,
   ) =>
       runContextDependentAction(
         contextDays,
-        () => StatisticsStateNoUser(),
+        () => NoContextValue(),
         (days) => runContextDependentAction(
           contextWeeks,
-          () => StatisticsStateNoUser(),
+          () => NoContextValue(),
           (weeks) {
-            if (weeks.length <= 25) {
-              return StatisticsStateNotEnoughData();
-            }
             // TODO: fill with data
-            return StatisticsStateResult();
+            return ContextValue(
+              StatisticsState(
+                notEnoughDataWarning: weeks.length <= 25,
+              ),
+            );
           },
         ),
       );

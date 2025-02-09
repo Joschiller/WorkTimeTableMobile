@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_time_table_mobile/models/statistics/statistics_state.dart';
 import 'package:work_time_table_mobile/services/statistics_service.dart';
+import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_cubit.dart';
 
-class StatisticsCubit extends Cubit<StatisticsState> {
+class StatisticsCubit extends ContextDependentCubit<StatisticsState> {
   late StreamSubscription _subscription;
 
   StatisticsCubit(this._statisticsService)
