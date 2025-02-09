@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:work_time_table_mobile/components/metadata_field.dart';
 
+enum IconMode {
+  edit,
+  view,
+  ;
+}
+
 class SettingsCard extends StatelessWidget {
   const SettingsCard({
     super.key,
@@ -11,6 +17,7 @@ class SettingsCard extends StatelessWidget {
     required this.metadataValueWeight,
     bool? showMetadataVertical,
     this.actions,
+    required this.iconMode,
   }) : showMetadataVertical = showMetadataVertical ?? false;
 
   final String title;
@@ -20,6 +27,7 @@ class SettingsCard extends StatelessWidget {
   final int metadataValueWeight;
   final bool showMetadataVertical;
   final List<({String text, void Function() action})>? actions;
+  final IconMode iconMode;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -39,7 +47,10 @@ class SettingsCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const Spacer(),
-                    const Icon(Icons.edit),
+                    switch (iconMode) {
+                      IconMode.edit => const Icon(Icons.edit),
+                      IconMode.view => const Icon(Icons.visibility),
+                    }
                   ],
                 ),
                 const Divider(
