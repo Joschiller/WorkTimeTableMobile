@@ -2,11 +2,11 @@ import 'package:scidart/numdart.dart';
 import 'package:work_time_table_mobile/models/statistics/statistics_mode.dart';
 
 double? analyzeList<T>(
-  List<T> list,
+  List<T>? list,
   double Function(T item) extractData,
   StatisticsMode statisticsMode,
 ) {
-  if (list.isEmpty) {
+  if (list == null || list.isEmpty) {
     return null;
   }
 
