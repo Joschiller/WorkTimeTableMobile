@@ -46,11 +46,13 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
               Expanded(
                 flex: 4,
                 child: Text(
-                  analyzeList(
-                    widget.statistics.workDaysInWeek,
-                    (item) => item,
-                    _statisticsMode,
-                  ).toString(),
+                  (analyzeList(
+                            widget.statistics.workDaysInWeek,
+                            (item) => item,
+                            _statisticsMode,
+                          ) ??
+                          0)
+                      .toString(),
                 ),
               ),
             ],
