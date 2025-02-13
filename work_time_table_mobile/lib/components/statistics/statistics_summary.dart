@@ -33,19 +33,25 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
           ),
           Row(
             children: [
-              const Text(
-                'Work Days Per Week:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+              const Expanded(
+                child: Text(
+                  'Work Days Per Week:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.right,
                 ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                analyzeList(
-                  widget.statistics.workDaysInWeek,
-                  (item) => item,
-                  _statisticsMode,
-                ).toString(),
+              const SizedBox(width: 16),
+              Expanded(
+                flex: 4,
+                child: Text(
+                  analyzeList(
+                    widget.statistics.workDaysInWeek,
+                    (item) => item,
+                    _statisticsMode,
+                  ).toString(),
+                ),
               ),
             ],
           ),
@@ -61,17 +67,17 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
                     textAlign: TextAlign.right,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 16),
                 Expanded(
                   flex: 4,
                   child: !widget.statistics.dayValuesPerDayOfWeek.values
                           .any((v) => v.isNotEmpty)
                       ? const Text('No Data')
                       : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            const Text('Work Period: '),
                             Text(
-                              Duration(
+                              _durationToString(Duration(
                                 minutes: analyzeList<DayValue>(
                                       widget.statistics
                                           .dayValuesPerDayOfWeek[day],
@@ -79,11 +85,11 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
                                       _statisticsMode,
                                     )?.toInt() ??
                                     0,
-                              ).toString(),
+                              )),
                             ),
                             const Text(' - '),
                             Text(
-                              Duration(
+                              _durationToString(Duration(
                                 minutes: analyzeList<DayValue>(
                                       widget.statistics
                                           .dayValuesPerDayOfWeek[day],
@@ -91,11 +97,12 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
                                       _statisticsMode,
                                     )?.toInt() ??
                                     0,
-                              ).toString(),
+                              )),
                             ),
-                            const Text(' Break Duration: '),
+                            const SizedBox(width: 16),
+                            const Text('Break Duration: '),
                             Text(
-                              Duration(
+                              _durationToString(Duration(
                                 minutes: analyzeList<DayValue>(
                                       widget.statistics
                                           .dayValuesPerDayOfWeek[day],
@@ -103,7 +110,7 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
                                       _statisticsMode,
                                     )?.toInt() ??
                                     0,
-                              ).toString(),
+                              )),
                             ),
                           ],
                         ),
@@ -113,3 +120,6 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
         ],
       );
 }
+
+String _durationToString(Duration duration) =>
+    '${duration.inHours.toString().padLeft(2, '0')}:${duration.inMinutes.remainder(60).toString().padLeft(2, '0')} h';
