@@ -6,10 +6,11 @@ class CachedStream<T> {
   T get state => _state;
   Stream<T> get stream => _streamController.stream;
 
-  CachedStream(this._state) {
-    stream.listen((newState) => _state = newState);
-  }
+  CachedStream(this._state);
 
   /// Pushes a new state to the stream.
-  void emitReload(T data) => _streamController.add(data);
+  void emitReload(T data) {
+    _state = data;
+    _streamController.add(data);
+  }
 }
