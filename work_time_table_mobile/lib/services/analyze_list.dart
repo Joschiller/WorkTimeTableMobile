@@ -2,7 +2,7 @@ import 'package:scidart/numdart.dart';
 import 'package:work_time_table_mobile/models/statistics/statistics_mode.dart';
 
 double? analyzeList<T>(
-  List<T>? list,
+  Iterable<T>? list,
   double Function(T item) extractData,
   StatisticsMode statisticsMode,
 ) {
