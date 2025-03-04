@@ -1,5 +1,9 @@
 # Work Time Table
 
+> [!CAUTION]
+>
+> This application is still a work in progress and may receive breaking changes in the near future!
+
 <img style="float: right;" src="./work_time_table_icon.svg" height="80px" />
 
 To install the application, please use the latest version of the delivered [.apk-file in the Releases folder](./Releases) to install it on a mobile device. Then the application can be launched by tapping on the application icon.
