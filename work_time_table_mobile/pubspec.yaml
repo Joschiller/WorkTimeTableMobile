@@ -45,6 +45,7 @@ dependencies:
   table_calendar: ^3.1.2
   file_picker: ^8.1.7
   scidart: ^0.0.2-dev.12
+  fl_chart: ^0.70.2
 
 dev_dependencies:
   flutter_test:
