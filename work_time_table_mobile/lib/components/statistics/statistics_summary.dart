@@ -16,6 +16,23 @@ class StatisticsSummary extends StatefulWidget {
   State<StatisticsSummary> createState() => _StatisticsSummaryState();
 }
 
+const lineDiagramScale = 5;
+final dayBorder = Container(
+  color: Colors.black,
+  width: 2,
+  height: 20,
+);
+final workTimeBorder = Container(
+  color: Colors.black,
+  width: 2,
+  height: 16,
+);
+final breakBorder = Container(
+  color: Colors.black,
+  width: 1,
+  height: 10,
+);
+
 class _StatisticsSummaryState extends State<StatisticsSummary> {
   var _statisticsMode = StatisticsMode.average;
   var _includeHalfWorkDays = false;
@@ -116,42 +133,72 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
                         relevantDaysForDayOfWeek.isEmpty) {
                       return const Text('No Data');
                     }
+
+                    final startT = analyzeList<DayValue>(
+                          relevantDaysForDayOfWeek,
+                          (item) => item.workTimeStart.toDouble(),
+                          _statisticsMode,
+                        )?.toInt() ??
+                        0;
+                    final endT = analyzeList<DayValue>(
+                          relevantDaysForDayOfWeek,
+                          (item) => item.workTimeEnd.toDouble(),
+                          _statisticsMode,
+                        )?.toInt() ??
+                        0;
+                    final breakT = analyzeList<DayValue>(
+                          relevantDaysForDayOfWeek,
+                          (item) => item.breakDuration.toDouble(),
+                          _statisticsMode,
+                        )?.toInt() ??
+                        0;
+
                     return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Text('Work Period: '),
                         Text(
                           _durationToString(Duration(
-                            minutes: analyzeList<DayValue>(
-                                  relevantDaysForDayOfWeek,
-                                  (item) => item.workTimeStart.toDouble(),
-                                  _statisticsMode,
-                                )?.toInt() ??
-                                0,
+                            minutes: startT,
                           )),
                         ),
                         const Text(' - '),
                         Text(
                           _durationToString(Duration(
-                            minutes: analyzeList<DayValue>(
-                                  relevantDaysForDayOfWeek,
-                                  (item) => item.workTimeEnd.toDouble(),
-                                  _statisticsMode,
-                                )?.toInt() ??
-                                0,
+                            minutes: endT,
                           )),
                         ),
                         const SizedBox(width: 16),
                         const Text('Break Duration: '),
                         Text(
                           _durationToString(Duration(
-                            minutes: analyzeList<DayValue>(
-                                  relevantDaysForDayOfWeek,
-                                  (item) => item.breakDuration.toDouble(),
-                                  _statisticsMode,
-                                )?.toInt() ??
-                                0,
+                            minutes: breakT,
                           )),
                         ),
+                        const SizedBox(width: 32),
+                        // diagram
+                        dayBorder,
+                        SizedBox(width: startT / lineDiagramScale),
+                        workTimeBorder,
+                        Container(
+                          color: Colors.black,
+                          height: 1,
+                          width:
+                              (endT - startT - breakT) / 2 / lineDiagramScale,
+                        ),
+                        breakBorder,
+                        SizedBox(width: breakT / lineDiagramScale),
+                        breakBorder,
+                        Container(
+                          color: Colors.black,
+                          height: 1,
+                          width:
+                              (endT - startT - breakT) / 2 / lineDiagramScale,
+                        ),
+                        breakBorder,
+                        workTimeBorder,
+                        SizedBox(width: (24 * 60 - endT) / lineDiagramScale),
+                        dayBorder,
                       ],
                     );
                   }),
