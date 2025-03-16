@@ -195,7 +195,6 @@ class _StatisticsSummaryState extends State<StatisticsSummary> {
                           width:
                               (endT - startT - breakT) / 2 / lineDiagramScale,
                         ),
-                        breakBorder,
                         workTimeBorder,
                         SizedBox(width: (24 * 60 - endT) / lineDiagramScale),
                         dayBorder,
