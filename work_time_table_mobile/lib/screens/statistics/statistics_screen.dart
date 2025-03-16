@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_time_table_mobile/blocs/statistics_cubit.dart';
 import 'package:work_time_table_mobile/components/no_user_page.dart';
 import 'package:work_time_table_mobile/components/page_template.dart';
 import 'package:work_time_table_mobile/components/statistics/not_enough_data_warning.dart';
+import 'package:work_time_table_mobile/components/statistics/statistics_summary.dart';
 import 'package:work_time_table_mobile/daos/current_user_dao.dart';
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
 import 'package:work_time_table_mobile/daos/user_dao.dart';
@@ -48,9 +48,19 @@ class StatisticsScreen extends StatelessWidget {
                   title: 'Statistics',
                   content: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         if (statistics.notEnoughDataWarning)
-                          const NotEnoughDataWarning()
+                          const NotEnoughDataWarning(),
+                        const Divider(
+                          height: 24,
+                          thickness: 1,
+                        ),
+                        StatisticsSummary(statistics: statistics),
+                        const Divider(
+                          height: 24,
+                          thickness: 1,
+                        ),
                       ],
                     ),
                   ),

@@ -1,12 +1,15 @@
 import 'package:work_time_table_mobile/daos/day_value_dao.dart';
 import 'package:work_time_table_mobile/daos/week_value_dao.dart';
 import 'package:work_time_table_mobile/models/statistics/statistics_state.dart';
+import 'package:work_time_table_mobile/models/value/day_mode.dart';
 import 'package:work_time_table_mobile/models/value/day_value.dart';
 import 'package:work_time_table_mobile/models/value/week_value.dart';
+import 'package:work_time_table_mobile/models/week_setting/day_of_week.dart';
 import 'package:work_time_table_mobile/services/user_service.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_stream.dart';
 import 'package:work_time_table_mobile/stream_helpers/context/context_dependent_value.dart';
 import 'package:work_time_table_mobile/stream_helpers/streamable_service.dart';
+import 'package:work_time_table_mobile/utils.dart';
 
 class StatisticsService extends StreamableService {
   StatisticsService(
@@ -51,14 +54,37 @@ class StatisticsService extends StreamableService {
         (days) => runContextDependentAction(
           contextWeeks,
           () => NoContextValue(),
-          (weeks) {
-            // TODO: fill with data
-            return ContextValue(
-              StatisticsState(
-                notEnoughDataWarning: weeks.length <= 25,
-              ),
-            );
-          },
+          (weeks) => ContextValue(
+            StatisticsState(
+              notEnoughDataWarning: weeks.length <= 25,
+              workDaysInWeek: weeks
+                  .map(
+                    (week) =>
+                        (days
+                                .where((d) =>
+                                    d.date.firstDayOfWeek
+                                            .compareTo(week.weekStartDate) ==
+                                        0 &&
+                                    d.firstHalfMode == DayMode.workDay)
+                                .length +
+                            days
+                                .where((d) =>
+                                    d.date.firstDayOfWeek
+                                            .compareTo(week.weekStartDate) ==
+                                        0 &&
+                                    d.secondHalfMode == DayMode.workDay)
+                                .length) /
+                        2,
+                  )
+                  .toList(),
+              dayValuesPerDayOfWeek: {
+                for (final day in DayOfWeek.values)
+                  day: days
+                      .where((d) => DayOfWeek.fromDateTime(d.date) == day)
+                      .toList(),
+              },
+            ),
+          ),
         ),
       );
 
